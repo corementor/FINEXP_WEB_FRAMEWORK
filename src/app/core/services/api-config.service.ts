@@ -1,0 +1,35 @@
+import { Injectable } from '@angular/core';
+import { environment } from '../../../environments/environment';
+
+/**
+ * API Configuration Service
+ * Centralized configuration for all API endpoints
+ */
+@Injectable({
+  providedIn: 'root',
+})
+export class ApiConfigService {
+  readonly baseUrl = environment.apiUrl;
+  readonly authUrl = environment.authUrl;
+  readonly httpTimeout = environment.httpTimeout;
+
+  get employeeEndpoint(): string {
+    return `${this.baseUrl}/employees`;
+  }
+
+  get auditEndpoint(): string {
+    return `${this.baseUrl}/audit`;
+  }
+
+  get dashboardEndpoint(): string {
+    return `${this.baseUrl}/dashboard`;
+  }
+
+  get authEndpoint(): string {
+    return `${this.authUrl}/login`;
+  }
+
+  get refreshTokenEndpoint(): string {
+    return `${this.authUrl}/refresh`;
+  }
+}

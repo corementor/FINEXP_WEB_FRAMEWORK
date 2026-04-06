@@ -1,0 +1,32 @@
+<div class="w-full">
+  <label *ngIf="label" [for]="generatedId" class="block text-sm font-medium text-gray-700">
+    {{ label }}
+    <span *ngIf="required" class="text-red-600" aria-label="required">*</span>
+  </label>
+
+  <input
+    [id]="generatedId"
+    [type]="type"
+    [value]="value"
+    [placeholder]="placeholder"
+    [disabled]="disabled"
+    [attr.required]="required || null"
+    [attr.aria-label]="label || placeholder"
+    [attr.aria-describedby]="error || hint ? generatedId + '-desc' : null"
+    [attr.aria-invalid]="hasError"
+    [ngClass]="inputClasses"
+    class="mt-1"
+    (input)="onInput($event.target.value)"
+    (blur)="onBlur()"
+  />
+
+  <!-- Error message -->
+  <p *ngIf="hasError" [id]="generatedId + '-error'" class="mt-1 text-sm text-red-600" role="alert">
+    {{ errorMessage }}
+  </p>
+
+  <!-- Hint text -->
+  <p *ngIf="hint && !hasError" [id]="generatedId + '-hint'" class="mt-1 text-sm text-gray-500">
+    {{ hint }}
+  </p>
+</div>
