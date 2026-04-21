@@ -35,8 +35,8 @@ export class LoginComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     // Initialize form with validation
     this.loginForm = this.fb.group({
-      email: ['', [Validators.required, Validators.email]],
-      password: ['', [Validators.required, Validators.minLength(6)]],
+      email: ['admin@finxp.local', [Validators.required, Validators.email]],
+      password: ['admin123', [Validators.required, Validators.minLength(6)]],
     });
 
     // Check if already logged in
@@ -63,11 +63,11 @@ export class LoginComponent implements OnInit, OnDestroy {
         next: (response) => {
           this.isLoading = false;
           this.logger.info('Login successful', { email });
-          this.router.navigate([response.redirectUrl]);
+          this.router.navigate(['/dashboard']);
         },
         error: (err) => {
           this.isLoading = false;
-          this.error = err.message || 'Login failed. Please try again.';
+          this.error = err.message || 'Login failed. Please check your credentials.';
           this.logger.error('Login failed', err);
         },
       });

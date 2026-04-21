@@ -82,6 +82,7 @@
       <a
         routerLink="/workflows"
         routerLinkActive="bg-blue-600 text-white"
+        *appHasPermission="Permission.MANAGE_WORKFLOWS"
         class="block px-4 py-3 rounded-lg text-slate-300 hover:bg-slate-700 hover:text-white transition-colors font-medium"
       >
         <span class="flex items-center gap-3">
@@ -99,6 +100,7 @@
       <a
         routerLink="/audit"
         routerLinkActive="bg-blue-600 text-white"
+        *appHasPermission="Permission.VIEW_AUDIT"
         class="block px-4 py-3 rounded-lg text-slate-300 hover:bg-slate-700 hover:text-white transition-colors font-medium"
       >
         <span class="flex items-center gap-3">

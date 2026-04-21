@@ -50,6 +50,7 @@ export enum Permission {
   // Admin
   MANAGE_USERS = 'MANAGE_USERS',
   MANAGE_SYSTEM = 'MANAGE_SYSTEM',
+  VIEW_DASHBOARD= 'VIEW_DASHBOARD',
 }
 
 /**

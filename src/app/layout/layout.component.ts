@@ -3,20 +3,31 @@ import { CommonModule } from '@angular/common';
 import { RouterOutlet, RouterLink, RouterLinkActive, Router } from '@angular/router';
 import { ToastService } from '../services/toast.service';
 import { AuthService } from '../core/services/auth.service';
+import { HasRoleDirective, HasPermissionDirective } from '../core/directives';
+import { UserRole, Permission } from '../core/models';
 
 @Component({
   selector: 'app-layout',
   standalone: true,
-  imports: [CommonModule, RouterOutlet, RouterLink, RouterLinkActive],
+  imports: [
+    CommonModule,
+    RouterOutlet,
+    RouterLink,
+    RouterLinkActive,
+    HasRoleDirective,
+    HasPermissionDirective,
+  ],
   templateUrl: './layout.component.html',
 })
 export class LayoutComponent implements OnInit, OnDestroy {
   readonly toastService = inject(ToastService);
   private readonly authService = inject(AuthService);
   private readonly router = inject(Router);
-  
+
   currentUser = '';
   userInitial = 'A';
+  UserRole = UserRole;
+  Permission = Permission;
   private inactivityTimeout: number | null = null;
 
   ngOnInit(): void {

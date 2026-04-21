@@ -5,7 +5,7 @@
 export const environment = {
   production: false,
   apiUrl: 'http://localhost:8080/api',
-  authUrl: 'http://localhost:3001/auth',
+  authUrl: 'http://localhost:8080/api/auth',
   logLevel: 'debug',
   enableDevTools: true,
   httpTimeout: 30000, // 30 seconds
@@ -13,9 +13,9 @@ export const environment = {
     enabled: true,
     duration: 5 * 60 * 1000, // 5 minutes
   },
-  // Mock auth config - Remove when backend security is ready
+  // Mock auth config - Set to false when backend is ready
   mockAuth: {
-    enabled: true,
-    autoLoginEmail: 'admin@finxp.com',
+    enabled: false,
+    autoLoginEmail: 'admin@finxp.local',
   },
 };

@@ -6,10 +6,12 @@ import {
   HttpEvent,
   HttpErrorResponse
 } from '@angular/common/http';
-import { Observable, throwError, timer } from 'rxjs';
-import { catchError, retry, timeout, finalize } from 'rxjs/operators';
+import { Observable, throwError, timer, BehaviorSubject } from 'rxjs';
+import { catchError, retry, timeout, finalize, switchMap, filter, take } from 'rxjs/operators';
 import { LoggerService } from '../services/logger.service';
+import { AuthService } from '../services/auth.service';
 import { AppError, NetworkError, TimeoutError } from '../models/error.models';
+import { Router } from '@angular/router';
 
 /**
  * Error-handling HTTP Interceptor
@@ -17,15 +19,22 @@ import { AppError, NetworkError, TimeoutError } from '../models/error.models';
  * - Retries failed requests (except 4xx errors)
  * - Maps HTTP errors to custom error types
  * - Applies request timeout
+ * - Handles 401 errors with token refresh
  */
 @Injectable()
 export class ErrorInterceptor implements HttpInterceptor {
   private readonly logger = inject(LoggerService);
+  private readonly auth = inject(AuthService);
+  private readonly router = inject(Router);
 
   private readonly retryConfig = {
     count: 2,
     delay: 1000 // milliseconds
   };
+
+  // Subject to prevent multiple token refresh requests
+  private isRefreshing = false;
+  private refreshTokenSubject = new BehaviorSubject<any>(null);
 
   intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
     return next.handle(req).pipe(
@@ -41,9 +50,54 @@ export class ErrorInterceptor implements HttpInterceptor {
         }
       }),
       catchError((error) => {
+        // Handle 401 Unauthorized with token refresh
+        if (error instanceof HttpErrorResponse && error.status === 401) {
+          return this.handle401Error(req, next);
+        }
         return this.handleError(error);
       })
     );
+  }
+
+  /**
+   * Handle 401 Unauthorized error with token refresh attempt
+   */
+  private handle401Error(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
+    if (!this.isRefreshing) {
+      this.isRefreshing = true;
+      this.refreshTokenSubject.next(null);
+
+      return this.auth.refreshToken().pipe(
+        switchMap((token: any) => {
+          this.isRefreshing = false;
+          this.refreshTokenSubject.next(token);
+          return next.handle(this.addAuthHeader(req, token.accessToken));
+        }),
+        catchError((err) => {
+          this.isRefreshing = false;
+          this.auth.logout();
+          this.router.navigate(['/login']);
+          return throwError(() => err);
+        })
+      );
+    } else {
+      // Wait for token refresh to complete, then retry
+      return this.refreshTokenSubject.pipe(
+        filter(token => token != null),
+        take(1),
+        switchMap((token) => {
+          return next.handle(this.addAuthHeader(req, token.accessToken));
+        })
+      );
+    }
+  }
+
+  private addAuthHeader(req: HttpRequest<any>, token: string): HttpRequest<any> {
+    return req.clone({
+      setHeaders: {
+        Authorization: `Bearer ${token}`
+      }
+    });
   }
 
   private handleError(error: any): Observable<never> {

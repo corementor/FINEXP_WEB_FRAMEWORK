@@ -60,56 +60,67 @@ export class AuthService {
   login(email: string, password: string): Observable<AuthToken> {
     this.logger.debug('Login attempt', { email });
 
-    // MOCK IMPLEMENTATION - Remove when backend is ready
-    if (environment.mockAuth.enabled) {
-      // Create mock token and principal
-      const mockToken: AuthToken = {
-        accessToken: 'mock_token_' + Date.now(),
-        refreshToken: 'mock_refresh_' + Date.now(),
-        expiresIn: 8600, // 1 hour
-        tokenType: 'Bearer',
-      };
-
-      const mockPrincipal: Principal = {
-        id: 'mock_user_001',
-        username: email.split('@')[0],
-        email,
-        roles: [UserRole.ADMIN],
-        permissions: Object.values(Permission),
-        department: 'Management',
-        lastLogin: new Date().toISOString(),
-      };
-
-      // Simulate API delay
-      return of(mockToken).pipe(
-        delay(800),
-        tap(() => {
-          this.authTokenSignal.set(mockToken);
-          this.currentUserSignal.set(mockPrincipal);
-          this.isAuthenticatedSignal.set(true);
-          this.startSessionManagement();
-          this.saveAuthState();
-          this.logger.info('Login successful', { email });
-        }),
-      );
+    // Use real backend when not in mock mode
+    if (!environment.mockAuth.enabled) {
+      return this.http
+        .post<any>(this.config.authEndpoint, {
+          email,
+          password,
+        })
+        .pipe(
+          tap((response: any) => {
+            // Map response to AuthToken
+            const token: AuthToken = {
+              accessToken: response.access_token || response.accessToken,
+              refreshToken: response.refresh_token || response.refreshToken || '',
+              expiresIn: response.expires_in || 86400,
+              tokenType: response.token_type || 'Bearer',
+            };
+            this.authTokenSignal.set(token);
+            this.isAuthenticatedSignal.set(true);
+            this.saveAuthState();
+            this.logger.info('Login successful', { email });
+            // Fetch user principal after login
+            this.fetchCurrentUser();
+            return token;
+          }),
+          catchError((error) => {
+            this.logger.error('Login failed', error);
+            return throwError(() => new Error(error.error?.message || 'Login failed'));
+          }),
+        );
     }
 
-    // REAL IMPLEMENTATION - When backend is ready
-    return this.http
-      .post<AuthToken>(this.config.authEndpoint, {
-        email,
-        password,
-      })
-      .pipe(
-        tap((token: AuthToken) => {
-          this.authTokenSignal.set(token);
-          this.isAuthenticatedSignal.set(true);
-          this.saveAuthState();
-          this.logger.info('Login successful', { email });
-          // Fetch user principal after login
-          this.fetchCurrentUser();
-        }),
-      );
+    // MOCK IMPLEMENTATION - For development without backend
+    const mockToken: AuthToken = {
+      accessToken: 'mock_token_' + Date.now(),
+      refreshToken: 'mock_refresh_' + Date.now(),
+      expiresIn: 8600, // 1 hour
+      tokenType: 'Bearer',
+    };
+
+    const mockPrincipal: Principal = {
+      id: 'mock_user_001',
+      username: email.split('@')[0],
+      email,
+      roles: [UserRole.ADMIN],
+      permissions: Object.values(Permission),
+      department: 'Management',
+      lastLogin: new Date().toISOString(),
+    };
+
+    // Simulate API delay
+    return of(mockToken).pipe(
+      delay(800),
+      tap(() => {
+        this.authTokenSignal.set(mockToken);
+        this.currentUserSignal.set(mockPrincipal);
+        this.isAuthenticatedSignal.set(true);
+        this.startSessionManagement();
+        this.saveAuthState();
+        this.logger.info('Login successful (mock)', { email });
+      }),
+    );
   }
 
   /**
@@ -228,7 +239,7 @@ export class AuthService {
       const mockPrincipal: Principal = {
         id: 'user_001',
         username: 'admin',
-        email: 'admin@finxp.com',
+        email: 'admin@finxp.local',
         roles: [UserRole.ADMIN],
         permissions: Object.values(Permission),
         department: 'Management',
@@ -241,13 +252,23 @@ export class AuthService {
 
     // Real backend implementation
     this.http
-      .get<{ result: Principal }>(`${this.config.baseUrl}/users/me`)
+      .get<{ result: any }>(`${this.config.baseUrl}/auth/me`)
       .pipe(
         tap((response) => {
           if (response.result) {
-            this.currentUserSignal.set(response.result);
+            const user = response.result;
+            const principal: Principal = {
+              id: user.guid || user.id || 'unknown',
+              username: user.username,
+              email: user.email,
+              roles: [UserRole.USER], // Map from backend roles
+              permissions: [Permission.VIEW_DASHBOARD], // Default permissions
+              department: 'Finance',
+              lastLogin: new Date().toISOString(),
+            };
+            this.currentUserSignal.set(principal);
             this.startSessionManagement();
-            this.logger.info('Current user loaded', { userId: response.result.id });
+            this.logger.info('Current user loaded', { userId: principal.id });
           }
         }),
         catchError((error) => {
