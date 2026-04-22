@@ -1,4 +1,4 @@
-import { Directive, Input, TemplateRef, ViewContainerRef, inject, OnInit } from '@angular/core';
+import { Directive, Input, TemplateRef, ViewContainerRef, inject, OnInit, effect } from '@angular/core';
 import { AuthService } from '../services/auth.service';
 import { UserRole, Permission } from '../models/domain.models';
 
@@ -10,29 +10,43 @@ import { UserRole, Permission } from '../models/domain.models';
   selector: '[appHasRole]',
   standalone: true,
 })
-export class HasRoleDirective implements OnInit {
-  private readonly templateRef = inject(TemplateRef<any>);
+export class HasRoleDirective {
+  private readonly templateRef = inject(TemplateRef<any>, { optional: true });
   private readonly viewContainer = inject(ViewContainerRef);
   private readonly authService = inject(AuthService);
 
   private requiredRoles: UserRole[] = [];
+  private hasView = false;
+
+  constructor() {
+    effect(() => {
+      // Re-evaluate whenever userRoles signal changes
+      this.authService.userRoles();
+      if (this.templateRef) {
+        this.updateView();
+      }
+    });
+  }
 
   @Input()
   set appHasRole(roles: UserRole | UserRole[]) {
     this.requiredRoles = Array.isArray(roles) ? roles : [roles];
-    this.updateView();
-  }
-
-  ngOnInit(): void {
-    this.updateView();
+    if (this.templateRef) {
+      this.updateView();
+    }
   }
 
   private updateView(): void {
-    const hasRole = this.requiredRoles.some(role => this.authService.hasRole(role));
-    if (hasRole) {
+    if (!this.templateRef) return;
+
+    const hasRole = this.requiredRoles.length === 0 || this.requiredRoles.some(role => this.authService.hasRole(role));
+
+    if (hasRole && !this.hasView) {
       this.viewContainer.createEmbeddedView(this.templateRef);
-    } else {
+      this.hasView = true;
+    } else if (!hasRole && this.hasView) {
       this.viewContainer.clear();
+      this.hasView = false;
     }
   }
 }
@@ -45,31 +59,52 @@ export class HasRoleDirective implements OnInit {
   selector: '[appHasPermission]',
   standalone: true,
 })
-export class HasPermissionDirective implements OnInit {
-  private readonly templateRef = inject(TemplateRef<any>);
+export class HasPermissionDirective {
+  private readonly templateRef = inject(TemplateRef<any>, { optional: true });
   private readonly viewContainer = inject(ViewContainerRef);
   private readonly authService = inject(AuthService);
 
   private requiredPermissions: Permission[] = [];
   private requireAll = false;
+  private hasView = false;
+
+  constructor() {
+    effect(() => {
+      // Re-evaluate whenever userPermissions signal changes
+      this.authService.userPermissions();
+      if (this.templateRef) {
+        this.updateView();
+      }
+    });
+  }
 
   @Input()
   set appHasPermission(permissions: Permission | Permission[]) {
     this.requiredPermissions = Array.isArray(permissions) ? permissions : [permissions];
-    this.updateView();
+    if (this.templateRef) {
+      this.updateView();
+    }
   }
 
   @Input()
   set appHasPermissionRequireAll(value: boolean) {
     this.requireAll = value;
-    this.updateView();
-  }
-
-  ngOnInit(): void {
-    this.updateView();
+    if (this.templateRef) {
+      this.updateView();
+    }
   }
 
   private updateView(): void {
+    if (!this.templateRef) return;
+
+    if (!this.requiredPermissions || this.requiredPermissions.length === 0) {
+      if (!this.hasView) {
+        this.viewContainer.createEmbeddedView(this.templateRef);
+        this.hasView = true;
+      }
+      return;
+    }
+
     let hasPermission: boolean;
 
     if (this.requireAll) {
@@ -78,10 +113,12 @@ export class HasPermissionDirective implements OnInit {
       hasPermission = this.authService.hasAnyPermission(this.requiredPermissions);
     }
 
-    if (hasPermission) {
+    if (hasPermission && !this.hasView) {
       this.viewContainer.createEmbeddedView(this.templateRef);
-    } else {
+      this.hasView = true;
+    } else if (!hasPermission && this.hasView) {
       this.viewContainer.clear();
+      this.hasView = false;
     }
   }
 }

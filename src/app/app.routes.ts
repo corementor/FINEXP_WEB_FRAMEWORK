@@ -5,13 +5,14 @@ import { DashboardComponent } from './dashboard/dashboard.component';
 import { EntitiesComponent } from './entities/entities.component';
 import { WorkflowsComponent } from './workflows/workflows.component';
 import { AuditTrailComponent } from './audit/audit-trail.component';
+import { ManagementComponent } from './features/management/management.component';
 import { EmployeeAuditComponent } from './features/employees/components/employee-audit.component';
 import { authGuard, roleGuard, noAuthGuard } from './core/guards';
 import { UserRole, Permission } from './core/models';
 
 export const routes: Routes = [
-  { 
-    path: 'login', 
+  {
+    path: 'login',
     component: LoginComponent,
     canActivate: [noAuthGuard] // Prevent logged-in users from accessing login
   },
@@ -22,20 +23,25 @@ export const routes: Routes = [
     children: [
       { path: 'dashboard', component: DashboardComponent },
       { path: 'entities', component: EntitiesComponent },
-      { 
-        path: 'workflows', 
+      {
+        path: 'workflows',
         component: WorkflowsComponent,
-        data: { permissions: [Permission.MANAGE_WORKFLOWS] }
+        data: { permissions: [Permission.PERM_MANAGE_WORKFLOWS] }
       },
-      { 
-        path: 'audit', 
+      {
+        path: 'audit',
         component: AuditTrailComponent,
-        data: { permissions: [Permission.VIEW_AUDIT] }
+        data: { permissions: [Permission.PERM_VIEW_AUDIT] }
       },
       {
         path: 'employee/:employeeId/audit',
         component: EmployeeAuditComponent,
-        data: { permissions: [Permission.VIEW_AUDIT] }
+        data: { permissions: [Permission.PERM_VIEW_AUDIT] }
+      },
+      {
+        path: 'management',
+        component: ManagementComponent,
+        data: { permissions: [Permission.PERM_MANAGE_ROLES] }
       },
       { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
     ],

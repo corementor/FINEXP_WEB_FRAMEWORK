@@ -1,10 +1,21 @@
-import { Component, inject, OnInit, HostListener, OnDestroy } from '@angular/core';
+import { Component, inject, OnInit, HostListener, OnDestroy, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterOutlet, RouterLink, RouterLinkActive, Router } from '@angular/router';
 import { ToastService } from '../services/toast.service';
 import { AuthService } from '../core/services/auth.service';
 import { HasRoleDirective, HasPermissionDirective } from '../core/directives';
 import { UserRole, Permission } from '../core/models';
+
+/**
+ * Navigation item interface for sidebar menu
+ */
+export interface NavItem {
+  label: string;
+  route: string;
+  icon: string;
+  permission?: Permission | null; // Optional permission check
+  exact?: boolean; // For routerLinkActiveOptions
+}
 
 @Component({
   selector: 'app-layout',
@@ -14,7 +25,7 @@ import { UserRole, Permission } from '../core/models';
     RouterOutlet,
     RouterLink,
     RouterLinkActive,
-    HasRoleDirective,
+    // HasRoleDirective,
     HasPermissionDirective,
   ],
   templateUrl: './layout.component.html',
@@ -24,20 +35,55 @@ export class LayoutComponent implements OnInit, OnDestroy {
   private readonly authService = inject(AuthService);
   private readonly router = inject(Router);
 
-  currentUser = '';
-  userInitial = 'A';
+  currentUser = computed(() => {
+    const user = this.authService.currentUser$();
+    return user ? (user.username || user.email) : '';
+  });
+  userInitial = computed(() => {
+    const name = this.currentUser();
+    return name ? name.charAt(0).toUpperCase() : 'A';
+  });
   UserRole = UserRole;
   Permission = Permission;
   private inactivityTimeout: number | null = null;
 
-  ngOnInit(): void {
-    // Get current user from auth service
-    const user = this.authService.currentUser$();
-    if (user) {
-      this.currentUser = user.username || user.email;
-      this.userInitial = this.currentUser.charAt(0).toUpperCase();
-    }
+  /**
+   * Sidebar navigation items
+   */
+  navItems: NavItem[] = [
+    {
+      label: 'Dashboard',
+      route: '/dashboard',
+      icon: 'dashboard',
+      exact: true,
+    },
+    {
+      label: 'Employees',
+      route: '/entities',
+      icon: 'employees',
+      permission: Permission.PERM_VIEW_EMPLOYEE,
+    },
+    {
+      label: 'Workflows',
+      route: '/workflows',
+      icon: 'workflows',
+      permission: Permission.PERM_MANAGE_WORKFLOWS,
+    },
+    {
+      label: 'Audit Trail',
+      route: '/audit',
+      icon: 'audit',
+      permission: Permission.PERM_VIEW_AUDIT,
+    },
+    {
+      label: 'Management',
+      route: '/management',
+      icon: 'management',
+      permission: Permission.PERM_MANAGE_ROLES,
+    },
+  ];
 
+  ngOnInit(): void {
     // Setup session timeout warning (show warning at 25 minutes)
     this.setupSessionWarning();
   }
@@ -70,7 +116,7 @@ export class LayoutComponent implements OnInit, OnDestroy {
       const displayTimeRemainingMs = this.authService.getTimeRemainingInSession();
       if (displayTimeRemainingMs > 0) {
         this.toastService.warning(
-          `Your session will expire in ${Math.round(displayTimeRemainingMs / 1000 / 60)} minutes`
+          `Your session will expire in ${Math.round(displayTimeRemainingMs / 1000 / 60)} minutes`,
         );
       }
     }, warningTime);

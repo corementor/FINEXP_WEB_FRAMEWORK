@@ -1,4 +1,4 @@
-import { Injectable, inject } from '@angular/core';
+import { Injectable, inject, Injector } from '@angular/core';
 import {
   HttpInterceptor,
   HttpRequest,
@@ -16,8 +16,9 @@ import { LoggerService } from '../services/logger.service';
  */
 @Injectable()
 export class AuthInterceptor implements HttpInterceptor {
-  private readonly auth = inject(AuthService);
+  private readonly injector = inject(Injector);
   private readonly logger = inject(LoggerService);
+  private authService?: AuthService;
 
   // Endpoints that should not include auth token
   private readonly skipAuthEndpoints = [
@@ -25,6 +26,13 @@ export class AuthInterceptor implements HttpInterceptor {
     '/register',
     '/refresh-token'
   ];
+
+  private get auth(): AuthService {
+    if (!this.authService) {
+      this.authService = this.injector.get(AuthService);
+    }
+    return this.authService;
+  }
 
   intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
     // Skip auth token for certain endpoints

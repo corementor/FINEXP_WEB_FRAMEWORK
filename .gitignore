@@ -45,6 +45,7 @@ Thumbs.db
 
 
 # Environment files
+*.md
 .env
 .env.*.local
 .env.local

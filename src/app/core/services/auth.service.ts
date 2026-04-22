@@ -1,17 +1,14 @@
-import { Injectable, signal, computed, effect, inject, PLATFORM_ID } from '@angular/core';
+import { Injectable, signal, computed, inject, PLATFORM_ID } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { isPlatformBrowser } from '@angular/common';
 import { Observable, of, throwError } from 'rxjs';
-import { catchError, delay, tap } from 'rxjs/operators';
+import { catchError, delay, tap, map, finalize } from 'rxjs/operators';
 import { environment } from '../../../environments/environment';
-import { AuthToken, Principal, UserRole, Permission } from '../models/domain.models';
-import { LoggerService } from './logger.service';
-import { ApiConfigService } from './api-config.service';
-
+import { AuthToken, Principal, UserRole, Permission } from '../models';
+import { LoggerService, ApiConfigService } from './';
 /**
  * Auth Service - Handles authentication
- * Currently uses MOCK authentication for frontend development
- * Will integrate with backend auth microservice when ready
+ * Now integrated with backend RBAC system
  */
 @Injectable({
   providedIn: 'root',
@@ -30,11 +27,10 @@ export class AuthService {
   private sessionTimeoutSignal = signal<number | null>(null); // Session timeout timestamp
   private isSessionExpiredSignal = signal(false);
 
-  // Public observables
-  readonly isAuthenticated$ = this.isAuthenticatedSignal;
-  readonly currentUser$ = this.currentUserSignal;
-  readonly authToken$ = this.authTokenSignal;
-  readonly isSessionExpired$ = this.isSessionExpiredSignal;
+  // Public signals
+  readonly currentUser$ = this.currentUserSignal.asReadonly();
+  readonly authToken$ = this.authTokenSignal.asReadonly();
+  readonly isAuthenticated$ = this.isAuthenticatedSignal.asReadonly();
 
   // Computed signals
   readonly userRoles = computed(() => this.currentUserSignal()?.roles || []);
@@ -54,8 +50,7 @@ export class AuthService {
   }
 
   /**
-   * Mock Login Implementation
-   * TODO: Replace with actual backend auth when security is implemented
+   * Login - Now integrated with backend RBAC
    */
   login(email: string, password: string): Observable<AuthToken> {
     this.logger.debug('Login attempt', { email });
@@ -76,11 +71,26 @@ export class AuthService {
               expiresIn: response.expires_in || 86400,
               tokenType: response.token_type || 'Bearer',
             };
+            const permissions = Array.isArray(response.permissions) ? response.permissions : [];
+            const backendRoles = Array.isArray(response.roles)
+              ? response.roles.map((r: any) => typeof r === 'string' ? r : r.roleCode)
+              : [UserRole.USER];
+
+            const currentUser: Principal = {
+              id: response.id || response.guid || response.username || email,
+              username: response.username || email.split('@')[0],
+              email: response.email || email,
+              roles: backendRoles as UserRole[],
+              permissions: permissions.map((p: any) => String(p)) as Permission[],
+              department: response.department || 'Unknown',
+              lastLogin: new Date().toISOString(),
+            };
             this.authTokenSignal.set(token);
+            this.currentUserSignal.set(currentUser);
             this.isAuthenticatedSignal.set(true);
+            this.startSessionManagement();
             this.saveAuthState();
             this.logger.info('Login successful', { email });
-            // Fetch user principal after login
             this.fetchCurrentUser();
             return token;
           }),
@@ -127,6 +137,31 @@ export class AuthService {
    * Logout - Clear authentication state
    */
   logout(): void {
+    this.logger.debug('Logging out...');
+
+    // Clear local authentication state first for immediate UI update
+    this.clearLocalAuthState();
+
+    // Call backend logout if not in mock mode
+    if (!environment.mockAuth.enabled) {
+      this.http.post(this.config.logoutEndpoint, {}).pipe(
+        catchError(err => {
+          this.logger.error('Backend logout failed', err);
+          return of(null);
+        })
+      ).subscribe({
+        next: () => this.logger.info('Backend logout successful'),
+        complete: () => this.logger.info('Logout process completed')
+      });
+    } else {
+      this.logger.info('Logout successful (mock)');
+    }
+  }
+
+  /**
+   * Clear local authentication state
+   */
+  private clearLocalAuthState(): void {
     this.authTokenSignal.set(null);
     this.currentUserSignal.set(null);
     this.isAuthenticatedSignal.set(false);
@@ -134,7 +169,6 @@ export class AuthService {
     this.sessionTimeoutSignal.set(null);
     this.stopSessionManagement();
     this.clearAuthState();
-    this.logger.info('Logout successful');
   }
 
   /**
@@ -161,31 +195,33 @@ export class AuthService {
   /**
    * Check if user has specific role
    */
-  hasRole(role: UserRole): boolean {
-    return this.userRoles().includes(role);
-  }
-
-  /**
-   * Check if user has specific permission
-   */
-  hasPermission(permission: Permission): boolean {
-    return this.userPermissions().includes(permission);
+  hasRole(role: UserRole | string): boolean {
+    const roles = this.userRoles();
+    return roles.some(r => String(r) === String(role));
   }
 
   /**
    * Check if user has any of the provided permissions
    */
-  hasAnyPermission(permissions: Permission[]): boolean {
+  hasAnyPermission(permissions: Permission[] | string[]): boolean {
     const userPerms = this.userPermissions();
-    return permissions.some((p) => userPerms.includes(p));
+    if (!userPerms || userPerms.length === 0) return false;
+
+    return permissions.some(p =>
+      userPerms.some(up => String(up) === String(p))
+    );
   }
 
   /**
    * Check if user has all provided permissions
    */
-  hasAllPermissions(permissions: Permission[]): boolean {
+  hasAllPermissions(permissions: Permission[] | string[]): boolean {
     const userPerms = this.userPermissions();
-    return permissions.every((p) => userPerms.includes(p));
+    if (!userPerms || userPerms.length === 0) return false;
+
+    return permissions.every(p =>
+      userPerms.some(up => String(up) === String(p))
+    );
   }
 
   /**
@@ -217,10 +253,19 @@ export class AuthService {
 
     // Real implementation when backend is ready
     return this.http
-      .post<AuthToken>(this.config.refreshTokenEndpoint, {
+      .post<any>(this.config.refreshTokenEndpoint, {
         refreshToken: currentToken.refreshToken,
       })
       .pipe(
+        map((response: any) => {
+          const token: AuthToken = {
+            accessToken: response.access_token || response.accessToken,
+            refreshToken: response.refresh_token || response.refreshToken || currentToken.refreshToken,
+            expiresIn: response.expires_in || 86400,
+            tokenType: response.token_type || 'Bearer',
+          };
+          return token;
+        }),
         tap((token) => {
           this.authTokenSignal.set(token);
           this.saveAuthState();
@@ -255,25 +300,34 @@ export class AuthService {
       .get<{ result: any }>(`${this.config.baseUrl}/auth/me`)
       .pipe(
         tap((response) => {
-          if (response.result) {
+          if (response && response.result) {
             const user = response.result;
+            const backendPermissions = Array.isArray(user.permissions) ? user.permissions : [];
+            const backendRoles = Array.isArray(user.roles)
+              ? user.roles.map((r: any) => typeof r === 'string' ? r : r.roleCode)
+              : [];
+
             const principal: Principal = {
               id: user.guid || user.id || 'unknown',
               username: user.username,
               email: user.email,
-              roles: [UserRole.USER], // Map from backend roles
-              permissions: [Permission.VIEW_DASHBOARD], // Default permissions
-              department: 'Finance',
+              roles: backendRoles.length > 0 ? backendRoles as UserRole[] : [UserRole.USER],
+              permissions: backendPermissions.length > 0
+                ? backendPermissions.map((p: any) => String(p)) as Permission[]
+                : [Permission.PERM_VIEW_DASHBOARD],
+              department: user.department || 'Finance',
               lastLogin: new Date().toISOString(),
             };
             this.currentUserSignal.set(principal);
             this.startSessionManagement();
-            this.logger.info('Current user loaded', { userId: principal.id });
+            this.saveAuthState();
+            this.logger.info('Current user loaded', { userId: principal.id, permissionCount: principal.permissions.length });
           }
         }),
         catchError((error) => {
           this.logger.error('Failed to fetch current user', error);
-          // Continue with login even if user fetch fails
+          // Continue with login even if user fetch fails - user is already set from JWT
+          this.startSessionManagement();
           return of(null);
         }),
       )
@@ -314,6 +368,8 @@ export class AuthService {
         // Check if token is expired
         if (!this.isTokenExpired(token)) {
           this.isAuthenticatedSignal.set(true);
+          // Refresh user data from backend on page load
+          this.fetchCurrentUser();
         } else {
           this.clearAuthState();
         }
@@ -347,7 +403,7 @@ export class AuthService {
   /**
    * Check if token is expired (naive implementation)
    */
-  private isTokenExpired(token: AuthToken): boolean {
+  private isTokenExpired(_token: AuthToken): boolean {
     // Simple check: if token was created more than expiresIn seconds ago, it's expired
     // In real implementation, JWT decode is used
     return false; // For mock, assume not expired
@@ -466,4 +522,63 @@ export class AuthService {
     const remaining = sessionTimeout - Date.now();
     return remaining > 0 ? remaining : 0;
   }
+
+
+  /**
+   * Check if user has any of the provided permission codes
+   */
+  hasAnyPermissionCode(permissionCodes: string[]): boolean {
+    if (!permissionCodes || permissionCodes.length === 0) {
+      return true; // No requirements = allow
+    }
+
+    const userPerms = this.userPermissions();
+    if (!userPerms || userPerms.length === 0) {
+      return false;
+    }
+
+    const hasAny = permissionCodes.some(code =>
+      userPerms.some(p => {
+        if (!p) return false;
+        return String(p) === code;
+      })
+    );
+
+    this.logger.debug('Any permission check', {
+      required: permissionCodes,
+      hasAny,
+      userPermissions: userPerms?.length || 0
+    });
+    return hasAny;
+  }
+
+  /**
+   * Check if user has all provided permission codes
+   */
+  hasAllPermissionCodes(permissionCodes: string[]): boolean {
+    if (!permissionCodes || permissionCodes.length === 0) {
+      return true; // No requirements = allow
+    }
+
+    const userPerms = this.userPermissions();
+    if (!userPerms || userPerms.length === 0) {
+      return false;
+    }
+
+    const hasAll = permissionCodes.every(code =>
+      userPerms.some(p => {
+        if (!p) return false;
+        return String(p) === code;
+      })
+    );
+
+    this.logger.debug('All permissions check', {
+      required: permissionCodes,
+      hasAll,
+      userPermissions: userPerms?.length || 0
+    });
+    return hasAll;
+  }
+
+
 }

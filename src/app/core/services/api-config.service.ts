@@ -29,6 +29,10 @@ export class ApiConfigService {
     return `${this.authUrl}/login`;
   }
 
+  get logoutEndpoint(): string {
+    return `${this.authUrl}/logout`;
+  }
+
   get refreshTokenEndpoint(): string {
     return `${this.authUrl}/refresh`;
   }

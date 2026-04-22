@@ -1,4 +1,4 @@
-import { Injectable, inject } from '@angular/core';
+import { Injectable, inject, Injector } from '@angular/core';
 import {
   HttpInterceptor,
   HttpRequest,
@@ -23,9 +23,17 @@ import { Router } from '@angular/router';
  */
 @Injectable()
 export class ErrorInterceptor implements HttpInterceptor {
+  private readonly injector = inject(Injector);
   private readonly logger = inject(LoggerService);
-  private readonly auth = inject(AuthService);
   private readonly router = inject(Router);
+  private authService?: AuthService;
+
+  private get auth(): AuthService {
+    if (!this.authService) {
+      this.authService = this.injector.get(AuthService);
+    }
+    return this.authService;
+  }
 
   private readonly retryConfig = {
     count: 2,
