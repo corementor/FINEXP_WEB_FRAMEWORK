@@ -135,7 +135,8 @@ export class EntitiesComponent implements OnInit {
 
   constructor() {
     this.employeeForm = this.fb.group({
-      name: ['', Validators.required],
+      firstName: ['', Validators.required],
+      lastName: ['', Validators.required],
       employeeNumber: ['', Validators.required],
       nationalId: ['', Validators.required],
       emailAddress: ['', [Validators.required, Validators.email]],
@@ -205,6 +206,8 @@ export class EntitiesComponent implements OnInit {
     this.isEditMode = false;
     this.selectedEmployeeId = null;
     this.employeeForm.reset({
+      firstName: '',
+      lastName: '',
       securityLabel: ESecurityLabel.INTERNAL,
     });
     this.showModal = true;
@@ -214,8 +217,10 @@ export class EntitiesComponent implements OnInit {
     this.error = null;
     this.isEditMode = true;
     this.selectedEmployeeId = employee.id;
+    const [firstName = '', ...rest] = (employee.name || '').trim().split(/\s+/);
     this.employeeForm.patchValue({
-      name: employee.name,
+      firstName,
+      lastName: rest.join(' '),
       employeeNumber: employee.employeeNumber,
       nationalId: employee.nationalId,
       emailAddress: employee.emailAddress,
@@ -235,10 +240,17 @@ export class EntitiesComponent implements OnInit {
       return;
     }
 
-    const employeeData = this.employeeForm.getRawValue() as Omit<
-      Employee,
-      'id' | 'version' | 'createdAt' | 'updatedAt'
-    >;
+    const formValue = this.employeeForm.getRawValue();
+    const name = `${formValue.firstName?.trim() || ''} ${formValue.lastName?.trim() || ''}`.trim();
+
+    const employeeData = {
+      name,
+      employeeNumber: formValue.employeeNumber,
+      nationalId: formValue.nationalId,
+      emailAddress: formValue.emailAddress,
+      securityLabel: formValue.securityLabel,
+      comments: formValue.comments,
+    } as Omit<Employee, 'id' | 'version' | 'createdAt' | 'updatedAt'>;
 
     if (this.isEditMode && this.selectedEmployeeId) {
       this.updateEmployeeMutation.mutate(

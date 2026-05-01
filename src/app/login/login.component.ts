@@ -12,7 +12,7 @@ import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 
 import { LoginFacadeService } from '@app/features/auth/services';
-import { LoggerService, AuthService } from '@app/core/services';
+import { LoggerService } from '@app/core/services';
 
 @Component({
   selector: 'app-login',

@@ -11,7 +11,7 @@ const BREAKPOINT = 992;
 @Component({
   selector: '[app-sidebar]',
   standalone: true,
-  imports: [CommonModule, AppMenu, RouterModule],
+  imports: [CommonModule, AppMenu, RouterModule, Logo],
   template: ` <div
     [class]="sidebarClass()"
     (mouseenter)="onMouseEnter()"
@@ -19,7 +19,7 @@ const BREAKPOINT = 992;
   >
     <div class="sidebar-header">
       <a class="logo" [routerLink]="['/']">
-        <!-- <logo /> -->
+        <logo />
         <span class="app-name text-4xl font-medium leading-normal">FINXP</span></a
       >
       <button class="layout-sidebar-anchor z-2" type="button" (click)="onAnchorToggle()"></button>
