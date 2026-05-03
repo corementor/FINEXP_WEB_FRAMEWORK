@@ -84,7 +84,7 @@ import { AppRightMenu } from './app.rightmenu';
           </div>
         </div>
 
-        <div class="relative">
+        <!-- <div class="relative">
           <a
             pStyleClass="@next"
             enterFromClass="hidden"
@@ -102,7 +102,7 @@ import { AppRightMenu } from './app.rightmenu';
           <div class="absolute hidden top-full right-0 mt-2 z-20">
             <div app-profile class="w-52"></div>
           </div>
-        </div>
+        </div> -->
 
         <p-button
           (click)="onLogout()"
@@ -111,12 +111,12 @@ import { AppRightMenu } from './app.rightmenu';
           [outlined]="true"
         />
 
-        <p-button
+        <!-- <p-button
           (click)="layoutService.toggleRightMenu()"
           icon="pi pi-align-right"
           severity="secondary"
           [outlined]="true"
-        />
+        /> -->
         <div app-rightmenu></div>
       </div>
     </div>
