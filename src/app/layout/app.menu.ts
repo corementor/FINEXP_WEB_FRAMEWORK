@@ -64,53 +64,53 @@ const DEFAULT_MENU_MODEL: MenuItem[] = [
         routerLink: ['/management'],
         permission: Permission.PERM_MANAGE_ROLES,
       },
-      //   {
-      //     label: 'Files',
-      //     icon: 'pi pi-fw pi-folder',
-      //     routerLink: ['/apps/files'],
-      //   },
-      //   {
-      //     label: 'Mail',
-      //     icon: 'pi pi-fw pi-envelope',
-      //     routerLink: ['/apps/mail/inbox'],
-      //   },
-      //   {
-      //     label: 'Task List',
-      //     icon: 'pi pi-fw pi-check-square',
-      //     routerLink: ['/apps/tasklist'],
-      //   },
+      {
+        label: 'Files',
+        icon: 'pi pi-fw pi-folder',
+        routerLink: ['/apps/files'],
+      },
+      // {
+      //   label: 'Mail',
+      //   icon: 'pi pi-fw pi-envelope',
+      //   routerLink: ['/apps/mail/inbox'],
+      // },
+      // {
+      //   label: 'Task List',
+      //   icon: 'pi pi-fw pi-check-square',
+      //   routerLink: ['/apps/tasklist'],
+      // },
     ],
   },
-  // //   { separator: true },
-  // //   {
-  // //     label: 'Pages',
-  // //     icon: 'pi pi-fw pi-briefcase',
-  // //     path: '/pages',
-  // //     items: [
-  // //       {
-  // //         label: 'Auth',
-  // //         icon: 'pi pi-fw pi-user',
-  // //         path: '/auth',
-  // //         items: [
-  // //           {
-  // //             label: 'Login',
-  // //             icon: 'pi pi-fw pi-sign-in',
-  // //             routerLink: ['/auth/login'],
-  // //           },
-  // //           {
-  // //             label: 'Error',
-  // //             icon: 'pi pi-fw pi-times-circle',
-  // //             routerLink: ['/auth/error'],
-  // //           },
-  // //           {
-  // //             label: 'Access Denied',
-  // //             icon: 'pi pi-fw pi-lock',
-  // //             routerLink: ['/auth/access-denied'],
-  // //           },
-  // //         ],
-  // //       },
-  //     ],
-  //   },
+  // { separator: true },
+  // {
+  //   label: 'Pages',
+  //   icon: 'pi pi-fw pi-briefcase',
+  //   path: '/pages',
+  //   items: [
+  //     {
+  //       label: 'Auth',
+  //       icon: 'pi pi-fw pi-user',
+  //       path: '/auth',
+  //       items: [
+  //         {
+  //           label: 'Login',
+  //           icon: 'pi pi-fw pi-sign-in',
+  //           routerLink: ['/auth/login'],
+  //         },
+  //         {
+  //           label: 'Error',
+  //           icon: 'pi pi-fw pi-times-circle',
+  //           routerLink: ['/auth/error'],
+  //         },
+  //         {
+  //           label: 'Access Denied',
+  //           icon: 'pi pi-fw pi-lock',
+  //           routerLink: ['/auth/access-denied'],
+  //         },
+  //       ],
+  //     },
+  //   ],
+  // },
 ];
 
 @Component({
