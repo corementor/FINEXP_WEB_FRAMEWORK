@@ -5,42 +5,34 @@
   </div>
 
   <!-- Header -->
-  <div class="flex justify-between items-center">
-    <div>
-      <h2 class="text-3xl font-bold text-gray-900">Audit Trail</h2>
-      <p class="text-gray-600 text-sm mt-1">View system activity and user actions</p>
+  <div custom-card>
+    <h3 card-title>Audit Trail</h3>
+    <div card-action>
+      <app-button label="Export to PDF" variant="secondary" size="normal" (clicked)="exportPDF()" />
     </div>
-    <app-button (clicked)="exportPDF()" variant="secondary" size="md"> Export to PDF </app-button>
   </div>
 
   <!-- Loading State -->
   <app-spinner *ngIf="isLoading"></app-spinner>
 
   <!-- Filters -->
-  <app-card *ngIf="!isLoading">
-    <div class="p-6 grid grid-cols-1 md:grid-cols-4 gap-4" [formGroup]="filterForm">
+  <div custom-card *ngIf="!isLoading">
+    <h3 card-title>Filters</h3>
+    <div class="p-4 grid grid-cols-1 md:grid-cols-4 gap-4" [formGroup]="filterForm">
       <div>
         <label class="block text-xs font-semibold text-gray-500 uppercase mb-2">Date From</label>
-        <input
-          type="date"
-          formControlName="dateFrom"
-          class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-        />
+        <input type="date" formControlName="dateFrom"
+          class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent" />
       </div>
       <div>
         <label class="block text-xs font-semibold text-gray-500 uppercase mb-2">Date To</label>
-        <input
-          type="date"
-          formControlName="dateTo"
-          class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-        />
+        <input type="date" formControlName="dateTo"
+          class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent" />
       </div>
       <div>
         <label class="block text-xs font-semibold text-gray-500 uppercase mb-2">User</label>
-        <select
-          formControlName="user"
-          class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-        >
+        <select formControlName="user"
+          class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
           <option>All Users</option>
           <option>Admin</option>
           <option>System</option>
@@ -49,10 +41,8 @@
       </div>
       <div>
         <label class="block text-xs font-semibold text-gray-500 uppercase mb-2">Action</label>
-        <select
-          formControlName="action"
-          class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-        >
+        <select formControlName="action"
+          class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
           <option>All Actions</option>
           <option>CREATE</option>
           <option>UPDATE</option>
@@ -62,27 +52,20 @@
         </select>
       </div>
     </div>
-  </app-card>
+  </div>
 
   <!-- Audit Table -->
-  <app-card *ngIf="!isLoading && filteredLogs.length > 0">
+  <div custom-card *ngIf="!isLoading && filteredLogs.length > 0">
+    <h3 card-title>Audit Logs</h3>
     <div class="overflow-x-auto">
       <table class="w-full">
         <thead class="bg-gray-50">
           <tr>
-            <th class="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase">
-              Timestamp
-            </th>
+            <th class="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase">Timestamp</th>
             <th class="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase">User</th>
-            <th class="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase">
-              Action
-            </th>
-            <th class="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase">
-              Details
-            </th>
-            <th class="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase">
-              IP Address
-            </th>
+            <th class="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase">Action</th>
+            <th class="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase">Details</th>
+            <th class="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase">IP Address</th>
           </tr>
         </thead>
         <tbody class="divide-y divide-gray-100">
@@ -90,10 +73,8 @@
             <td class="px-6 py-4 text-sm text-gray-500">{{ log.timestamp }}</td>
             <td class="px-6 py-4 text-sm font-medium text-gray-900">{{ log.user }}</td>
             <td class="px-6 py-4">
-              <span
-                class="px-3 py-1 text-xs font-semibold rounded-full uppercase"
-                [ngClass]="getActionBadgeClass(log.action)"
-              >
+              <span class="px-3 py-1 text-xs font-semibold rounded-full uppercase"
+                [ngClass]="getActionBadgeClass(log.action)">
                 {{ log.action }}
               </span>
             </td>
@@ -103,26 +84,13 @@
         </tbody>
       </table>
     </div>
-  </app-card>
+  </div>
 
   <!-- Empty State -->
-  <app-card *ngIf="!isLoading && filteredLogs.length === 0">
+  <div custom-card *ngIf="!isLoading && filteredLogs.length === 0">
     <div class="p-12 text-center">
-      <svg
-        class="h-12 w-12 text-gray-300 mx-auto mb-4"
-        fill="none"
-        viewBox="0 0 24 24"
-        stroke="currentColor"
-      >
-        <path
-          stroke-linecap="round"
-          stroke-linejoin="round"
-          stroke-width="2"
-          d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
-        />
-      </svg>
       <p class="text-gray-500 font-medium text-lg">No audit logs found</p>
       <p class="text-gray-400 text-sm mt-1">Try adjusting your filters</p>
     </div>
-  </app-card>
+  </div>
 </div>

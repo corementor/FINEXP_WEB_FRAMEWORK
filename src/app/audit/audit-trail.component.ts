@@ -4,7 +4,8 @@ import { ReactiveFormsModule, FormBuilder, FormGroup } from '@angular/forms';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 
-import { ButtonComponent, CardComponent, SpinnerComponent } from '@app/shared/components';
+import { APP_UI_COMPONENTS } from '@app/shared/components/ui-base';
+import { SpinnerComponent } from '@app/shared/components/spinner/spinner.component';
 
 interface AuditEntry {
   id: string;
@@ -18,7 +19,7 @@ interface AuditEntry {
 @Component({
   selector: 'app-audit',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, ButtonComponent, CardComponent, SpinnerComponent],
+  imports: [CommonModule, ReactiveFormsModule, ...APP_UI_COMPONENTS, SpinnerComponent],
   templateUrl: './audit-trail.component.html',
 })
 export class AuditTrailComponent implements OnInit, OnDestroy {

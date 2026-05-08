@@ -8,7 +8,7 @@ import { firstValueFrom } from 'rxjs';
 
 import { CardComponent, ButtonComponent, SpinnerComponent } from '@app/shared/components';
 import { AuditApiService, LoggerService } from '@app/core/services';
-import { ToastService } from '@app/services/toast.service';
+import { ToastService } from '@app/shared/components/ui-base/toast.service';
 import { ApiResponse } from '@app/core/models';
 
 @Component({
@@ -75,7 +75,7 @@ export class EmployeeAuditComponent implements OnInit, OnDestroy {
       this.employeeId = params['employeeId'];
       // Show info toast when loading audit trail
       if (this.employeeId) {
-        this.toast.info('Loading audit trail...');
+        this.toast.info('Info', 'Loading audit trail...');
       }
     });
 

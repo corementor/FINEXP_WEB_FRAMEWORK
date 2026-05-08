@@ -2,7 +2,7 @@ import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { UserManagementService, RoleManagementService } from '@app/core';
-import { ToastService } from '@app/services/toast.service';
+import { ToastService } from '@app/shared/components/ui-base/toast.service';
 import type { User, Role, CreateUserRequest, AssignRolesRequest } from '@app/core/models/management.models';
 
 @Component({
@@ -50,7 +50,7 @@ export class UserListComponent implements OnInit {
         this.loading = false;
       },
       error: (err) => {
-        this.toastService.error('Failed to load users');
+        this.toastService.error('Error', 'Failed to load users');
         this.loading = false;
       },
     });
@@ -65,7 +65,7 @@ export class UserListComponent implements OnInit {
         this.availableRoles = response.result || [];
       },
       error: (err) => {
-        this.toastService.error('Failed to load roles');
+        this.toastService.error('Error', 'Failed to load roles');
       },
     });
   }
@@ -118,24 +118,24 @@ export class UserListComponent implements OnInit {
       };
       this.userService.updateUser(this.editingUser.id, updateData).subscribe({
         next: () => {
-          this.toastService.success('User updated successfully');
+          this.toastService.success('Success', 'User updated successfully');
           this.closeUserModal();
           this.loadUsers();
         },
         error: (err) => {
-          this.toastService.error('Failed to update user');
+          this.toastService.error('Error', 'Failed to update user');
         },
       });
     } else {
       // Create user
       this.userService.createUser(this.userForm).subscribe({
         next: () => {
-          this.toastService.success('User created successfully');
+          this.toastService.success('Success', 'User created successfully');
           this.closeUserModal();
           this.loadUsers();
         },
         error: (err) => {
-          this.toastService.error(err.error?.messages?.[0] || 'Failed to create user');
+          this.toastService.error('Error', err.error?.messages?.[0] || 'Failed to create user');
         },
       });
     }
@@ -148,11 +148,11 @@ export class UserListComponent implements OnInit {
     if (confirm('Are you sure you want to delete this user?')) {
       this.userService.deleteUser(userId).subscribe({
         next: () => {
-          this.toastService.success('User deleted successfully');
+          this.toastService.success('Success', 'User deleted successfully');
           this.loadUsers();
         },
         error: (err) => {
-          this.toastService.error('Failed to delete user');
+          this.toastService.error('Error',  'Failed to delete user');
         },
       });
     }
@@ -205,12 +205,12 @@ export class UserListComponent implements OnInit {
       };
       this.userService.assignRolesToUser(this.selectedUser.id, request).subscribe({
         next: () => {
-          this.toastService.success('Roles assigned successfully');
+          this.toastService.success('Success', 'Roles assigned successfully');
           this.closeRolesModal();
           this.loadUsers();
         },
         error: (err) => {
-          this.toastService.error('Failed to assign roles');
+          this.toastService.error('Error', 'Failed to assign roles');
         },
       });
     }

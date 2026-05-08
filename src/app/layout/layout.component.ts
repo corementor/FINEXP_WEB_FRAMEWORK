@@ -1,7 +1,7 @@
 import { Component, inject, OnInit, HostListener, OnDestroy, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
-import { ToastService } from '../services/toast.service';
+import { ToastService } from '@app/shared/components/ui-base/toast.service';
 import { AuthService } from '../core/services/auth.service';
 import { UserRole, Permission } from '../core/models';
 import { AppBreadcrumb } from './app.breadcrumb';
@@ -10,6 +10,7 @@ import { RouterModule } from '@angular/router';
 import { AppConfigurator } from './app.configurator';
 import { AppSidebar } from './app.sidebar';
 import { AppHeader } from './app.header';
+import { AppToastComponent } from '@app/shared/components/ui-base';
 
 /**
  * Navigation item interface for sidebar menu with RBAC
@@ -25,11 +26,12 @@ export interface NavItem {
 @Component({
   selector: 'app-layout',
   standalone: true,
-  imports: [CommonModule, AppHeader, AppSidebar, RouterModule, AppConfigurator, AppBreadcrumb],
+  imports: [CommonModule, AppHeader, AppSidebar, RouterModule, AppConfigurator, AppBreadcrumb, AppToastComponent],
   template: `<div
     class="layout-wrapper h-dvh bg-primary-50 dark:bg-surface-950 relative p-2 flex overflow-hidden"
     [ngClass]="containerClass()"
   >
+    <app-toast />
     <div app-sidebar></div>
     <main
       class="layout-content-wrapper flex-1 max-w-[1720px] w-full mx-auto flex flex-col transition-all duration-300 h-full bg-background rounded-3xl shadow-stroke overflow-hidden"
@@ -133,7 +135,8 @@ export class LayoutComponent implements OnInit, OnDestroy {
     this.inactivityTimeout = window.setTimeout(() => {
       const displayTimeRemainingMs = this.authService.getTimeRemainingInSession();
       if (displayTimeRemainingMs > 0) {
-        this.toastService.warning(
+        this.toastService.warn(
+          'Session Expiring',
           `Your session will expire in ${Math.round(displayTimeRemainingMs / 1000 / 60)} minutes`,
         );
       }

@@ -15,13 +15,10 @@ import { injectQuery } from '@tanstack/angular-query-experimental';
 import { EmployeeFacadeService, EmployeeMutationService } from '@app/features/employees/services';
 import { Employee, ELifeCycle, ESecurityLabel } from '@app/core/models';
 import { LoggerService } from '@app/core/services';
-import {
-  ButtonComponent,
-  CardComponent,
-  ModalComponent,
-  TextInputComponent,
-  SpinnerComponent,
-} from '@app/shared/components';
+import { APP_UI_COMPONENTS, TableColumn } from '@app/shared/components/ui-base';
+import { ModalComponent } from '@app/shared/components/modal/modal.component';
+import { TextInputComponent } from '@app/shared/components/text-input/text-input.component';
+import { SpinnerComponent } from '@app/shared/components/spinner/spinner.component';
 
 @Component({
   selector: 'app-entities',
@@ -31,10 +28,8 @@ import {
     CommonModule,
     RouterLink,
     ReactiveFormsModule,
-    ButtonComponent,
-    CardComponent,
+    ...APP_UI_COMPONENTS,
     ModalComponent,
-
     TextInputComponent,
     SpinnerComponent,
   ],
@@ -132,6 +127,14 @@ export class EntitiesComponent implements OnInit {
   lifeCycle = ELifeCycle;
   securityLabel = ESecurityLabel;
   securityLabels = Object.values(ESecurityLabel);
+
+  readonly employeeColumns: TableColumn<Employee>[] = [
+    { field: 'name', header: 'Employee', sortable: true },
+    { field: 'emailAddress', header: 'Contact', sortable: true },
+    { field: 'securityLabel', header: 'Security', sortable: true },
+    { field: 'state', header: 'Status', sortable: true },
+    { field: 'version', header: 'Version', sortable: false },
+  ];
 
   constructor() {
     this.employeeForm = this.fb.group({

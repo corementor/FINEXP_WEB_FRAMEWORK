@@ -9,7 +9,6 @@ import { ManagementComponent } from './features/management/management.component'
 import { EmployeeAuditComponent } from './features/employees/components/employee-audit.component';
 import { authGuard, roleGuard, noAuthGuard } from './core/guards';
 import { UserRole, Permission } from './core/models';
-import { TableDemo } from './shared/components/table/tabledemo';
 
 export const routes: Routes = [
   {
@@ -31,7 +30,7 @@ export const routes: Routes = [
       },
       {
         path: 'audit',
-        component: TableDemo,
+        component: AuditTrailComponent,
         data: { permissions: [Permission.PERM_VIEW_AUDIT] },
       },
       {

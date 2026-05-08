@@ -5,7 +5,7 @@ import { firstValueFrom } from 'rxjs';
 import { EmployeeFacadeService } from './employee-facade.service';
 import { Employee } from '@app/core/models';
 import { LoggerService } from '@app/core/services';
-import { ToastService } from '@app/services/toast.service';
+import { ToastService } from '@app/shared/components/ui-base/toast.service';
 
 /**
  * Employee Mutation Service
@@ -46,13 +46,13 @@ export class EmployeeMutationService {
       },
       onSuccess: async () => {
         this.logger.info('Mutation: employee created successfully');
-        this.toast.success('Employee created successfully!');
+        this.toast.success('Success', 'Employee created successfully!');
         await this.queryClient.invalidateQueries({ queryKey: this.employeeQueryKey });
         onSuccess?.();
       },
       onError: (error: unknown) => {
         this.logger.error('Mutation: failed to create employee', error);
-        this.toast.error('Failed to create employee');
+        this.toast.error('Error', 'Failed to create employee');
         onError?.(error);
       },
     }));
@@ -71,13 +71,13 @@ export class EmployeeMutationService {
       },
       onSuccess: async () => {
         this.logger.info('Mutation: employee updated successfully');
-        this.toast.success('Employee updated successfully!');
+        this.toast.success('Success', 'Employee updated successfully!');
         await this.queryClient.invalidateQueries({ queryKey: this.employeeQueryKey });
         onSuccess?.();
       },
       onError: (error: unknown) => {
         this.logger.error('Mutation: failed to update employee', error);
-        this.toast.error('Failed to update employee');
+        this.toast.error('Error', 'Failed to update employee');
         onError?.(error);
       },
     }));
@@ -96,13 +96,13 @@ export class EmployeeMutationService {
       },
       onSuccess: async () => {
         this.logger.info('Mutation: employee activated successfully');
-        this.toast.success('Employee activated!');
+        this.toast.success('Success', 'Employee activated!');
         await this.queryClient.invalidateQueries({ queryKey: this.employeeQueryKey });
         onSuccess?.();
       },
       onError: (error: unknown) => {
         this.logger.error('Mutation: failed to activate employee', error);
-        this.toast.error('Failed to activate employee');
+        this.toast.error('Error', 'Failed to activate employee');
         onError?.(error);
       },
     }));
@@ -121,13 +121,13 @@ export class EmployeeMutationService {
       },
       onSuccess: async () => {
         this.logger.info('Mutation: employee deactivated successfully');
-        this.toast.success('Employee deactivated!');
+        this.toast.success('Success', 'Employee deactivated!');
         await this.queryClient.invalidateQueries({ queryKey: this.employeeQueryKey });
         onSuccess?.();
       },
       onError: (error: unknown) => {
         this.logger.error('Mutation: failed to deactivate employee', error);
-        this.toast.error('Failed to deactivate employee');
+        this.toast.error('Error', 'Failed to deactivate employee');
         onError?.(error);
       },
     }));
@@ -146,13 +146,13 @@ export class EmployeeMutationService {
       },
       onSuccess: async () => {
         this.logger.info('Mutation: employee deleted successfully');
-        this.toast.success('Employee deleted successfully!');
+        this.toast.success('Success', 'Employee deleted successfully!');
         await this.queryClient.invalidateQueries({ queryKey: this.employeeQueryKey });
         onSuccess?.();
       },
       onError: (error: unknown) => {
         this.logger.error('Mutation: failed to delete employee', error);
-        this.toast.error('Failed to delete employee');
+        this.toast.error('Error', 'Failed to delete employee');
         onError?.(error);
       },
     }));
@@ -184,13 +184,13 @@ export class EmployeeMutationService {
       },
       onSuccess: async () => {
         this.logger.info('Mutation: batch transition completed successfully');
-        this.toast.success('Batch transition completed!');
+        this.toast.success('Success', 'Batch transition completed!');
         await this.queryClient.invalidateQueries({ queryKey: this.employeeQueryKey });
         onSuccess?.();
       },
       onError: (error: unknown) => {
         this.logger.error('Mutation: batch transition failed', error);
-        this.toast.error('Batch transition failed');
+        this.toast.error('Error', 'Batch transition failed');
         onError?.(error);
       },
     }));

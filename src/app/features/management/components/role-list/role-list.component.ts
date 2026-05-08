@@ -2,8 +2,13 @@ import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RoleManagementService, PermissionManagementService } from '@app/core';
-import { ToastService } from '@app/services/toast.service';
-import type { Role, PermissionDetail, CreateRoleRequest, AddPermissionsRequest } from '@app/core/models/management.models';
+import { ToastService } from '@app/shared/components/ui-base/toast.service';
+import type {
+  Role,
+  PermissionDetail,
+  CreateRoleRequest,
+  AddPermissionsRequest,
+} from '@app/core/models/management.models';
 
 @Component({
   selector: 'app-role-list',
@@ -48,7 +53,7 @@ export class RoleListComponent implements OnInit {
         this.loading = false;
       },
       error: (err) => {
-        this.toastService.error('Failed to load roles');
+        this.toastService.error('Error', 'Failed to load roles');
         this.loading = false;
       },
     });
@@ -63,7 +68,7 @@ export class RoleListComponent implements OnInit {
         this.availablePermissions = response.result || [];
       },
       error: (err) => {
-        this.toastService.error('Failed to load permissions');
+        this.toastService.error('Error', 'Failed to load permissions');
       },
     });
   }
@@ -113,24 +118,24 @@ export class RoleListComponent implements OnInit {
       };
       this.roleService.updateRole(this.editingRole.id, updateData).subscribe({
         next: () => {
-          this.toastService.success('Role updated successfully');
+          this.toastService.success('Success', 'Role updated successfully');
           this.closeRoleModal();
           this.loadRoles();
         },
         error: (err) => {
-          this.toastService.error('Failed to update role');
+          this.toastService.error('Error', 'Failed to update role');
         },
       });
     } else {
       // Create role
       this.roleService.createRole(this.roleForm).subscribe({
         next: () => {
-          this.toastService.success('Role created successfully');
+          this.toastService.success('Success', 'Role created successfully');
           this.closeRoleModal();
           this.loadRoles();
         },
         error: (err) => {
-          this.toastService.error(err.error?.messages?.[0] || 'Failed to create role');
+          this.toastService.error('Error', err.error?.messages?.[0] || 'Failed to create role');
         },
       });
     }
@@ -143,11 +148,11 @@ export class RoleListComponent implements OnInit {
     if (confirm('Are you sure you want to delete this role?')) {
       this.roleService.deleteRole(roleId).subscribe({
         next: () => {
-          this.toastService.success('Role deleted successfully');
+          this.toastService.success('Success', 'Role deleted successfully');
           this.loadRoles();
         },
         error: (err) => {
-          this.toastService.error('Failed to delete role');
+          this.toastService.error('Error', 'Failed to delete role');
         },
       });
     }
@@ -200,15 +205,14 @@ export class RoleListComponent implements OnInit {
       };
       this.roleService.addPermissionsToRole(this.selectedRole.id, request).subscribe({
         next: () => {
-          this.toastService.success('Permissions assigned successfully');
+          this.toastService.success('Success', 'Permissions assigned successfully');
           this.closePermissionsModal();
           this.loadRoles();
         },
         error: (err) => {
-          this.toastService.error('Failed to assign permissions');
+          this.toastService.error('Error', 'Failed to assign permissions');
         },
       });
     }
   }
 }
-

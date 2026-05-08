@@ -32,7 +32,6 @@ export type ToastSeverity = 'success' | 'info' | 'warn' | 'error';
   selector: 'app-toast',
   standalone: true,
   imports: [ToastModule, CommonModule],
-  providers: [MessageService],
   template: ` <p-toast position="top-right" [baseZIndex]="9999" [breakpoints]="breakpoints" /> `,
 })
 export class AppToastComponent {
