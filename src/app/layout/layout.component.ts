@@ -26,7 +26,15 @@ export interface NavItem {
 @Component({
   selector: 'app-layout',
   standalone: true,
-  imports: [CommonModule, AppHeader, AppSidebar, RouterModule, AppConfigurator, AppBreadcrumb, AppToastComponent],
+  imports: [
+    CommonModule,
+    AppHeader,
+    AppSidebar,
+    RouterModule,
+    AppConfigurator,
+    AppBreadcrumb,
+    AppToastComponent,
+  ],
   template: `<div
     class="layout-wrapper h-dvh bg-primary-50 dark:bg-surface-950 relative p-2 flex overflow-hidden"
     [ngClass]="containerClass()"

@@ -27,9 +27,9 @@ import { AppRightMenu } from './app.rightmenu';
     ButtonModule,
     IconFieldModule,
     InputIconModule,
-    Avatar,
+    // Avatar,
     AppNotifications,
-    AppProfile,
+    // AppProfile,
     AppRightMenu,
   ],
   template: `

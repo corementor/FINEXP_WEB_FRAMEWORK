@@ -64,11 +64,11 @@ const DEFAULT_MENU_MODEL: MenuItem[] = [
         routerLink: ['/management'],
         permission: Permission.PERM_MANAGE_ROLES,
       },
-      {
-        label: 'Files',
-        icon: 'pi pi-fw pi-folder',
-        routerLink: ['/apps/files'],
-      },
+      // {
+      //   label: 'Charts of Accounts',
+      //   icon: 'pi pi-fw pi-folder',
+      //   routerLink: ['/apps/files'],
+      // },
       // {
       //   label: 'Mail',
       //   icon: 'pi pi-fw pi-envelope',
@@ -81,36 +81,208 @@ const DEFAULT_MENU_MODEL: MenuItem[] = [
       // },
     ],
   },
-  // { separator: true },
-  // {
-  //   label: 'Pages',
-  //   icon: 'pi pi-fw pi-briefcase',
-  //   path: '/pages',
-  //   items: [
-  //     {
-  //       label: 'Auth',
-  //       icon: 'pi pi-fw pi-user',
-  //       path: '/auth',
-  //       items: [
-  //         {
-  //           label: 'Login',
-  //           icon: 'pi pi-fw pi-sign-in',
-  //           routerLink: ['/auth/login'],
-  //         },
-  //         {
-  //           label: 'Error',
-  //           icon: 'pi pi-fw pi-times-circle',
-  //           routerLink: ['/auth/error'],
-  //         },
-  //         {
-  //           label: 'Access Denied',
-  //           icon: 'pi pi-fw pi-lock',
-  //           routerLink: ['/auth/access-denied'],
-  //         },
-  //       ],
-  //     },
-  //   ],
-  // },
+  { separator: true },
+  {
+    label: 'Charts of Accounts',
+    icon: 'pi pi-fw pi-briefcase',
+    path: '/pages',
+    items: [
+      {
+        label: 'Segment 1',
+        icon: 'pi pi-fw pi-shield',
+        path: '/auth',
+        items: [
+          {
+            label: 'Option 1',
+            icon: 'pi pi-fw pi-shield',
+            path: '/auth/login',
+            routerLink: ['/auth/login'],
+            items: [
+              {
+                label: 'Sub Option 1',
+                icon: 'pi pi-fw pi-shield',
+                path: '/auth/login',
+                routerLink: ['/auth/login'],
+              },
+              {
+                label: 'Sub Option 2',
+                icon: 'pi pi-fw pi-shield',
+                path: '/auth/login',
+                routerLink: ['/auth/login'],
+              },
+            ],
+          },
+          {
+            label: 'Option 2',
+            icon: 'pi pi-fw pi-shield',
+            routerLink: ['/auth/error'],
+          },
+          {
+            label: 'Option 3',
+            icon: 'pi pi-fw pi-lock',
+            routerLink: ['/auth/access-denied'],
+          },
+        ],
+      },
+    ],
+  },
+  { separator: true },
+  {
+    label: 'Budget Formulation',
+    icon: 'pi pi-fw pi-wallet',
+    path: '/budget',
+    items: [
+      {
+        label: 'Ceiling',
+        icon: 'pi pi-fw pi-chart-bar',
+        routerLink: ['/budget/budget'],
+      },
+      {
+        label: 'Budget Costing salary',
+        icon: 'pi pi-fw pi-chart-line',
+        routerLink: ['/budget/variance'],
+      },
+      {
+        label: 'Budget Costing Debt',
+        icon: 'pi pi-fw pi-chart-line',
+        routerLink: ['/budget/variance'],
+      },
+    ],
+  },
+  { separator: true },
+  {
+    label: 'Commitments',
+    icon: 'pi pi-fw pi-handshake',
+    path: '/commitments',
+    items: [
+      {
+        label: 'Create Commitment',
+        icon: 'pi pi-fw pi-plus',
+        routerLink: ['/commitments/create'],
+      },
+      {
+        label: 'View Commitments',
+        icon: 'pi pi-fw pi-eye',
+        routerLink: ['/commitments/view'],
+      },
+    ],
+  },
+  { separator: true },
+  {
+    label: 'Payments',
+    icon: 'pi pi-fw pi-credit-card',
+    path: '/payments',
+    items: [
+      {
+        label: 'Create Payment',
+        icon: 'pi pi-fw pi-plus',
+        routerLink: ['/payments/create'],
+      },
+      {
+        label: 'View Payments',
+        icon: 'pi pi-fw pi-eye',
+        routerLink: ['/payments/view'],
+      },
+    ],
+  },
+  { separator: true },
+  {
+    label: 'Receipts',
+    icon: 'pi pi-fw pi-handshake',
+    path: '/receipts',
+    items: [
+      {
+        label: 'Create Receipt',
+        icon: 'pi pi-fw pi-plus',
+        routerLink: ['/receipts/create'],
+      },
+      {
+        label: 'View Receipts',
+        icon: 'pi pi-fw pi-eye',
+        routerLink: ['/receipts/view'],
+      },
+    ],
+  },
+  { separator: true },
+  {
+    label: 'Accounting',
+    icon: 'pi pi-fw pi-file',
+    path: '/accounting',
+    items: [
+      {
+        label: 'Journal Entries',
+        icon: 'pi pi-fw pi-book',
+        routerLink: ['/accounting/journal-entries'],
+      },
+      {
+        label: 'Chart of Accounts',
+        icon: 'pi pi-fw pi-list',
+        routerLink: ['/accounting/chart-of-accounts'],
+      },
+      {
+        label: 'Trial Balance',
+        icon: 'pi pi-fw pi-table',
+        routerLink: ['/accounting/trial-balance'],
+      },
+      {
+        label: 'Financial Statements',
+        icon: 'pi pi-fw pi-file-export',
+        routerLink: ['/accounting/financial-statements'],
+      },
+    ],
+  },
+  { separator: true },
+
+  {
+    label: 'TSA',
+    icon: 'pi pi-fw pi-chart-pie',
+    path: '/reports',
+    items: [
+      {
+        label: 'Budget vs Actual',
+        icon: 'pi pi-fw pi-chart-bar',
+        routerLink: ['/reports/budget-vs-actual'],
+      },
+      {
+        label: 'Cash Flow Statement',
+        icon: 'pi pi-fw pi-chart-line',
+        routerLink: ['/reports/cash-flow-statement'],
+      },
+      {
+        label: 'Balance Sheet',
+        icon: 'pi pi-fw pi-table',
+        routerLink: ['/reports/balance-sheet'],
+      },
+      {
+        label: 'Income Statement',
+        icon: 'pi pi-fw pi-file-export',
+        routerLink: ['/reports/income-statement'],
+      },
+    ],
+  },
+  { separator: true },
+  {
+    label: 'Admin',
+    icon: 'pi pi-fw pi-cog',
+    routerLink: ['/admin'],
+    items: [
+      {
+        label: 'User Management',
+        icon: 'pi pi-fw pi-users',
+        routerLink: ['/admin/users'],
+      },
+      {
+        label: 'Role  Management',
+        icon: 'pi pi-fw pi-users',
+        routerLink: ['/admin/users'],
+      },
+      {
+        label: 'System Settings',
+        icon: 'pi pi-fw pi-sliders-h',
+        routerLink: ['/admin/settings'],
+      },
+    ],
+  },
 ];
 
 @Component({
