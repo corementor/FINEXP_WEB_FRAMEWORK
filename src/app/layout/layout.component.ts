@@ -109,6 +109,12 @@ export class LayoutComponent implements OnInit, OnDestroy {
       icon: 'management',
       permission: Permission.PERM_MANAGE_ROLES,
     },
+    {
+      label: 'examples',
+      route: '/examples',
+      icon: 'examples',
+      permission: Permission.PERM_VIEW_DASHBOARD,
+    },
   ];
 
   ngOnInit(): void {

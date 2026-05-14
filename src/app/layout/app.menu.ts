@@ -4,6 +4,7 @@ import { RouterModule } from '@angular/router';
 import { AppMenuitem } from './app.menuitem';
 import { AuthService } from '../core/services/auth.service';
 import { Permission } from '../core/models';
+import { DashboardExampleComponent } from '@app/shared/components/ui-base/examples.component';
 
 export interface MenuItem {
   label?: string;
@@ -63,6 +64,13 @@ const DEFAULT_MENU_MODEL: MenuItem[] = [
         icon: 'pi pi-fw pi-cog',
         routerLink: ['/management'],
         permission: Permission.PERM_MANAGE_ROLES,
+      },
+
+      {
+        label: 'examples',
+        icon: 'pi pi-fw pi-cog',
+        routerLink: ['/examples'],
+        permission: Permission.PERM_VIEW_DASHBOARD,
       },
       // {
       //   label: 'Charts of Accounts',

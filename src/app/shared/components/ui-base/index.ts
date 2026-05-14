@@ -1,6 +1,6 @@
 /**
- * Centralized UI Component Library
- * All components use PrimeNG with Avalon styling
+ * Centralized UI Component Library (Avalon Style)
+ * All components use PrimeNG with Avalon styling and dark mode support
  * Props-based configuration only - no raw PrimeNG API exposure
  *
  * USAGE:
@@ -10,7 +10,7 @@
  *   imports: [APP_UI_COMPONENTS],
  *   template: `
  *     <app-button label="Click me" variant="primary" (clicked)="onClicked()" />
- *     <app-card [data]="cardData" />
+ *     <app-input label="Name" type="text" (changed)="onChanged($event)" />
  *     <app-table [columns]="columns" [rows]="rows" />
  *     <app-toast />
  *   `
@@ -21,12 +21,27 @@ import { CustomCard } from './custom-card';
 import { AppButtonComponent } from './button.component';
 import { AppTableComponent } from './table.component';
 import { AppToastComponent } from './toast.component';
+import { AppInputComponent } from './input.component';
+import { AppModalComponent } from './modal.component';
+import { AppSpinnerComponent } from './spinner.component';
+import { AppHeadingComponent, AppTextComponent, AppLabelComponent } from './typography.component';
 
 // Export individual components
 export { CustomCard } from './custom-card';
 export { AppButtonComponent, type AppButtonVariant, type AppButtonSize } from './button.component';
 export { AppTableComponent, type TableColumn } from './table.component';
 export { AppToastComponent, type ToastSeverity } from './toast.component';
+export { AppInputComponent, type InputType } from './input.component';
+export { AppModalComponent } from './modal.component';
+export { AppSpinnerComponent, type SpinnerSize } from './spinner.component';
+export {
+  AppHeadingComponent,
+  AppTextComponent,
+  AppLabelComponent,
+  type HeadingLevel,
+  type TextSize,
+  type TextColor,
+} from './typography.component';
 
 // Export as a single module for easy imports
 export const APP_UI_COMPONENTS = [
@@ -34,6 +49,12 @@ export const APP_UI_COMPONENTS = [
   AppButtonComponent,
   AppTableComponent,
   AppToastComponent,
+  AppInputComponent,
+  AppModalComponent,
+  AppSpinnerComponent,
+  AppHeadingComponent,
+  AppTextComponent,
+  AppLabelComponent,
 ];
 
 /**

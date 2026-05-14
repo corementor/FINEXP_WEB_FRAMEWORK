@@ -3,28 +3,43 @@ import { ButtonModule } from 'primeng/button';
 import { CommonModule } from '@angular/common';
 import type { ButtonSeverity } from 'primeng/button';
 
-export type AppButtonVariant = 'primary' | 'secondary' | 'danger' | 'success' | 'info' | 'ghost';
+export type AppButtonVariant =
+  | 'primary'
+  | 'secondary'
+  | 'success'
+  | 'warning'
+  | 'danger'
+  | 'info'
+  | 'ghost';
 export type AppButtonSize = 'small' | 'normal' | 'large';
 
 /**
- * AppButton Component
- * 
+ * AppButton Component (Avalon Style)
+ *
  * SOURCE: PrimeNG Button (primeng/button)
+ * DESIGN: Avalon template by PrimeNG
  * - PrimeNG v21.0.2
+ * - Tailwind CSS with dark mode support
  * - License: MIT
  * - Reference: https://primeng.org/button
- * 
- * WRAPPER PURPOSE:
- * This component wraps PrimeNG's p-button to provide a simplified,
- * props-only API that abstracts PrimeNG internals.
- * 
+ *
+ * FEATURES:
+ * - Multiple severity levels (primary, secondary, success, warning, danger, info, ghost)
+ * - Three size options (small, normal, large)
+ * - Loading state with spinner
+ * - Disabled state
+ * - Icon support
+ * - Outlined variant option
+ * - Dark mode support
+ * - Avalon color theme
+ *
  * STYLING:
- * Uses Avalon theme colors and PrimeUX design system.
- * 
+ * Uses Avalon theme colors and PrimeUX design system with Tailwind CSS.
+ *
  * USAGE:
- * <app-button 
- *   label="Save" 
- *   variant="primary" 
+ * <app-button
+ *   label="Save"
+ *   variant="primary"
  *   size="normal"
  *   icon="pi pi-save"
  *   [loading]="isSaving"
@@ -44,8 +59,9 @@ export type AppButtonSize = 'small' | 'normal' | 'large';
       [disabled]="disabled"
       [loading]="loading"
       [outlined]="outlined"
+      [rounded]="rounded"
       [text]="variant === 'ghost'"
-      [styleClass]="customClass"
+      [styleClass]="'cursor-pointer ' + customClass"
       (click)="onClick()"
       [attr.aria-label]="ariaLabel"
     />
@@ -59,6 +75,7 @@ export class AppButtonComponent {
   @Input() disabled = false;
   @Input() loading = false;
   @Input() outlined = false;
+  @Input() rounded = false;
   @Input() customClass = '';
   @Input() ariaLabel: string | null = null;
   @Output() clicked = new EventEmitter<void>();
@@ -67,8 +84,9 @@ export class AppButtonComponent {
     const severityMap: Record<AppButtonVariant, ButtonSeverity> = {
       primary: 'primary',
       secondary: 'secondary',
-      danger: 'danger',
       success: 'success',
+      warning: 'secondary',
+      danger: 'danger',
       info: 'info',
       ghost: 'secondary',
     };

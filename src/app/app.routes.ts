@@ -9,6 +9,7 @@ import { ManagementComponent } from './features/management/management.component'
 import { EmployeeAuditComponent } from './features/employees/components/employee-audit.component';
 import { authGuard, roleGuard, noAuthGuard } from './core/guards';
 import { UserRole, Permission } from './core/models';
+import { DashboardExampleComponent } from './shared/components/ui-base/examples.component';
 
 export const routes: Routes = [
   {
@@ -42,6 +43,11 @@ export const routes: Routes = [
         path: 'management',
         component: ManagementComponent,
         data: { permissions: [Permission.PERM_MANAGE_ROLES] },
+      },
+      {
+        path: 'examples',
+        component: DashboardExampleComponent,
+        data: { permissions: [Permission.PERM_VIEW_DASHBOARD] },
       },
       { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
     ],

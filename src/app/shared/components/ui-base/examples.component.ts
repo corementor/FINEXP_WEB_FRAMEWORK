@@ -83,7 +83,6 @@ interface User {
       <app-table
         [columns]="userColumns"
         [rows]="users"
-        [isLoading]="loading"
         [pageSize]="10"
         headerTitle="Users"
       />
