@@ -53,12 +53,12 @@ const DEFAULT_MENU_MODEL: MenuItem[] = [
         routerLink: ['/workflows'],
         permission: Permission.PERM_MANAGE_WORKFLOWS,
       },
-      {
-        label: 'Audit Trail',
-        icon: 'pi pi-fw pi-shield',
-        routerLink: ['/audit'],
-        permission: Permission.PERM_VIEW_AUDIT,
-      },
+      // {
+      //   label: 'Audit Trail',
+      //   icon: 'pi pi-fw pi-shield',
+      //   routerLink: ['/audit'],
+      //   permission: Permission.PERM_VIEW_AUDIT,
+      // },
       {
         label: 'Management',
         icon: 'pi pi-fw pi-cog',

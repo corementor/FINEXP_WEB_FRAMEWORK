@@ -2,7 +2,6 @@ import { Component, Input, Output, EventEmitter, forwardRef } from '@angular/cor
 import { CommonModule } from '@angular/common';
 import { FormsModule, NG_VALUE_ACCESSOR, ControlValueAccessor } from '@angular/forms';
 import { InputTextModule } from 'primeng/inputtext';
-import { FloatLabelModule } from 'primeng/floatlabel';
 import { TextareaModule } from 'primeng/textarea';
 
 export type InputType = 'text' | 'email' | 'password' | 'number' | 'date' | 'textarea';
@@ -40,7 +39,7 @@ export type InputType = 'text' | 'email' | 'password' | 'number' | 'date' | 'tex
 @Component({
   selector: 'app-input',
   standalone: true,
-  imports: [CommonModule, FormsModule, InputTextModule, FloatLabelModule, TextareaModule],
+  imports: [CommonModule, FormsModule, InputTextModule, TextareaModule],
   providers: [
     {
       provide: NG_VALUE_ACCESSOR,
@@ -49,24 +48,26 @@ export type InputType = 'text' | 'email' | 'password' | 'number' | 'date' | 'tex
     },
   ],
   template: `
-    <div class="flex flex-col gap-2 w-full">
-      <p-floatLabel *ngIf="label && type !== 'textarea'">
-        <input
-          pInputText
-          [type]="type"
-          [ngModel]="value"
-          (ngModelChange)="onValueChange($event)"
-          [disabled]="disabled"
-          [placeholder]="placeholder"
-          class="w-full"
-          [class.ng-invalid]="error"
-          [attr.aria-label]="label"
-          [attr.aria-describedby]="error ? 'error-' + label : null"
-        />
-        <label>{{ label }}</label>
-      </p-floatLabel>
+    <div class="flex flex-col gap-1.5 w-full">
+      <label *ngIf="label && type !== 'textarea'" class="text-sm font-medium text-surface-700 dark:text-surface-300">
+        {{ label }}
+      </label>
 
-      <div *ngIf="type === 'textarea'" class="flex flex-col gap-2">
+      <input
+        *ngIf="type !== 'textarea'"
+        pInputText
+        [type]="type"
+        [ngModel]="value"
+        (ngModelChange)="onValueChange($event)"
+        [disabled]="disabled"
+        [placeholder]="placeholder"
+        class="w-full"
+        [class.ng-invalid]="error"
+        [attr.aria-label]="label"
+        [attr.aria-describedby]="error ? 'error-' + label : null"
+      />
+
+      <div *ngIf="type === 'textarea'" class="flex flex-col gap-1.5">
         <label *ngIf="label" class="text-sm font-medium text-surface-700 dark:text-surface-300">
           {{ label }}
         </label>
@@ -99,12 +100,12 @@ export class AppInputComponent implements ControlValueAccessor {
   @Input() type: InputType = 'text';
   @Input() value: any = '';
   @Input() placeholder: string = '';
-  @Input() disabled = false;
-  @Input() error = false;
+  @Input() disabled: boolean = false;
+  @Input() error: boolean = false;
   @Input() errorMessage: string = '';
   @Input() hint: string = '';
-  @Input() rows = 3;
-  @Input() fullWidth = true;
+  @Input() rows: number = 3;
+  @Input() fullWidth: boolean = true;
 
   @Output() changed = new EventEmitter<any>();
 

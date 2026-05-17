@@ -45,7 +45,6 @@ import { ButtonModule } from 'primeng/button';
   template: `
     <p-dialog
       [(visible)]="visible"
-      [header]="header"
       [modal]="modal"
       [style]="{ width: width }"
       [maximizable]="maximizable"
@@ -54,32 +53,23 @@ import { ButtonModule } from 'primeng/button';
       [closeOnEscape]="closeOnEscape"
       styleClass="rounded-2xl"
       contentStyleClass="bg-surface-0 dark:bg-surface-800 p-6"
+      headerStyleClass="bg-surface-50 dark:bg-surface-800 border-b border-surface-200 dark:border-surface-700"
+      footerStyleClass="bg-surface-50 dark:bg-surface-800 border-t border-surface-200 dark:border-surface-700"
       (onHide)="onHide.emit()"
     >
-      <ng-container *ngIf="contentTemplate">
-        <ng-container *ngTemplateOutlet="contentTemplate"></ng-container>
-      </ng-container>
-
-      <ng-template #footer *ngIf="showFooter && footerTemplate">
-        <div
-          class="flex justify-end gap-3 pt-4 border-t border-surface-200 dark:border-surface-700"
-        >
-          <ng-container *ngTemplateOutlet="footerTemplate"></ng-container>
+      <ng-template pTemplate="header">
+        <div class="flex items-center gap-3">
+          <i *ngIf="headerIcon" [class]="'pi ' + headerIcon"></i>
+          <span class="font-semibold">{{ header }}</span>
         </div>
       </ng-template>
 
-      <ng-template #defaultFooter *ngIf="showFooter && !footerTemplate">
-        <div
-          class="flex justify-end gap-3 pt-4 border-t border-surface-200 dark:border-surface-700"
-        >
-          <p-button
-            label="Close"
-            severity="secondary"
-            [outlined]="true"
-            (onClick)="onHide.emit()"
-            styleClass="cursor-pointer"
-          />
-        </div>
+      <!-- Projected Content (body of modal) -->
+      <ng-content></ng-content>
+
+      <!-- Footer with projected content -->
+      <ng-template pTemplate="footer">
+        <ng-content select="[footer]"></ng-content>
       </ng-template>
     </p-dialog>
   `,
@@ -87,6 +77,7 @@ import { ButtonModule } from 'primeng/button';
 export class AppModalComponent {
   @Input() visible = false;
   @Input() header = 'Dialog';
+  @Input() headerIcon?: string;
   @Input() width = '50vw';
   @Input() modal = true;
   @Input() maximizable = false;
@@ -94,8 +85,6 @@ export class AppModalComponent {
   @Input() closable = true;
   @Input() closeOnEscape = true;
   @Input() showFooter = true;
-  @Input() contentTemplate?: TemplateRef<any>;
-  @Input() footerTemplate?: TemplateRef<any>;
 
   @Output() onHide = new EventEmitter<void>();
 }

@@ -29,16 +29,7 @@ import { ToastService } from '@app/shared/components/ui-base/toast.service';
   standalone: true,
   imports: [APP_UI_COMPONENTS],
   template: `
-    <div custom-card>
-      <h3 card-title>Example: Button + Toast</h3>
-
-      <app-button
-        label="Click Me"
-        variant="primary"
-        icon="pi pi-check"
-        (clicked)="onButtonClick()"
-      />
-    </div>
+ 
 
     <app-toast />
   `,

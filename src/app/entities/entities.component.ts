@@ -5,34 +5,27 @@ import {
   OnInit,
   ChangeDetectionStrategy,
   ChangeDetectorRef,
+  ViewChild,
+  TemplateRef,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { firstValueFrom } from 'rxjs';
 import { injectQuery } from '@tanstack/angular-query-experimental';
+import { MessageService } from 'primeng/api';
 
 import { EmployeeFacadeService, EmployeeMutationService } from '@app/features/employees/services';
 import { Employee, ELifeCycle, ESecurityLabel } from '@app/core/models';
 import { LoggerService } from '@app/core/services';
 import { APP_UI_COMPONENTS, TableColumn } from '@app/shared/components/ui-base';
-import { ModalComponent } from '@app/shared/components/modal/modal.component';
-import { TextInputComponent } from '@app/shared/components/text-input/text-input.component';
-import { SpinnerComponent } from '@app/shared/components/spinner/spinner.component';
 
 @Component({
   selector: 'app-entities',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [
-    CommonModule,
-    RouterLink,
-    ReactiveFormsModule,
-    ...APP_UI_COMPONENTS,
-    ModalComponent,
-    TextInputComponent,
-    SpinnerComponent,
-  ],
+  providers: [MessageService],
+  imports: [CommonModule, RouterLink, ReactiveFormsModule, ...APP_UI_COMPONENTS],
   templateUrl: './entities.component.html',
   styleUrls: ['./entities.component.scss'],
 })
@@ -42,6 +35,9 @@ export class EntitiesComponent implements OnInit {
   private readonly logger = inject(LoggerService);
   private readonly fb = inject(FormBuilder);
   private readonly cdr = inject(ChangeDetectorRef);
+  private readonly messageService = inject(MessageService);
+
+  @ViewChild('actionsTemplate') actionsTemplate?: TemplateRef<any>;
 
   private readonly employeeQueryKey = ['employees'];
 
@@ -56,16 +52,36 @@ export class EntitiesComponent implements OnInit {
 
   readonly createEmployeeMutation = this.mutationService.createMutation(
     // onSuccess callback
-    () => this.closeModal(),
+    () => {
+      this.messageService.add({
+        severity: 'success',
+        summary: 'Success',
+        detail: 'Employee created successfully',
+        life: 3000,
+      });
+      this.closeModal();
+    },
     // onError callback
     (error) => {
       this.error = 'Failed to create employee';
+      this.messageService.add({
+        severity: 'error',
+        summary: 'Error',
+        detail: this.error,
+        life: 3000,
+      });
     },
   );
 
   readonly updateEmployeeMutation = this.mutationService.updateMutation(
     // onSuccess callback
     () => {
+      this.messageService.add({
+        severity: 'success',
+        summary: 'Success',
+        detail: 'Employee updated successfully',
+        life: 3000,
+      });
       if (this.isEditMode) {
         this.closeModal();
       }
@@ -73,39 +89,81 @@ export class EntitiesComponent implements OnInit {
     // onError callback
     (error) => {
       this.error = 'Failed to update employee';
+      this.messageService.add({
+        severity: 'error',
+        summary: 'Error',
+        detail: this.error,
+        life: 3000,
+      });
     },
   );
 
   readonly activateEmployeeMutation = this.mutationService.activateMutation(
     // onSuccess callback
     () => {
+      this.messageService.add({
+        severity: 'success',
+        summary: 'Success',
+        detail: 'Employee activated successfully',
+        life: 3000,
+      });
       this.logger.info('Employee activated successfully');
     },
     // onError callback
     (error) => {
       this.error = 'Failed to activate employee';
+      this.messageService.add({
+        severity: 'error',
+        summary: 'Error',
+        detail: this.error,
+        life: 3000,
+      });
     },
   );
 
   readonly deactivateEmployeeMutation = this.mutationService.deactivateMutation(
     // onSuccess callback
     () => {
+      this.messageService.add({
+        severity: 'success',
+        summary: 'Success',
+        detail: 'Employee deactivated successfully',
+        life: 3000,
+      });
       this.logger.info('Employee deactivated successfully');
     },
     // onError callback
     (error) => {
       this.error = 'Failed to deactivate employee';
+      this.messageService.add({
+        severity: 'error',
+        summary: 'Error',
+        detail: this.error,
+        life: 3000,
+      });
     },
   );
 
   readonly deleteMutation = this.mutationService.deleteMutation(
     // onSuccess callback
     () => {
+      this.messageService.add({
+        severity: 'success',
+        summary: 'Success',
+        detail: 'Employee deleted successfully',
+        life: 3000,
+      });
       this.logger.info('Employee deleted successfully');
     },
     // onError callback
     (error) => {
       this.error = 'Failed to delete employee';
+      this.messageService.add({
+        severity: 'error',
+        summary: 'Error',
+        detail: this.error,
+        life: 3000,
+      });
     },
   );
 
@@ -214,6 +272,7 @@ export class EntitiesComponent implements OnInit {
       securityLabel: ESecurityLabel.INTERNAL,
     });
     this.showModal = true;
+    this.cdr.markForCheck();
   }
 
   openEditModal(employee: Employee): void {
@@ -231,15 +290,23 @@ export class EntitiesComponent implements OnInit {
       comments: employee.comments,
     });
     this.showModal = true;
+    this.cdr.markForCheck();
   }
 
   closeModal(): void {
     this.showModal = false;
+    this.cdr.markForCheck();
   }
 
   onSubmit(): void {
     if (!this.employeeForm.valid) {
       this.employeeForm.markAllAsTouched();
+      this.messageService.add({
+        severity: 'warn',
+        summary: 'Validation Error',
+        detail: 'Please fill in all required fields correctly',
+        life: 3000,
+      });
       return;
     }
 
@@ -277,10 +344,25 @@ export class EntitiesComponent implements OnInit {
   }
 
   deactivate(id: string, comments?: string): void {
-    this.deactivateEmployeeMutation.mutate({ id, comments });
+    if (confirm('Are you sure you want to deactivate this employee?')) {
+      this.deactivateEmployeeMutation.mutate({ id, comments });
+    }
   }
 
   delete(id: string): void {
+    this.showDeleteConfirmation(id);
+  }
+
+  private showDeleteConfirmation(id: string): void {
+    this.messageService.add({
+      severity: 'warn',
+      summary: 'Confirm Delete',
+      detail: 'Are you sure you want to delete this employee? This action cannot be undone.',
+      sticky: true,
+      closable: true,
+    });
+    // Keep the confirmation dialog approach or use confirmation service
+    // For now, using browser confirm to maintain logic
     if (confirm('Are you sure you want to delete this employee? This action cannot be undone.')) {
       this.deleteMutation.mutate(id);
     }
@@ -310,13 +392,13 @@ export class EntitiesComponent implements OnInit {
   getSecurityLabelClass(label: ESecurityLabel): string {
     switch (label) {
       case ESecurityLabel.PUBLIC:
-        return 'bg-gray-50 text-gray-600 border-gray-200';
+        return 'bg-surface-100 dark:bg-surface-700 text-surface-600 dark:text-surface-300 border-surface-200 dark:border-surface-600';
       case ESecurityLabel.INTERNAL:
-        return 'bg-blue-50 text-blue-600 border-blue-200';
+        return 'bg-blue-50 dark:bg-blue-900 text-blue-600 dark:text-blue-300 border-blue-200 dark:border-blue-700';
       case ESecurityLabel.RESTRICTED:
-        return 'bg-orange-50 text-orange-600 border-orange-200';
+        return 'bg-orange-50 dark:bg-orange-900 text-orange-600 dark:text-orange-300 border-orange-200 dark:border-orange-700';
       case ESecurityLabel.CONFIDENTIAL:
-        return 'bg-red-50 text-red-600 border-red-200';
+        return 'bg-red-50 dark:bg-red-900 text-red-600 dark:text-red-300 border-red-200 dark:border-red-700';
       default:
         return '';
     }

@@ -74,7 +74,7 @@ export interface TableColumn<T = any> {
       <p-toast />
 
       <!-- Toolbar with New and Delete buttons -->
-      <p-toolbar class="mb-6">
+      <!-- <p-toolbar class="mb-6">
         <ng-template #start>
           <p-button
             label="New"
@@ -92,7 +92,7 @@ export interface TableColumn<T = any> {
             [disabled]="!selectedItems || !selectedItems.length"
           />
         </ng-template>
-      </p-toolbar>
+      </p-toolbar> -->
 
       <!-- Main Table -->
       <p-table
@@ -179,44 +179,15 @@ export interface TableColumn<T = any> {
                 styleClass="cursor-pointer"
                 (click)="deleteConfirm(rowData)"
               />
+              <ng-container
+                *ngIf="actionsTemplate"
+                [ngTemplateOutlet]="actionsTemplate"
+                [ngTemplateOutletContext]="{ $implicit: rowData }"
+              ></ng-container>
             </td>
           </tr>
         </ng-template>
       </p-table>
-
-      <!-- Edit Dialog -->
-      <p-dialog
-        [(visible)]="showDialog"
-        [style]="{ width: '450px' }"
-        [header]="isAddMode ? 'Add Item' : 'Edit Item'"
-        [modal]="true"
-      >
-        <ng-template #content>
-          <ng-container *ngIf="editFormTemplate">
-            <ng-container
-              *ngTemplateOutlet="editFormTemplate; context: { $implicit: editingItem }"
-            ></ng-container>
-          </ng-container>
-          <div *ngIf="!editFormTemplate" class="text-surface-500">
-            No form template provided. Use &lt;ng-template #editForm&gt; to define your form.
-          </div>
-        </ng-template>
-        <ng-template #footer>
-          <p-button
-            label="Cancel"
-            icon="pi pi-times"
-            text
-            (click)="hideDialog()"
-            styleClass="cursor-pointer"
-          />
-          <p-button
-            label="Save"
-            icon="pi pi-check"
-            (click)="saveItemHandler()"
-            styleClass="cursor-pointer"
-          />
-        </ng-template>
-      </p-dialog>
 
       <!-- Confirmation Dialog -->
       <p-confirmdialog [style]="{ width: '450px' }" />
@@ -229,7 +200,7 @@ export class AppTableComponent<T = any> implements OnInit {
   @Input() pageSize = 10;
   @Input() headerTitle = 'Data Table';
   @Input() paginator = true;
-  @Input() editFormTemplate?: TemplateRef<any>;
+  @Input() actionsTemplate?: TemplateRef<any>;
 
   @Output() addNew = new EventEmitter<void>();
   @Output() itemEdited = new EventEmitter<T>();
@@ -241,9 +212,6 @@ export class AppTableComponent<T = any> implements OnInit {
 
   globalFilterFields: string[] = [];
   selectedItems: T[] = [];
-  editingItem: T | null = null;
-  showDialog = false;
-  isAddMode = false;
 
   constructor(
     private messageService: MessageService,
@@ -264,35 +232,19 @@ export class AppTableComponent<T = any> implements OnInit {
   }
 
   openNew(): void {
-    this.editingItem = {} as T;
-    this.isAddMode = true;
-    this.showDialog = true;
     this.addNew.emit();
   }
 
   editItemHandler(item: T): void {
-    this.editingItem = { ...item };
-    this.isAddMode = false;
-    this.showDialog = true;
     this.itemEdited.emit(item);
   }
 
   hideDialog(): void {
-    this.showDialog = false;
-    this.editingItem = null;
+    // No longer used - edit dialog moved to parent component
   }
 
   saveItemHandler(): void {
-    if (this.editingItem) {
-      this.saveItem.emit(this.editingItem);
-      this.hideDialog();
-      this.messageService.add({
-        severity: 'success',
-        summary: 'Successful',
-        detail: `Item ${this.isAddMode ? 'Created' : 'Updated'}`,
-        life: 3000,
-      });
-    }
+    // No longer used - edit dialog moved to parent component
   }
 
   deleteConfirm(item: T): void {
