@@ -1,5 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { CommonModule } from '@angular/common';
+import { RouterModule } from '@angular/router';
+import { provideAngularQuery, QueryClient } from '@tanstack/angular-query-experimental';
 import { DashboardComponent } from './dashboard.component';
 import { DashboardFacadeService } from '../features/dashboard/services/dashboard-facade.service';
 import { LoggerService } from '../core/services/logger.service';
@@ -38,8 +40,9 @@ describe('DashboardComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [DashboardComponent, CommonModule],
+      imports: [DashboardComponent, CommonModule, RouterModule.forRoot([])],
       providers: [
+        provideAngularQuery(new QueryClient({ defaultOptions: { queries: { retry: false } } })),
         {
           provide: DashboardFacadeService,
           useValue: {

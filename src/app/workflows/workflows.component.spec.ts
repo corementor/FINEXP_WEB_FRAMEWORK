@@ -1,5 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { CommonModule } from '@angular/common';
+import { provideAngularQuery, QueryClient } from '@tanstack/angular-query-experimental';
 import { WorkflowsComponent } from './workflows.component';
 import { EmployeeFacadeService } from '@app/features/employees/services';
 import { LoggerService } from '@app/core/services';
@@ -37,10 +38,16 @@ describe('WorkflowsComponent', () => {
     { ...mockEmployee, id: '3', state: ELifeCycle.INACTIVE, name: 'Bob Inactive' },
   ];
 
+  const mockMutationService = {
+    activateMutation: vi.fn(() => ({ mutate: vi.fn(), isPending: vi.fn(() => false) })),
+    deactivateMutation: vi.fn(() => ({ mutate: vi.fn(), isPending: vi.fn(() => false) })),
+  };
+
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [WorkflowsComponent, CommonModule],
       providers: [
+        provideAngularQuery(new QueryClient({ defaultOptions: { queries: { retry: false } } })),
         {
           provide: EmployeeFacadeService,
           useValue: {
@@ -50,12 +57,7 @@ describe('WorkflowsComponent', () => {
         },
         {
           provide: LoggerService,
-          useValue: {
-            info: vi.fn(),
-            warn: vi.fn(),
-            debug: vi.fn(),
-            error: vi.fn(),
-          },
+          useValue: { info: vi.fn(), warn: vi.fn(), debug: vi.fn(), error: vi.fn() },
         },
       ],
     }).compileComponents();
@@ -227,7 +229,7 @@ describe('WorkflowsComponent', () => {
     it('should refresh workflow list', async () => {
       fixture.detectChanges();
 
-      component.loadData();
+      component.onRefresh();
 
       await new Promise((resolve) => setTimeout(resolve, 150));
       expect(employeeService.getEmployees).toHaveBeenCalledTimes(2);
@@ -238,7 +240,7 @@ describe('WorkflowsComponent', () => {
         throwError(() => new Error('Refresh failed')),
       );
 
-      component.loadData();
+      component.onRefresh();
 
       await new Promise((resolve) => setTimeout(resolve, 150));
       expect(component.error).toBeTruthy();

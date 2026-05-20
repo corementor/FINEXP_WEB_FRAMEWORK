@@ -29,7 +29,7 @@ export class WorkflowsComponent implements OnInit, OnDestroy {
 
   readonly employeesQuery = injectQuery(() => ({
     queryKey: this.employeesQueryKey,
-    queryFn: () => firstValueFrom(this.employeeFacade.getEmployees()),
+    queryFn: () => firstValueFrom(this.employeeFacade.getEmployees(0, 100)),
   }));
 
   // ===== MUTATIONS =====

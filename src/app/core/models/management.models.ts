@@ -1,5 +1,3 @@
-import { UUID } from 'crypto';
-
 /**
  * Role model for frontend
  */

@@ -99,262 +99,23 @@
     </div>
   </div>
 
-  <!-- Create Modal -->
+  <!-- Create / Edit Modal — single modal, config-driven form -->
   <app-modal
-    [visible]="showModal && !isEditMode"
-    header="Create New Employee"
-    headerIcon="pi-user-plus"
+    [visible]="showModal"
+    [header]="modalHeader"
+    [headerIcon]="modalHeaderIcon"
     [modal]="true"
     [draggable]="true"
     [closable]="true"
     width="50vw"
     (onHide)="closeModal()"
   >
-    <form [formGroup]="employeeForm" (ngSubmit)="onSubmit()" class="space-y-4">
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <app-input
-          type="text"
-          label="First Name"
-          formControlName="firstName"
-          placeholder="e.g. John"
-          [error]="
-            (employeeForm.get('firstName')?.touched ?? false) &&
-            (employeeForm.get('firstName')?.invalid ?? false)
-          "
-          [errorMessage]="
-            employeeForm.get('firstName')?.hasError('required') ? 'First name is required' : ''
-          "
-        />
-
-        <app-input
-          type="text"
-          label="Last Name"
-          formControlName="lastName"
-          placeholder="e.g. Doe"
-          [error]="
-            (employeeForm.get('lastName')?.touched ?? false) &&
-            (employeeForm.get('lastName')?.invalid ?? false)
-          "
-          [errorMessage]="
-            employeeForm.get('lastName')?.hasError('required') ? 'Last name is required' : ''
-          "
-        />
-
-        <app-input
-          type="text"
-          label="Employee Number"
-          formControlName="employeeNumber"
-          placeholder="e.g. EMP-001"
-          [error]="
-            (employeeForm.get('employeeNumber')?.touched ?? false) &&
-            (employeeForm.get('employeeNumber')?.invalid ?? false)
-          "
-          [errorMessage]="
-            employeeForm.get('employeeNumber')?.hasError('required')
-              ? 'Employee number is required'
-              : ''
-          "
-        />
-
-        <app-input
-          type="text"
-          label="National ID"
-          formControlName="nationalId"
-          placeholder="National ID"
-          [error]="
-            (employeeForm.get('nationalId')?.touched ?? false) &&
-            (employeeForm.get('nationalId')?.invalid ?? false)
-          "
-          [errorMessage]="
-            employeeForm.get('nationalId')?.hasError('required') ? 'National ID is required' : ''
-          "
-        />
-
-        <app-input
-          type="email"
-          label="Email Address"
-          formControlName="emailAddress"
-          placeholder="email@example.com"
-          [error]="
-            (employeeForm.get('emailAddress')?.touched ?? false) &&
-            (employeeForm.get('emailAddress')?.invalid ?? false)
-          "
-          [errorMessage]="
-            employeeForm.get('emailAddress')?.hasError('required')
-              ? 'Email is required'
-              : employeeForm.get('emailAddress')?.hasError('email')
-                ? 'Valid email is required'
-                : ''
-          "
-        />
-
-        <div class="md:col-span-2">
-          <app-label>Security Label</app-label>
-          <select
-            formControlName="securityLabel"
-            class="w-full px-4 py-2.5 border border-surface-200 dark:border-surface-700 rounded-lg bg-surface-0 dark:bg-surface-800 text-surface-900 dark:text-surface-0 focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all"
-          >
-            <option *ngFor="let label of securityLabels" [value]="label">{{ label }}</option>
-          </select>
-        </div>
-
-        <div class="md:col-span-2">
-          <app-input
-            type="textarea"
-            label="Comments"
-            formControlName="comments"
-            placeholder="Optional comments..."
-          />
-        </div>
-      </div>
-    </form>
-
-    <div footer class="flex justify-end gap-3">
-      <app-button
-        label="Cancel"
-        variant="secondary"
-        size="small"
-        icon="pi pi-times"
-        (clicked)="closeModal()"
-      />
-      <app-button
-        label="Create"
-        variant="primary"
-        size="small"
-        icon="pi pi-check"
-        [disabled]="employeeForm.invalid"
-        (clicked)="onSubmit()"
-      />
-    </div>
-  </app-modal>
-
-  <!-- Edit Modal -->
-  <app-modal
-    [visible]="showModal && isEditMode"
-    header="Edit Employee"
-    headerIcon="pi-user-edit"
-    [modal]="true"
-    [draggable]="true"
-    [closable]="true"
-    width="50vw"
-    (onHide)="closeModal()"
-  >
-    <form [formGroup]="employeeForm" (ngSubmit)="onSubmit()" class="space-y-4">
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <app-input
-          type="text"
-          label="First Name"
-          formControlName="firstName"
-          placeholder="e.g. John"
-          [error]="
-            (employeeForm.get('firstName')?.touched ?? false) &&
-            (employeeForm.get('firstName')?.invalid ?? false)
-          "
-          [errorMessage]="
-            employeeForm.get('firstName')?.hasError('required') ? 'First name is required' : ''
-          "
-        />
-
-        <app-input
-          type="text"
-          label="Last Name"
-          formControlName="lastName"
-          placeholder="e.g. Doe"
-          [error]="
-            (employeeForm.get('lastName')?.touched ?? false) &&
-            (employeeForm.get('lastName')?.invalid ?? false)
-          "
-          [errorMessage]="
-            employeeForm.get('lastName')?.hasError('required') ? 'Last name is required' : ''
-          "
-        />
-
-        <app-input
-          type="text"
-          label="Employee Number"
-          formControlName="employeeNumber"
-          placeholder="e.g. EMP-001"
-          [error]="
-            (employeeForm.get('employeeNumber')?.touched ?? false) &&
-            (employeeForm.get('employeeNumber')?.invalid ?? false)
-          "
-          [errorMessage]="
-            employeeForm.get('employeeNumber')?.hasError('required')
-              ? 'Employee number is required'
-              : ''
-          "
-        />
-
-        <app-input
-          type="text"
-          label="National ID"
-          formControlName="nationalId"
-          placeholder="National ID"
-          [error]="
-            (employeeForm.get('nationalId')?.touched ?? false) &&
-            (employeeForm.get('nationalId')?.invalid ?? false)
-          "
-          [errorMessage]="
-            employeeForm.get('nationalId')?.hasError('required') ? 'National ID is required' : ''
-          "
-        />
-
-        <app-input
-          type="email"
-          label="Email Address"
-          formControlName="emailAddress"
-          placeholder="email@example.com"
-          [error]="
-            (employeeForm.get('emailAddress')?.touched ?? false) &&
-            (employeeForm.get('emailAddress')?.invalid ?? false)
-          "
-          [errorMessage]="
-            employeeForm.get('emailAddress')?.hasError('required')
-              ? 'Email is required'
-              : employeeForm.get('emailAddress')?.hasError('email')
-                ? 'Valid email is required'
-                : ''
-          "
-        />
-
-        <div class="md:col-span-2">
-          <app-label>Security Label</app-label>
-          <select
-            formControlName="securityLabel"
-            class="w-full px-4 py-2.5 border border-surface-200 dark:border-surface-700 rounded-lg bg-surface-0 dark:bg-surface-800 text-surface-900 dark:text-surface-0 focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all"
-          >
-            <option *ngFor="let label of securityLabels" [value]="label">{{ label }}</option>
-          </select>
-        </div>
-
-        <div class="md:col-span-2">
-          <app-input
-            type="textarea"
-            label="Comments"
-            formControlName="comments"
-            placeholder="Optional comments..."
-          />
-        </div>
-      </div>
-    </form>
-
-    <div footer class="flex justify-end gap-3">
-      <app-button
-        label="Cancel"
-        variant="secondary"
-        size="small"
-        icon="pi pi-times"
-        (clicked)="closeModal()"
-      />
-      <app-button
-        label="Update"
-        variant="primary"
-        size="small"
-        icon="pi pi-check"
-        [disabled]="employeeForm.invalid"
-        (clicked)="onSubmit()"
-      />
-    </div>
+    <app-form
+      [form]="employeeForm"
+      [config]="{ ...employeeFormConfig, submitLabel: submitLabel, loading: createEmployeeMutation.isPending() || updateEmployeeMutation.isPending() }"
+      (submitted)="onSubmit($event)"
+      (cancelled)="closeModal()"
+    />
   </app-modal>
 
   <!-- Custom Actions Template for Table -->
@@ -366,7 +127,6 @@
       title="View audit logs"
     >
       <i class="pi pi-history"></i>
-      <!-- <span>Logs</span> -->
     </a>
   </ng-template>
 </div>

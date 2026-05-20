@@ -25,6 +25,7 @@ import { AppInputComponent } from './input.component';
 import { AppModalComponent } from './modal.component';
 import { AppSpinnerComponent } from './spinner.component';
 import { AppHeadingComponent, AppTextComponent, AppLabelComponent } from './typography.component';
+import { AppFormComponent } from './form.component';
 
 // Export individual components
 export { CustomCard } from './custom-card';
@@ -42,6 +43,13 @@ export {
   type TextSize,
   type TextColor,
 } from './typography.component';
+export {
+  AppFormComponent,
+  type FormField,
+  type FormConfig,
+  type FormFieldType,
+  type SelectOption,
+} from './form.component';
 
 // Export as a single module for easy imports
 export const APP_UI_COMPONENTS = [
@@ -55,6 +63,7 @@ export const APP_UI_COMPONENTS = [
   AppHeadingComponent,
   AppTextComponent,
   AppLabelComponent,
+  AppFormComponent,
 ];
 
 /**
