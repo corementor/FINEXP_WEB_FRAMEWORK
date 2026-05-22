@@ -1,8 +1,8 @@
 import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { PermissionManagementService } from '../../../../core/services/management.service';
-import { ToastService } from '../../../../services/toast.service';
-import type { PermissionDetail } from '../../../../core/models/management.models';
+import { PermissionManagementService } from '@app/core/services/management.service';
+import { ToastService } from '@app/shared/components/ui-base/toast.service';
+import type { PermissionDetail } from '@app/core/models/management.models';
 
 @Component({
   selector: 'app-permission-list',
@@ -35,7 +35,7 @@ export class PermissionListComponent implements OnInit {
         this.loading = false;
       },
       error: (err) => {
-        this.toastService.error('Failed to load permissions');
+        this.toastService.error('Error', 'Failed to load permissions');
         this.loading = false;
       },
     });
@@ -56,4 +56,3 @@ export class PermissionListComponent implements OnInit {
     });
   }
 }
-

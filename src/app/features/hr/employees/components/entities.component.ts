@@ -15,7 +15,7 @@ import { firstValueFrom } from 'rxjs';
 import { injectQuery } from '@tanstack/angular-query-experimental';
 import { MessageService } from 'primeng/api';
 
-import { EmployeeFacadeService, EmployeeMutationService } from '@app/features/employees/services';
+import { EmployeeFacadeService, EmployeeMutationService } from '@app/features/hr/employees/services';
 import { Employee, ELifeCycle, ESecurityLabel } from '@app/core/models';
 import { LoggerService } from '@app/core/services';
 import {

@@ -1,18 +1,18 @@
 import { Routes } from '@angular/router';
-import { LoginComponent } from './login/login.component';
+import { LoginComponent } from './features/iam/auth/components/login.component';
 import { LayoutComponent } from './layout/layout.component';
-import { DashboardComponent } from './dashboard/dashboard.component';
-import { EntitiesComponent } from './entities/entities.component';
-import { WorkflowsComponent } from './workflows/workflows.component';
-import { AuditTrailComponent } from './audit/audit-trail.component';
-import { ManagementComponent } from './features/management/management.component';
-import { EmployeeAuditComponent } from './features/employees/components/employee-audit.component';
+import { DashboardComponent } from './features/dashboard/components/dashboard.component';
+import { EntitiesComponent } from './features/hr/employees/components/entities.component';
+import { WorkflowsComponent } from './features/hr/workflows/components/workflows.component';
+import { AuditTrailComponent } from './features/hr/audit/components/audit-trail.component';
+import { ManagementComponent } from './features/iam/management.component';
+import { EmployeeAuditComponent } from './features/hr/employees/components/employee-audit.component';
 import { authGuard, roleGuard, noAuthGuard } from './core/guards';
 import { UserRole, Permission } from './core/models';
 import { DashboardExampleComponent } from './shared/components/ui-base/examples.component';
-import { JournalListComponent } from './features/journal/components/journal-list/journal-list.component';
-import { JournalEntryPageComponent } from './features/journal/components/journal-entry-page/journal-entry-page.component';
-import { ChartOfAccountsComponent } from './features/journal/components/chart-of-accounts/chart-of-accounts.component';
+import { JournalListComponent } from './features/accounting/journal/components/journal-list/journal-list.component';
+import { JournalEntryPageComponent } from './features/accounting/journal/components/journal-entry-page/journal-entry-page.component';
+import { ChartOfAccountsComponent } from './features/accounting/chart-of-accounts/components/chart-of-accounts.component';
 
 export const routes: Routes = [
   {

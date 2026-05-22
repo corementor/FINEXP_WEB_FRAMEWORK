@@ -4,7 +4,7 @@ import { Subject } from 'rxjs';
 import { firstValueFrom } from 'rxjs';
 import { injectQuery } from '@tanstack/angular-query-experimental';
 
-import { EmployeeFacadeService, EmployeeMutationService } from '@app/features/employees/services';
+import { EmployeeFacadeService, EmployeeMutationService } from '@app/features/hr/employees/services';
 import { Employee, ELifeCycle } from '@app/core/models';
 import { LoggerService } from '@app/core/services';
 import { ButtonComponent, SpinnerComponent } from '@app/shared/components';

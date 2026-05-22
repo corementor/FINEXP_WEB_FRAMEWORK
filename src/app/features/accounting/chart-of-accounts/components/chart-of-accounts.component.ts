@@ -18,7 +18,7 @@ import {
 import { DrawerModule } from 'primeng/drawer';
 import { APP_UI_COMPONENTS } from '@app/shared/components/ui-base';
 import { ToastService } from '@app/shared/components/ui-base/toast.service';
-import { JournalFacadeService } from '../../services/journal-facade.service';
+import { JournalFacadeService } from '../../journal/services/journal-facade.service';
 import {
   ChartOfAccount,
   AccountType,

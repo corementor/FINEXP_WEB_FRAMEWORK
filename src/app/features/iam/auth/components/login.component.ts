@@ -11,7 +11,7 @@ import { Router } from '@angular/router';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 
-import { LoginFacadeService } from '@app/features/auth/services';
+import { LoginFacadeService } from '@app/features/iam/auth/services';
 import { LoggerService } from '@app/core/services';
 
 @Component({

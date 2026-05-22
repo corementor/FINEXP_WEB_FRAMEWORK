@@ -1,8 +1,8 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { UserListComponent } from './components/user-list/user-list.component';
-import { RoleListComponent } from './components/role-list/role-list.component';
-import { PermissionListComponent } from './components/permission-list/permission-list.component';
+import { UserListComponent } from './users/components/user-list.component';
+import { RoleListComponent } from './roles/components/role-list.component';
+import { PermissionListComponent } from './permissions/components/permission-list.component';
 
 @Component({
   selector: 'app-management',
