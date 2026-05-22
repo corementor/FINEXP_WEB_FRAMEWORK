@@ -10,6 +10,9 @@ import { EmployeeAuditComponent } from './features/employees/components/employee
 import { authGuard, roleGuard, noAuthGuard } from './core/guards';
 import { UserRole, Permission } from './core/models';
 import { DashboardExampleComponent } from './shared/components/ui-base/examples.component';
+import { JournalListComponent } from './features/journal/components/journal-list/journal-list.component';
+import { JournalEntryPageComponent } from './features/journal/components/journal-entry-page/journal-entry-page.component';
+import { ChartOfAccountsComponent } from './features/journal/components/chart-of-accounts/chart-of-accounts.component';
 
 export const routes: Routes = [
   {
@@ -47,6 +50,20 @@ export const routes: Routes = [
       {
         path: 'examples',
         component: DashboardExampleComponent,
+        data: { permissions: [Permission.PERM_VIEW_DASHBOARD] },
+      },
+      {
+        path: 'journal',
+        data: { permissions: [Permission.PERM_VIEW_DASHBOARD] },
+        children: [
+          { path: '', component: JournalListComponent },
+          { path: 'new', component: JournalEntryPageComponent },
+          { path: ':id/edit', component: JournalEntryPageComponent },
+        ],
+      },
+      {
+        path: 'accounting/chart-of-accounts',
+        component: ChartOfAccountsComponent,
         data: { permissions: [Permission.PERM_VIEW_DASHBOARD] },
       },
       { path: '', redirectTo: 'dashboard', pathMatch: 'full' },

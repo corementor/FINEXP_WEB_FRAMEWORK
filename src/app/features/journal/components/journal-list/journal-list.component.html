@@ -1,0 +1,230 @@
+<div class="space-y-6 p-6">
+
+  <!-- Header -->
+  <div custom-card>
+    <h3 card-title>Journal Transaction Management</h3>
+    <div card-action class="flex items-center gap-3">
+      <app-input
+        [value]="searchTerm()"
+        (changed)="searchTerm.set($event)"
+        placeholder="Search by ref, description, account, tag..."
+      />
+      <app-button label="New Entry" variant="primary" size="small" icon="pi pi-plus" (clicked)="openCreate()"/>
+    </div>
+  </div>
+
+  <!-- Error -->
+  <div *ngIf="error"
+       class="px-4 py-3 rounded-lg bg-red-50 dark:bg-red-950 border border-red-200 dark:border-red-800 text-sm text-red-700 dark:text-red-300"
+       role="alert">
+    <i class="pi pi-exclamation-circle mr-2"></i>{{ error }}
+  </div>
+
+  <!-- Loading -->
+  <div *ngIf="isLoading" class="flex justify-center py-16">
+    <app-spinner size="large" text="Loading journal entries..." />
+  </div>
+
+  <!-- Table -->
+  <div custom-card *ngIf="!isLoading">
+    <h3 card-title>
+      Entries
+      <span class="ml-2 text-xs font-normal text-surface-400">({{ entries().length }})</span>
+    </h3>
+
+    <div class="overflow-x-auto">
+      <table class="w-full text-sm" role="table" aria-label="Journal entries">
+        <thead class="bg-surface-50 dark:bg-surface-800 border-b border-surface-200 dark:border-surface-700">
+          <tr>
+            <th class="w-10 px-3 py-3"></th>
+            <th class="px-3 py-3 text-left text-xs font-semibold text-surface-500 uppercase">Ref #</th>
+            <th class="px-3 py-3 text-left text-xs font-semibold text-surface-500 uppercase">Period</th>
+            <th class="px-3 py-3 text-left text-xs font-semibold text-surface-500 uppercase">Date</th>
+            <th class="px-3 py-3 text-left text-xs font-semibold text-surface-500 uppercase">Type</th>
+            <th class="px-3 py-3 text-left text-xs font-semibold text-surface-500 uppercase">Description</th>
+            <th class="px-3 py-3 text-left text-xs font-semibold text-surface-500 uppercase">Tags</th>
+            <th class="px-3 py-3 text-right text-xs font-semibold text-surface-500 uppercase">Total DR</th>
+            <th class="px-3 py-3 text-left text-xs font-semibold text-surface-500 uppercase">Status</th>
+            <th class="px-3 py-3 text-right text-xs font-semibold text-surface-500 uppercase">Actions</th>
+          </tr>
+        </thead>
+
+        <tbody class="divide-y divide-surface-100 dark:divide-surface-700">
+          <ng-container *ngFor="let entry of entries()">
+
+            <!-- Main row -->
+            <tr class="hover:bg-surface-50 dark:hover:bg-surface-800/50 transition-colors"
+                [class.opacity-60]="entry.status === 'REVERSED'">
+
+              <!-- Expand toggle -->
+              <td class="px-3 py-3 text-center">
+                <button type="button"
+                  (click)="toggleExpand(entry.id)"
+                  class="w-7 h-7 rounded-lg flex items-center justify-center transition-colors
+                         border border-surface-300 dark:border-surface-600
+                         hover:bg-primary-50 dark:hover:bg-primary-900 hover:border-primary-400"
+                  [attr.aria-expanded]="isExpanded(entry.id)"
+                  [attr.aria-label]="(isExpanded(entry.id) ? 'Collapse' : 'Expand') + ' lines'">
+                  <i class="pi text-xs"
+                     [class.pi-chevron-down]="isExpanded(entry.id)"
+                     [class.pi-chevron-right]="!isExpanded(entry.id)"></i>
+                </button>
+              </td>
+
+              <td class="px-3 py-3 font-mono text-xs font-semibold text-surface-700 dark:text-surface-300 whitespace-nowrap">
+                {{ entry.referenceNumber }}
+                <span *ngIf="entry.reversalOfId"
+                  class="ml-1 px-1 py-0.5 rounded text-xs bg-red-100 text-red-600 dark:bg-red-900 dark:text-red-300"
+                  title="This is a reversal entry">REV</span>
+                <span *ngIf="entry.reversedById"
+                  class="ml-1 px-1 py-0.5 rounded text-xs bg-surface-200 text-surface-500 dark:bg-surface-700"
+                  title="This entry has been reversed">↩</span>
+              </td>
+
+              <td class="px-3 py-3 text-xs text-surface-500 whitespace-nowrap">{{ entry.fiscalPeriodName }}</td>
+
+              <td class="px-3 py-3 whitespace-nowrap text-surface-700 dark:text-surface-300 text-xs">
+                {{ entry.entryDate | date:'dd MMM yyyy' }}
+              </td>
+
+              <td class="px-3 py-3">
+                <span class="px-2 py-1 rounded-full text-xs font-semibold" [ngClass]="typeClass(entry.entryType)">
+                  {{ entry.entryType }}
+                </span>
+              </td>
+
+              <td class="px-3 py-3 max-w-xs">
+                <p class="truncate text-surface-900 dark:text-surface-0 text-xs">{{ entry.description }}</p>
+              </td>
+
+              <td class="px-3 py-3">
+                <div class="flex flex-wrap gap-1">
+                  <span *ngFor="let tag of entry.tags"
+                    class="px-1.5 py-0.5 rounded-full text-xs bg-surface-100 dark:bg-surface-700 text-surface-600 dark:text-surface-300">
+                    {{ tag }}
+                  </span>
+                  <span *ngIf="entry.tags.length === 0" class="text-surface-400 text-xs italic">—</span>
+                </div>
+              </td>
+
+              <td class="px-3 py-3 text-right font-mono text-xs font-semibold text-surface-900 dark:text-surface-0 whitespace-nowrap">
+                {{ totalDR(entry) | number:'1.2-2' }}
+              </td>
+
+              <td class="px-3 py-3">
+                <span class="px-2 py-1 rounded-full text-xs font-semibold" [ngClass]="statusClass(entry.status)">
+                  {{ entry.status }}
+                </span>
+              </td>
+
+              <!-- Actions — context-sensitive based on status -->
+              <td class="px-3 py-3">
+                <div class="flex justify-end gap-1">
+                  <app-button *ngIf="entry.status === 'DRAFT'"
+                    label="Edit" variant="ghost" size="small" icon="pi pi-pencil"
+                    (clicked)="openEdit(entry)" />
+                  <app-button *ngIf="entry.status === 'DRAFT'"
+                    label="Post" variant="success" size="small" icon="pi pi-send"
+                    (clicked)="postEntry(entry)" />
+                  <app-button *ngIf="entry.status === 'POSTED' && !entry.reversedById"
+                    label="Reverse" variant="secondary" size="small" icon="pi pi-replay"
+                    (clicked)="reverseEntry(entry)" />
+                  <app-button *ngIf="entry.status === 'DRAFT'"
+                    label="" variant="danger" size="small" icon="pi pi-trash"
+                    (clicked)="deleteEntry(entry)" />
+                </div>
+              </td>
+            </tr>
+
+            <!-- Expanded lines detail -->
+            <tr *ngIf="isExpanded(entry.id)">
+              <td></td>
+              <td colspan="9" class="px-3 pb-4 pt-0">
+                <div class="rounded-xl border-l-4 border-primary-500 bg-surface-50 dark:bg-surface-800/60 p-4">
+
+                  <!-- Entry meta -->
+                  <div class="flex flex-wrap gap-4 mb-3 text-xs text-surface-500">
+                    <span><span class="font-semibold">Created:</span> {{ entry.createdAt | date:'dd MMM yyyy HH:mm' }}</span>
+                    <span *ngIf="entry.postedAt"><span class="font-semibold">Posted:</span> {{ entry.postedAt | date:'dd MMM yyyy HH:mm' }} by {{ entry.postedBy }}</span>
+                    <span *ngIf="entry.reversalOfId" class="text-red-500"><i class="pi pi-info-circle mr-1"></i>Reversal of {{ entry.reversalOfId }}</span>
+                    <span *ngIf="entry.reversedById" class="text-surface-400"><i class="pi pi-info-circle mr-1"></i>Reversed by {{ entry.reversedById }}</span>
+                    <span><span class="font-semibold">Version:</span> {{ entry.version }}</span>
+                  </div>
+
+                  <p class="text-xs font-semibold text-primary-600 dark:text-primary-400 mb-2 flex items-center gap-1">
+                    <i class="pi pi-list"></i> Journal Lines — Double-Entry Ledger
+                  </p>
+
+                  <table class="w-full text-sm" role="table" aria-label="Journal lines">
+                    <thead>
+                      <tr class="text-xs text-surface-500 uppercase border-b border-surface-200 dark:border-surface-700">
+                        <th class="pb-2 text-left font-semibold">Account</th>
+                        <th class="pb-2 text-left font-semibold">Type</th>
+                        <th class="pb-2 text-left font-semibold">Narration</th>
+                        <th class="pb-2 text-right font-semibold text-blue-600 dark:text-blue-400">Debit (DR)</th>
+                        <th class="pb-2 text-right font-semibold text-green-600 dark:text-green-400">Credit (CR)</th>
+                      </tr>
+                    </thead>
+                    <tbody class="divide-y divide-surface-100 dark:divide-surface-700">
+                      <tr *ngFor="let line of entry.lines"
+                          class="hover:bg-surface-100 dark:hover:bg-surface-700/50 transition-colors">
+                        <td class="py-2 pr-4">
+                          <div class="flex items-center gap-2">
+                            <code class="px-1.5 py-0.5 rounded bg-surface-200 dark:bg-surface-700 text-xs font-mono">{{ line.accountCode }}</code>
+                            <span class="font-medium text-surface-900 dark:text-surface-0">{{ line.accountName }}</span>
+                          </div>
+                        </td>
+                        <td class="py-2 pr-4">
+                          <span class="px-1.5 py-0.5 rounded text-xs" [ngClass]="accountTypeClass(line.accountType)">{{ line.accountType }}</span>
+                        </td>
+                        <td class="py-2 pr-4 text-xs text-surface-500 italic">{{ line.description || '—' }}</td>
+                        <td class="py-2 text-right font-mono text-sm font-semibold text-blue-600 dark:text-blue-400">
+                          {{ line.drCr === 'DR' ? (line.amount | number:'1.2-2') : '' }}
+                        </td>
+                        <td class="py-2 text-right font-mono text-sm font-semibold text-green-600 dark:text-green-400">
+                          {{ line.drCr === 'CR' ? (line.amount | number:'1.2-2') : '' }}
+                        </td>
+                      </tr>
+                    </tbody>
+                    <tfoot class="border-t-2 border-surface-300 dark:border-surface-600">
+                      <tr>
+                        <td colspan="3" class="pt-2 font-bold text-surface-700 dark:text-surface-300 text-xs uppercase">
+                          Total
+                          <span *ngIf="isEntryBalanced(entry)" class="ml-2 text-green-600 dark:text-green-400 font-normal normal-case">
+                            <i class="pi pi-check-circle"></i> Balanced
+                          </span>
+                        </td>
+                        <td class="pt-2 text-right font-bold font-mono text-blue-600 dark:text-blue-400">{{ totalDR(entry) | number:'1.2-2' }}</td>
+                        <td class="pt-2 text-right font-bold font-mono text-green-600 dark:text-green-400">{{ totalCR(entry) | number:'1.2-2' }}</td>
+                      </tr>
+                    </tfoot>
+                  </table>
+                </div>
+              </td>
+            </tr>
+
+          </ng-container>
+
+          <!-- Empty state -->
+          <tr *ngIf="entries().length === 0 && !isLoading">
+            <td colspan="10" class="px-4 py-16 text-center">
+              <i class="pi pi-book text-4xl text-surface-300 dark:text-surface-600 block mb-3"></i>
+              <p class="text-surface-500 font-medium">
+                {{ searchTerm() ? 'No entries match your search' : 'No journal entries yet' }}
+              </p>
+              <p class="text-surface-400 text-xs mt-1">
+                {{ searchTerm() ? 'Try a different search term' : 'Click "+ New Entry" to create the first one' }}
+              </p>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Create / Edit Modal removed — now uses dedicated pages:
+       /journal/new        → create
+       /journal/:id/edit   → edit
+  -->
+
+</div>

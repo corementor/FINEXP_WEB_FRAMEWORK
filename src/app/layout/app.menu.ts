@@ -72,6 +72,7 @@ const DEFAULT_MENU_MODEL: MenuItem[] = [
         routerLink: ['/examples'],
         permission: Permission.PERM_VIEW_DASHBOARD,
       },
+
       // {
       //   label: 'Charts of Accounts',
       //   icon: 'pi pi-fw pi-folder',
@@ -220,12 +221,14 @@ const DEFAULT_MENU_MODEL: MenuItem[] = [
       {
         label: 'Journal Entries',
         icon: 'pi pi-fw pi-book',
-        routerLink: ['/accounting/journal-entries'],
+        routerLink: ['/journal'],
+        permission: Permission.PERM_VIEW_DASHBOARD,
       },
       {
         label: 'Chart of Accounts',
         icon: 'pi pi-fw pi-list',
         routerLink: ['/accounting/chart-of-accounts'],
+        permission: Permission.PERM_VIEW_DASHBOARD,
       },
       {
         label: 'Trial Balance',

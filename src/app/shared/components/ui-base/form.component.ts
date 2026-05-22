@@ -245,11 +245,7 @@ export interface FormConfig {
               <!-- checkbox -->
               @if (field.type === 'checkbox') {
                 <div class="flex items-center gap-2 mt-1">
-                  <p-checkbox
-                    [inputId]="field.key"
-                    [formControlName]="field.key"
-                    [binary]="true"
-                  />
+                  <p-checkbox [inputId]="field.key" [formControlName]="field.key" [binary]="true" />
                   <label
                     [for]="field.key"
                     class="text-sm text-surface-700 dark:text-surface-300 cursor-pointer"
@@ -278,13 +274,15 @@ export interface FormConfig {
       </div>
 
       <!-- Actions -->
-      <div class="flex items-center justify-end gap-3 mt-6 pt-4 border-t border-surface-200 dark:border-surface-700">
+      <div
+        class="flex items-center justify-end gap-3 mt-6 pt-4 border-t border-surface-200 dark:border-surface-700"
+      >
         @if (config.showReset) {
           <app-button
             type="button"
             [label]="'Reset'"
             variant="ghost"
-            size="normal"
+            size="small"
             (clicked)="onReset()"
           />
         }
@@ -293,7 +291,7 @@ export interface FormConfig {
             type="button"
             [label]="config.cancelLabel ?? 'Cancel'"
             variant="secondary"
-            size="normal"
+            size="small"
             icon="pi pi-times"
             (clicked)="cancelled.emit()"
           />
@@ -302,7 +300,7 @@ export interface FormConfig {
           type="submit"
           [label]="config.submitLabel ?? 'Submit'"
           variant="primary"
-          size="normal"
+          size="small"
           icon="pi pi-check"
           [loading]="config.loading ?? false"
           [disabled]="form.invalid || (config.loading ?? false)"
@@ -372,8 +370,7 @@ export class AppFormComponent implements OnInit, OnDestroy {
     if (e['email']) return 'Please enter a valid email address';
     if (e['minlength'])
       return `${label} must be at least ${e['minlength'].requiredLength} characters`;
-    if (e['maxlength'])
-      return `${label} cannot exceed ${e['maxlength'].requiredLength} characters`;
+    if (e['maxlength']) return `${label} cannot exceed ${e['maxlength'].requiredLength} characters`;
     if (e['min']) return `${label} must be at least ${e['min'].min}`;
     if (e['max']) return `${label} cannot exceed ${e['max'].max}`;
     if (e['pattern']) return `${label} format is invalid`;

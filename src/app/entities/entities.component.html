@@ -112,7 +112,11 @@
   >
     <app-form
       [form]="employeeForm"
-      [config]="{ ...employeeFormConfig, submitLabel: submitLabel, loading: createEmployeeMutation.isPending() || updateEmployeeMutation.isPending() }"
+      [config]="{
+        ...employeeFormConfig,
+        submitLabel: submitLabel,
+        loading: createEmployeeMutation.isPending() || updateEmployeeMutation.isPending(),
+      }"
       (submitted)="onSubmit($event)"
       (cancelled)="closeModal()"
     />

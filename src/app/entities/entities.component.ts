@@ -18,7 +18,12 @@ import { MessageService } from 'primeng/api';
 import { EmployeeFacadeService, EmployeeMutationService } from '@app/features/employees/services';
 import { Employee, ELifeCycle, ESecurityLabel } from '@app/core/models';
 import { LoggerService } from '@app/core/services';
-import { APP_UI_COMPONENTS, TableColumn, FormConfig, SelectOption } from '@app/shared/components/ui-base';
+import {
+  APP_UI_COMPONENTS,
+  TableColumn,
+  FormConfig,
+  SelectOption,
+} from '@app/shared/components/ui-base';
 
 @Component({
   selector: 'app-entities',
@@ -49,14 +54,56 @@ export class EntitiesComponent implements OnInit {
   readonly employeeFormConfig: FormConfig = {
     columns: 2,
     fields: [
-      { key: 'firstName',     type: 'text',     label: 'First Name',      placeholder: 'e.g. John',          required: true },
-      { key: 'lastName',      type: 'text',     label: 'Last Name',       placeholder: 'e.g. Doe',           required: true },
-      { key: 'employeeNumber',type: 'text',     label: 'Employee Number', placeholder: 'e.g. EMP-001',       required: true },
-      { key: 'nationalId',    type: 'text',     label: 'National ID',     placeholder: 'National ID',        required: true },
-      { key: 'emailAddress',  type: 'email',    label: 'Email Address',   placeholder: 'email@example.com',  required: true },
-      { key: 'securityLabel', type: 'select',   label: 'Security Label',  required: true, colSpan: 2,
-        options: Object.values(ESecurityLabel).map((v) => ({ label: v, value: v })) },
-      { key: 'comments',      type: 'textarea', label: 'Comments',        placeholder: 'Optional comments...', colSpan: 2 },
+      {
+        key: 'firstName',
+        type: 'text',
+        label: 'First Name',
+        placeholder: 'e.g. John',
+        required: true,
+      },
+      {
+        key: 'lastName',
+        type: 'text',
+        label: 'Last Name',
+        placeholder: 'e.g. Doe',
+        required: true,
+      },
+      {
+        key: 'employeeNumber',
+        type: 'text',
+        label: 'Employee Number',
+        placeholder: 'e.g. EMP-001',
+        required: true,
+      },
+      {
+        key: 'nationalId',
+        type: 'text',
+        label: 'National ID',
+        placeholder: 'National ID',
+        required: true,
+      },
+      {
+        key: 'emailAddress',
+        type: 'email',
+        label: 'Email Address',
+        placeholder: 'email@example.com',
+        required: true,
+      },
+      {
+        key: 'securityLabel',
+        type: 'select',
+        label: 'Security Label',
+        required: true,
+        colSpan: 2,
+        options: Object.values(ESecurityLabel).map((v) => ({ label: v, value: v })),
+      },
+      {
+        key: 'comments',
+        type: 'textarea',
+        label: 'Comments',
+        placeholder: 'Optional comments...',
+        colSpan: 2,
+      },
     ],
   };
 
@@ -345,7 +392,11 @@ export class EntitiesComponent implements OnInit {
     if (this.isEditMode && this.selectedEmployeeId) {
       this.updateEmployeeMutation.mutate(
         { id: this.selectedEmployeeId, updates: employeeData },
-        { onError: () => { this.error = 'Failed to update employee'; } },
+        {
+          onError: () => {
+            this.error = 'Failed to update employee';
+          },
+        },
       );
     } else {
       this.createEmployeeMutation.mutate(employeeData);
