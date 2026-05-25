@@ -262,7 +262,7 @@ const DEFAULT_MENU_MODEL: MenuItem[] = [
       {
         label: 'Balance Sheet',
         icon: 'pi pi-fw pi-table',
-        routerLink: ['/reports/balance-sheet'],
+        routerLink: ['/accounting/balance-sheet'],
       },
       {
         label: 'Income Statement',

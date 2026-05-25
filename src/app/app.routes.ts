@@ -7,23 +7,20 @@ import { WorkflowsComponent } from './features/hr/workflows/components/workflows
 import { AuditTrailComponent } from './features/hr/audit/components/audit-trail.component';
 import { ManagementComponent } from './features/iam/management.component';
 import { EmployeeAuditComponent } from './features/hr/employees/components/employee-audit.component';
-import { authGuard, roleGuard, noAuthGuard } from './core/guards';
-import { UserRole, Permission } from './core/models';
+import { authGuard, noAuthGuard } from './core/guards';
+import { Permission } from './core/models';
 import { DashboardExampleComponent } from './shared/components/ui-base/examples.component';
-import { JournalListComponent } from './features/accounting/journal/components/journal-list/journal-list.component';
-import { JournalEntryPageComponent } from './features/accounting/journal/components/journal-entry-page/journal-entry-page.component';
-import { ChartOfAccountsComponent } from './features/accounting/chart-of-accounts/components/chart-of-accounts.component';
 
 export const routes: Routes = [
   {
     path: 'login',
     component: LoginComponent,
-    canActivate: [noAuthGuard], // Prevent logged-in users from accessing login
+    canActivate: [noAuthGuard],
   },
   {
     path: '',
     component: LayoutComponent,
-    canActivate: [authGuard], // Require authentication for all child routes
+    canActivate: [authGuard],
     children: [
       { path: 'dashboard', component: DashboardComponent },
       { path: 'entities', component: EntitiesComponent },
@@ -52,18 +49,49 @@ export const routes: Routes = [
         component: DashboardExampleComponent,
         data: { permissions: [Permission.PERM_VIEW_DASHBOARD] },
       },
+      // ── Accounting — lazy loaded to break circular dependency ──────────
       {
         path: 'journal',
         data: { permissions: [Permission.PERM_VIEW_DASHBOARD] },
         children: [
-          { path: '', component: JournalListComponent },
-          { path: 'new', component: JournalEntryPageComponent },
-          { path: ':id/edit', component: JournalEntryPageComponent },
+          {
+            path: '',
+            loadComponent: () =>
+              import('./features/accounting/journal/components/journal-list/journal-list.component').then(
+                (m) => m.JournalListComponent,
+              ),
+          },
+          {
+            path: 'new',
+            loadComponent: () =>
+              import('./features/accounting/journal/components/journal-entry-page/journal-entry-page.component').then(
+                (m) => m.JournalEntryPageComponent,
+              ),
+          },
+          {
+            path: ':id/edit',
+            loadComponent: () =>
+              import('./features/accounting/journal/components/journal-entry-page/journal-entry-page.component').then(
+                (m) => m.JournalEntryPageComponent,
+              ),
+          },
         ],
       },
+
       {
         path: 'accounting/chart-of-accounts',
-        component: ChartOfAccountsComponent,
+        loadComponent: () =>
+          import('./features/accounting/chart-of-accounts/components/chart-of-accounts.component').then(
+            (m) => m.ChartOfAccountsComponent,
+          ),
+        data: { permissions: [Permission.PERM_VIEW_DASHBOARD] },
+      },
+      {
+        path: 'accounting/balance-sheet',
+        loadComponent: () =>
+          import('./features/accounting/balance-sheet/components/balance-sheet.component').then(
+            (m) => m.BalanceSheetComponent,
+          ),
         data: { permissions: [Permission.PERM_VIEW_DASHBOARD] },
       },
       { path: '', redirectTo: 'dashboard', pathMatch: 'full' },

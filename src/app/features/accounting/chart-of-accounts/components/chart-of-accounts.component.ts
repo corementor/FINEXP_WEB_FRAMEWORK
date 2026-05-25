@@ -16,15 +16,12 @@ import {
   AbstractControl,
 } from '@angular/forms';
 import { DrawerModule } from 'primeng/drawer';
+import { InputTextModule } from 'primeng/inputtext';
+import { TextareaModule } from 'primeng/textarea';
 import { APP_UI_COMPONENTS } from '@app/shared/components/ui-base';
 import { ToastService } from '@app/shared/components/ui-base/toast.service';
 import { JournalFacadeService } from '../../journal/services/journal-facade.service';
-import {
-  ChartOfAccount,
-  AccountType,
-  AccountStatus,
-  DrCr,
-} from '@app/core/models/journal.models';
+import { ChartOfAccount, AccountType, AccountStatus, DrCr } from '@app/core/models/journal.models';
 
 // ── Constants ─────────────────────────────────────────────────────────────────
 
@@ -32,21 +29,91 @@ const ACCOUNT_TYPES: AccountType[] = ['ASSET', 'LIABILITY', 'EQUITY', 'REVENUE',
 
 const TYPE_META: Record<
   AccountType,
-  { label: string; range: string; normalBalance: DrCr; color: string; icon: string; bsSection: string }
+  {
+    label: string;
+    range: string;
+    normalBalance: DrCr;
+    color: string;
+    icon: string;
+    bsSection: string;
+  }
 > = {
-  ASSET:     { label: 'Assets',       range: '1000–1999', normalBalance: 'DR', color: 'blue',   icon: 'pi-building',      bsSection: 'Balance Sheet' },
-  LIABILITY: { label: 'Liabilities',  range: '2000–2999', normalBalance: 'CR', color: 'red',    icon: 'pi-credit-card',   bsSection: 'Balance Sheet' },
-  EQUITY:    { label: 'Equity',       range: '3000–3999', normalBalance: 'CR', color: 'purple', icon: 'pi-chart-pie',     bsSection: 'Balance Sheet' },
-  REVENUE:   { label: 'Revenue',      range: '4000–4999', normalBalance: 'CR', color: 'green',  icon: 'pi-arrow-up',      bsSection: 'Income Statement' },
-  EXPENSE:   { label: 'Expenses',     range: '5000–5999', normalBalance: 'DR', color: 'orange', icon: 'pi-arrow-down',    bsSection: 'Income Statement' },
+  ASSET: {
+    label: 'Assets',
+    range: '1000–1999',
+    normalBalance: 'DR',
+    color: 'blue',
+    icon: 'pi-building',
+    bsSection: 'Balance Sheet',
+  },
+  LIABILITY: {
+    label: 'Liabilities',
+    range: '2000–2999',
+    normalBalance: 'CR',
+    color: 'red',
+    icon: 'pi-credit-card',
+    bsSection: 'Balance Sheet',
+  },
+  EQUITY: {
+    label: 'Equity',
+    range: '3000–3999',
+    normalBalance: 'CR',
+    color: 'purple',
+    icon: 'pi-chart-pie',
+    bsSection: 'Balance Sheet',
+  },
+  REVENUE: {
+    label: 'Revenue',
+    range: '4000–4999',
+    normalBalance: 'CR',
+    color: 'green',
+    icon: 'pi-arrow-up',
+    bsSection: 'Income Statement',
+  },
+  EXPENSE: {
+    label: 'Expenses',
+    range: '5000–5999',
+    normalBalance: 'DR',
+    color: 'orange',
+    icon: 'pi-arrow-down',
+    bsSection: 'Income Statement',
+  },
 };
 
-const COLOR_CLASSES: Record<string, { badge: string; header: string; border: string; text: string }> = {
-  blue:   { badge: 'bg-blue-100 text-blue-700 dark:bg-blue-900 dark:text-blue-300',     header: 'bg-blue-50 dark:bg-blue-950',   border: 'border-blue-300 dark:border-blue-700',   text: 'text-blue-700 dark:text-blue-300' },
-  red:    { badge: 'bg-red-100 text-red-700 dark:bg-red-900 dark:text-red-300',         header: 'bg-red-50 dark:bg-red-950',     border: 'border-red-300 dark:border-red-700',     text: 'text-red-700 dark:text-red-300' },
-  purple: { badge: 'bg-purple-100 text-purple-700 dark:bg-purple-900 dark:text-purple-300', header: 'bg-purple-50 dark:bg-purple-950', border: 'border-purple-300 dark:border-purple-700', text: 'text-purple-700 dark:text-purple-300' },
-  green:  { badge: 'bg-green-100 text-green-700 dark:bg-green-900 dark:text-green-300', header: 'bg-green-50 dark:bg-green-950', border: 'border-green-300 dark:border-green-700', text: 'text-green-700 dark:text-green-300' },
-  orange: { badge: 'bg-orange-100 text-orange-700 dark:bg-orange-900 dark:text-orange-300', header: 'bg-orange-50 dark:bg-orange-950', border: 'border-orange-300 dark:border-orange-700', text: 'text-orange-700 dark:text-orange-300' },
+const COLOR_CLASSES: Record<
+  string,
+  { badge: string; header: string; border: string; text: string }
+> = {
+  blue: {
+    badge: 'bg-blue-100 text-blue-700 dark:bg-blue-900 dark:text-blue-300',
+    header: 'bg-blue-50 dark:bg-blue-950',
+    border: 'border-blue-300 dark:border-blue-700',
+    text: 'text-blue-700 dark:text-blue-300',
+  },
+  red: {
+    badge: 'bg-red-100 text-red-700 dark:bg-red-900 dark:text-red-300',
+    header: 'bg-red-50 dark:bg-red-950',
+    border: 'border-red-300 dark:border-red-700',
+    text: 'text-red-700 dark:text-red-300',
+  },
+  purple: {
+    badge: 'bg-purple-100 text-purple-700 dark:bg-purple-900 dark:text-purple-300',
+    header: 'bg-purple-50 dark:bg-purple-950',
+    border: 'border-purple-300 dark:border-purple-700',
+    text: 'text-purple-700 dark:text-purple-300',
+  },
+  green: {
+    badge: 'bg-green-100 text-green-700 dark:bg-green-900 dark:text-green-300',
+    header: 'bg-green-50 dark:bg-green-950',
+    border: 'border-green-300 dark:border-green-700',
+    text: 'text-green-700 dark:text-green-300',
+  },
+  orange: {
+    badge: 'bg-orange-100 text-orange-700 dark:bg-orange-900 dark:text-orange-300',
+    header: 'bg-orange-50 dark:bg-orange-950',
+    border: 'border-orange-300 dark:border-orange-700',
+    text: 'text-orange-700 dark:text-orange-300',
+  },
 };
 
 /**
@@ -67,7 +134,14 @@ const COLOR_CLASSES: Record<string, { badge: string; header: string; border: str
   selector: 'app-chart-of-accounts',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CommonModule, ReactiveFormsModule, DrawerModule, ...APP_UI_COMPONENTS],
+  imports: [
+    CommonModule,
+    ReactiveFormsModule,
+    DrawerModule,
+    InputTextModule,
+    TextareaModule,
+    ...APP_UI_COMPONENTS,
+  ],
   templateUrl: './chart-of-accounts.component.html',
 })
 export class ChartOfAccountsComponent implements OnInit {
@@ -134,9 +208,7 @@ export class ChartOfAccountsComponent implements OnInit {
     };
   });
 
-  readonly drawerTitle = computed(() =>
-    this.editingCode() ? 'Edit Account' : 'New Account',
-  );
+  readonly drawerTitle = computed(() => (this.editingCode() ? 'Edit Account' : 'New Account'));
 
   readonly isEditMode = computed(() => !!this.editingCode());
 
@@ -167,14 +239,14 @@ export class ChartOfAccountsComponent implements OnInit {
 
   private buildForm(): void {
     this.form = this.fb.group({
-      code:          ['', [Validators.required, Validators.pattern(/^\d{4}$/)]],
-      name:          ['', [Validators.required, Validators.minLength(3)]],
-      type:          ['', Validators.required],
+      code: ['', [Validators.required, Validators.pattern(/^\d{4}$/)]],
+      name: ['', [Validators.required, Validators.minLength(3)]],
+      type: ['', Validators.required],
       normalBalance: ['', Validators.required],
-      parentCode:    [''],
-      isContra:      [false],
-      status:        ['ACTIVE', Validators.required],
-      description:   [''],
+      parentCode: [''],
+      isContra: [false],
+      status: ['ACTIVE', Validators.required],
+      description: [''],
     });
 
     // Auto-set normalBalance when type changes (accounting default)
@@ -196,14 +268,14 @@ export class ChartOfAccountsComponent implements OnInit {
   openEdit(account: ChartOfAccount): void {
     this.editingCode.set(account.code);
     this.form.patchValue({
-      code:          account.code,
-      name:          account.name,
-      type:          account.type,
+      code: account.code,
+      name: account.name,
+      type: account.type,
       normalBalance: account.normalBalance,
-      parentCode:    account.parentCode ?? '',
-      isContra:      account.isContra ?? false,
-      status:        account.status,
-      description:   account.description ?? '',
+      parentCode: account.parentCode ?? '',
+      isContra: account.isContra ?? false,
+      status: account.status,
+      description: account.description ?? '',
     });
     this.form.get('code')?.disable(); // code is immutable after creation
     this.drawerVisible.set(true);
@@ -223,14 +295,14 @@ export class ChartOfAccountsComponent implements OnInit {
     this.cdr.markForCheck();
 
     const payload = {
-      code:          v.code,
-      name:          v.name,
-      type:          v.type as AccountType,
+      code: v.code,
+      name: v.name,
+      type: v.type as AccountType,
       normalBalance: v.normalBalance as DrCr,
-      parentCode:    v.parentCode || undefined,
-      isContra:      v.isContra ?? false,
-      status:        v.status as AccountStatus,
-      description:   v.description || undefined,
+      parentCode: v.parentCode || undefined,
+      isContra: v.isContra ?? false,
+      status: v.status as AccountStatus,
+      description: v.description || undefined,
     };
 
     const op$ = this.isEditMode()
