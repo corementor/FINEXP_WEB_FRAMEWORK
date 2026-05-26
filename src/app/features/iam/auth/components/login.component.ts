@@ -27,10 +27,12 @@ export class LoginComponent implements OnInit, OnDestroy {
   private readonly loginFacade = inject(LoginFacadeService);
   private readonly logger = inject(LoggerService);
   private readonly destroy$ = new Subject<void>();
+  currentYear: number = new Date().getFullYear();
 
   loginForm!: FormGroup;
   isLoading = false;
   error: string | null = null;
+  errorTimeout: any;
 
   ngOnInit(): void {
     // Initialize form with validation
@@ -43,11 +45,19 @@ export class LoginComponent implements OnInit, OnDestroy {
     if (this.loginFacade.isAuthenticated()) {
       this.router.navigate(['/dashboard']);
     }
+
+    // Clear error messages after 10 seconds
+    this.loginForm.valueChanges.pipe(takeUntil(this.destroy$)).subscribe(() => {
+      if (this.error) {
+        this.clearError();
+      }
+    });
   }
 
   onLogin(): void {
     if (this.loginForm.invalid) {
       this.logger.warn('Login form invalid', { errors: this.loginForm.errors });
+      this.markFormGroupTouched(this.loginForm);
       return;
     }
 
@@ -63,19 +73,53 @@ export class LoginComponent implements OnInit, OnDestroy {
         next: (response) => {
           this.isLoading = false;
           this.logger.info('Login successful', { email });
-          this.router.navigate(['/dashboard']);
+          // Add a small delay for UX feedback
+          setTimeout(() => {
+            this.router.navigate(['/dashboard']);
+          }, 300);
         },
         error: (err) => {
           this.isLoading = false;
-          this.error = err.message || 'Login failed. Please check your credentials.';
+          this.error =
+            err?.error?.message ||
+            err?.message ||
+            'Login failed. Please check your credentials and try again.';
           this.logger.error('Login failed', err);
+          // Auto-clear error after 10 seconds
+          this.setErrorTimeout();
         },
       });
+  }
+
+  private setErrorTimeout(): void {
+    if (this.errorTimeout) {
+      clearTimeout(this.errorTimeout);
+    }
+    this.errorTimeout = setTimeout(() => {
+      this.clearError();
+    }, 10000);
+  }
+
+  private clearError(): void {
+    this.error = null;
+    if (this.errorTimeout) {
+      clearTimeout(this.errorTimeout);
+    }
+  }
+
+  private markFormGroupTouched(formGroup: FormGroup): void {
+    Object.keys(formGroup.controls).forEach((key) => {
+      const control = formGroup.get(key);
+      control?.markAsTouched();
+    });
   }
 
   ngOnDestroy(): void {
     this.destroy$.next();
     this.destroy$.complete();
+    if (this.errorTimeout) {
+      clearTimeout(this.errorTimeout);
+    }
   }
 
   get emailControl() {

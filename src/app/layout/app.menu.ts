@@ -92,6 +92,36 @@ const DEFAULT_MENU_MODEL: MenuItem[] = [
   },
   { separator: true },
   {
+    label: 'Accounting',
+    icon: 'pi pi-fw pi-file',
+    path: '/accounting',
+    items: [
+      {
+        label: 'Journal Entries',
+        icon: 'pi pi-fw pi-book',
+        routerLink: ['/journal'],
+        permission: Permission.PERM_VIEW_DASHBOARD,
+      },
+      {
+        label: 'Chart of Accounts',
+        icon: 'pi pi-fw pi-list',
+        routerLink: ['/accounting/chart-of-accounts'],
+        permission: Permission.PERM_VIEW_DASHBOARD,
+      },
+      {
+        label: 'Trial Balance',
+        icon: 'pi pi-fw pi-table',
+        routerLink: ['/accounting/trial-balance'],
+      },
+      {
+        label: 'Financial Statements',
+        icon: 'pi pi-fw pi-file-export',
+        routerLink: ['/accounting/financial-statements'],
+      },
+    ],
+  },
+  { separator: true },
+  {
     label: 'Charts of Accounts',
     icon: 'pi pi-fw pi-briefcase',
     path: '/pages',
@@ -212,36 +242,7 @@ const DEFAULT_MENU_MODEL: MenuItem[] = [
       },
     ],
   },
-  { separator: true },
-  {
-    label: 'Accounting',
-    icon: 'pi pi-fw pi-file',
-    path: '/accounting',
-    items: [
-      {
-        label: 'Journal Entries',
-        icon: 'pi pi-fw pi-book',
-        routerLink: ['/journal'],
-        permission: Permission.PERM_VIEW_DASHBOARD,
-      },
-      {
-        label: 'Chart of Accounts',
-        icon: 'pi pi-fw pi-list',
-        routerLink: ['/accounting/chart-of-accounts'],
-        permission: Permission.PERM_VIEW_DASHBOARD,
-      },
-      {
-        label: 'Trial Balance',
-        icon: 'pi pi-fw pi-table',
-        routerLink: ['/accounting/trial-balance'],
-      },
-      {
-        label: 'Financial Statements',
-        icon: 'pi pi-fw pi-file-export',
-        routerLink: ['/accounting/financial-statements'],
-      },
-    ],
-  },
+
   { separator: true },
 
   {
