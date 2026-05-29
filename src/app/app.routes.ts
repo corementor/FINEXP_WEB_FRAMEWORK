@@ -94,6 +94,14 @@ export const routes: Routes = [
           ),
         data: { permissions: [Permission.PERM_VIEW_DASHBOARD] },
       },
+      {
+        path: 'accounting/trial-balance',
+        loadComponent: () =>
+          import('./features/accounting/trial-balance/trial-balance.component').then(
+            (m) => m.TrialBalanceComponent,
+          ),
+        data: { permissions: [Permission.PERM_VIEW_TRIAL_BALANCE] },
+      },
       { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
     ],
   },
