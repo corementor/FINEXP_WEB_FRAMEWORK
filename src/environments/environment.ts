@@ -1,6 +1,5 @@
 /**
  * Development environment configuration
- * Used when running with: ng serve
  */
 export const environment = {
   production: false,

@@ -60,15 +60,15 @@ import { AppRightMenu } from './app.rightmenu';
           <i class="pi pi-bars"></i>
         </button>
 
-        <button
+        <!-- <button
           type="button"
           (click)="layoutService.toggleConfigSidebar()"
           class="app-config-button"
         >
           <i class="pi pi-cog"></i>
-        </button>
+        </button> -->
 
-        <div class="relative">
+        <!-- <div class="relative">
           <a
             pStyleClass="@next"
             enterFromClass="hidden"
@@ -82,7 +82,7 @@ import { AppRightMenu } from './app.rightmenu';
           <div class="absolute hidden min-w-72 top-auto right-0 z-20 mt-2">
             <div app-notifications styleClass="w-full sm:w-[22rem]"></div>
           </div>
-        </div>
+        </div> -->
 
         <!-- <div class="relative">
           <a
