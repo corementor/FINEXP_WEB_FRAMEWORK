@@ -16,32 +16,8 @@ export class ValidationService {
    */
   validateEmployeeForm(formData: any): Observable<{ valid: boolean; errors: string[] }> {
     const errors: string[] = [];
-
-    // Rule: Employee number must be unique (mock check)
-    if (!this.isEmployeeNumberUnique(formData.employeeNumber)) {
-      errors.push('Employee number already exists');
-    }
-
-    // Rule: Email must be unique (mock check)
-    if (!this.isEmailUnique(formData.emailAddress)) {
-      errors.push('Email address already in use');
-    }
-
-    // Rule: National ID must be unique (mock check)
-    if (!this.isNationalIdUnique(formData.nationalId)) {
-      errors.push('National ID already registered');
-    }
-
-    // Rule: Name must have at least 2 parts (first and last)
-    const nameParts = formData.name?.trim().split(/\s+/) || [];
-    if (nameParts.length < 2) {
-      errors.push('Please provide both first and last name');
-    }
-
-    return of({
-      valid: errors.length === 0,
-      errors,
-    });
+    // Client-side uniqueness checks removed — backend enforces these constraints
+    return of({ valid: errors.length === 0, errors });
   }
 
   /**

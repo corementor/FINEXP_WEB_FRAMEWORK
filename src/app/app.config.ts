@@ -12,6 +12,7 @@ import { routes } from './app.routes';
 import { provideClientHydration, withEventReplay } from '@angular/platform-browser';
 import { ErrorInterceptor, AuthInterceptor, LoadingInterceptor } from './core/interceptors';
 import { providePrimeNG } from 'primeng/config';
+import { MessageService } from 'primeng/api';
 import Aura from '@primeuix/themes/aura';
 
 import { definePreset } from '@primeuix/themes';
@@ -39,6 +40,7 @@ const MyPreset = definePreset(Aura, {
 export const appConfig: ApplicationConfig = {
   providers: [
     providePrimeNG({ theme: { preset: MyPreset, options: { darkModeSelector: '.app-dark' } } }),
+    MessageService,
     provideBrowserGlobalErrorListeners(),
     provideRouter(routes),
     provideHttpClient(

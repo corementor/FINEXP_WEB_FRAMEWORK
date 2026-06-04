@@ -1,0 +1,172 @@
+<div class="space-y-6">
+  <!-- Header with Add Role Button -->
+  <div class="flex justify-between items-center">
+    <app-heading level="h2">Roles</app-heading>
+    <app-button
+      label="+ Add Role"
+      variant="primary"
+      size="small"
+      (clicked)="openCreateRoleModal()"
+    />
+  </div>
+
+  <!-- Loading State -->
+  @if (loading) {
+    <div class="text-center py-8">
+      <app-spinner size="medium" />
+    </div>
+  }
+
+  <!-- Roles Grid -->
+  @if (!loading && roles.length > 0) {
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      @for (role of roles; track role.id) {
+        <div custom-card>
+          <div class="flex justify-between items-start mb-3">
+            <div>
+              <h3 card-title>{{ role.roleName }}</h3>
+              <app-text size="sm" color="secondary">{{ role.roleCode }}</app-text>
+            </div>
+            <span
+              class="px-2 py-1 text-xs rounded-full"
+              [ngClass]="
+                role.state === 'ACTIVE' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
+              "
+            >
+              {{ role.state }}
+            </span>
+          </div>
+
+          @if (role.description) {
+            <app-text size="base" color="secondary" class="mb-3">{{ role.description }}</app-text>
+          }
+
+          <!-- Permissions List -->
+          @if (role.permissions && role.permissions.length > 0) {
+            <div class="mb-4">
+              <app-text size="sm" class="mb-2">
+                Permissions ({{ role.permissions.length }})
+              </app-text>
+              <div class="flex flex-wrap gap-2">
+                @for (perm of role.permissions | slice: 0 : 3; track perm.id) {
+                  <span class="px-2 py-1 bg-blue-50 text-blue-700 text-xs rounded">{{
+                    perm.permissionCode
+                  }}</span>
+                }
+                @if (role.permissions.length > 3) {
+                  <span class="px-2 py-1 bg-gray-100 text-gray-600 text-xs rounded"
+                    >+{{ role.permissions.length - 3 }}</span
+                  >
+                }
+              </div>
+            </div>
+          }
+
+          <!-- Actions -->
+          <div card-action class="flex gap-2 pt-4 border-t border-gray-200">
+            <app-button
+              label="Edit"
+              variant="secondary"
+              size="small"
+              (clicked)="openEditRoleModal(role)"
+            />
+            <app-button
+              label="Permissions"
+              variant="secondary"
+              size="small"
+              (clicked)="openPermissionsModal(role)"
+            />
+            <app-button
+              label="Delete"
+              variant="danger"
+              size="small"
+              (clicked)="deleteRole(role.id)"
+            />
+          </div>
+        </div>
+      }
+    </div>
+  }
+
+  <!-- Empty State -->
+  @if (!loading && roles.length === 0) {
+    <div class="text-center py-8 border border-gray-200 rounded-lg">
+      <app-text size="base" color="secondary">No roles found. Create one to get started.</app-text>
+    </div>
+  }
+</div>
+
+<!-- Create/Edit Role Modal -->
+@if (showRoleModal) {
+  <app-modal [visible]="showRoleModal" header="Create Role" (onHide)="closeRoleModal()">
+    <form (ngSubmit)="saveRole()" class="space-y-4">
+      <app-input
+        label="Role Code"
+        type="text"
+        [(ngModel)]="roleForm.roleCode"
+        name="roleCode"
+        [disabled]="!!editingRole"
+        required
+      />
+
+      <app-input
+        label="Role Name"
+        type="text"
+        [(ngModel)]="roleForm.roleName"
+        name="roleName"
+        required
+      />
+
+      <div>
+        <app-label>Description</app-label>
+        <textarea
+          [(ngModel)]="roleForm.description"
+          name="description"
+          class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+          rows="3"
+        ></textarea>
+      </div>
+
+      <div class="flex gap-2 pt-4 border-t border-gray-200">
+        <app-button label="Cancel" variant="secondary" (clicked)="closeRoleModal()" size="small" />
+        <app-button
+          label="{{ editingRole ? 'Update' : 'Create' }}"
+          variant="primary"
+          type="submit"
+          size="small"
+        />
+      </div>
+    </form>
+  </app-modal>
+}
+
+<!-- Assign Permissions Modal -->
+@if (showPermissionsModal && selectedRole) {
+  <app-modal
+    [visible]="showPermissionsModal"
+    header="Assign Permissions"
+    (onHide)="closePermissionsModal()"
+  >
+    <div class="space-y-3 max-h-96 overflow-y-auto mb-4">
+      @for (permission of availablePermissions; track permission.id) {
+        <label class="flex items-start gap-3 p-2 hover:bg-gray-50 rounded">
+          <input
+            type="checkbox"
+            [checked]="isPermissionSelected(permission.id)"
+            (change)="togglePermission(permission.id)"
+            class="w-4 h-4 text-blue-600 rounded focus:ring-2 focus:ring-blue-500 mt-1"
+          />
+          <div class="flex-1">
+            <p class="text-sm font-medium text-gray-800">{{ permission.permissionName }}</p>
+            <app-text size="sm" color="secondary">{{ permission.permissionCode }}</app-text>
+          </div>
+        </label>
+      }
+    </div>
+
+    <div class="flex gap-2 pt-4 border-t border-gray-200">
+      <app-button label="Cancel" variant="secondary" (clicked)="closePermissionsModal()" />
+      <app-button label="Save Permissions" variant="primary" (clicked)="savePermissions()" />
+    </div>
+  </app-modal>
+}

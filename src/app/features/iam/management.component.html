@@ -1,0 +1,53 @@
+<div class="p-6">
+  <!-- Header Section -->
+  <div class="mb-6">
+    <app-heading level="h1" class="mb-2">User Management</app-heading>
+    <app-text size="base" color="secondary"
+      >Manage users, roles, and permissions in the system</app-text
+    >
+  </div>
+
+  <!-- Tabs Navigation -->
+  <div class="flex gap-2 border-b border-gray-200 mb-6">
+    <app-button
+      label="Users"
+      variant="ghost"
+      [class.border-b-2]="activeTab === 'users'"
+      [class.border-blue-600]="activeTab === 'users'"
+      [class.text-blue-600]="activeTab === 'users'"
+      [class.text-gray-600]="activeTab !== 'users'"
+      (clicked)="onTabChange('users')"
+    />
+    <app-button
+      label="Roles"
+      variant="ghost"
+      [class.border-b-2]="activeTab === 'roles'"
+      [class.border-blue-600]="activeTab === 'roles'"
+      [class.text-blue-600]="activeTab === 'roles'"
+      [class.text-gray-600]="activeTab !== 'roles'"
+      (clicked)="onTabChange('roles')"
+    />
+    <app-button
+      label="Permissions"
+      variant="ghost"
+      [class.border-b-2]="activeTab === 'permissions'"
+      [class.border-blue-600]="activeTab === 'permissions'"
+      [class.text-blue-600]="activeTab === 'permissions'"
+      [class.text-gray-600]="activeTab !== 'permissions'"
+      (clicked)="onTabChange('permissions')"
+    />
+  </div>
+
+  <!-- Tab Content -->
+  @if (activeTab === 'users') {
+    <app-user-list></app-user-list>
+  }
+
+  @if (activeTab === 'roles') {
+    <app-role-list></app-role-list>
+  }
+
+  @if (activeTab === 'permissions') {
+    <app-permission-list></app-permission-list>
+  }
+</div>

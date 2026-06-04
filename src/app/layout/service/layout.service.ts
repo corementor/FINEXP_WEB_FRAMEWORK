@@ -31,13 +31,13 @@ interface MenuChangeEvent {
     providedIn: 'root'
 })
 export class LayoutService {
-    layoutConfig = signal<LayoutConfig>({
-        preset: 'Aura',
-        primary: 'blue',
-        surface: null,
-        darkTheme: false,
-        menuMode: 'static'
-    });
+     layoutConfig = signal<LayoutConfig>({
+         preset: 'Aura',
+         primary: 'cyan',
+         surface: null,
+         darkTheme: false,
+         menuMode: 'static'
+     });
 
     layoutState = signal<LayoutState>({
         staticMenuInactive: false,

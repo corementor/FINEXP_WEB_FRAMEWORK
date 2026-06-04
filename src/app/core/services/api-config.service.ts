@@ -36,4 +36,42 @@ export class ApiConfigService {
   get refreshTokenEndpoint(): string {
     return `${this.authUrl}/refresh`;
   }
+
+  // ── Accounting / Finance endpoints ──────────────────────────────────────────
+
+  get journalEndpoint(): string {
+    return `${this.baseUrl}/journal-entries`;
+  }
+
+  get chartOfAccountsEndpoint(): string {
+    return `${this.baseUrl}/chart-of-accounts`;
+  }
+
+  get fiscalPeriodsEndpoint(): string {
+    return `${this.baseUrl}/fiscal-periods`;
+  }
+
+  get trialBalanceEndpoint(): string {
+    return `${this.baseUrl}/reports/trial-balance`;
+  }
+
+  get financialStatementsEndpoint(): string {
+    return `${this.baseUrl}/reports/financial-statements`;
+  }
+
+  get budgetEndpoint(): string {
+    return `${this.baseUrl}/budget`;
+  }
+
+  get paymentsEndpoint(): string {
+    return `${this.baseUrl}/payments`;
+  }
+
+  get receiptsEndpoint(): string {
+    return `${this.baseUrl}/receipts`;
+  }
+
+  get commitmentsEndpoint(): string {
+    return `${this.baseUrl}/commitments`;
+  }
 }

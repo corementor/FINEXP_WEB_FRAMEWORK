@@ -1,0 +1,414 @@
+<div
+  class="min-h-screen relative overflow-hidden bg-[radial-gradient(circle_at_top_left,_rgba(67,142,185,0.18),_transparent_30%),radial-gradient(circle_at_top_right,_rgba(91,192,222,0.16),_transparent_28%),linear-gradient(135deg,_#f8fcff_0%,_#eef7fb_40%,_#e9f3f8_100%)] dark:bg-[radial-gradient(circle_at_top_left,_rgba(67,142,185,0.24),_transparent_30%),radial-gradient(circle_at_top_right,_rgba(91,192,222,0.18),_transparent_28%),linear-gradient(135deg,_#07111d_0%,_#0b1723_45%,_#09131c_100%)]"
+>
+  <div class="absolute inset-0 pointer-events-none">
+    <div
+      class="absolute -left-24 top-16 h-72 w-72 rounded-full blur-3xl opacity-70"
+      style="background: rgba(67, 142, 185, 0.12)"
+    ></div>
+    <div
+      class="absolute -right-24 top-32 h-80 w-80 rounded-full blur-3xl opacity-60"
+      style="background: rgba(91, 192, 222, 0.12)"
+    ></div>
+    <div
+      class="absolute bottom-0 left-1/3 h-96 w-96 rounded-full blur-3xl opacity-40"
+      style="background: rgba(91, 192, 222, 0.1)"
+    ></div>
+  </div>
+
+  <div
+    class="relative z-10 min-h-screen px-4 py-8 sm:px-6 lg:px-8 flex items-center justify-center"
+  >
+    <div class="w-full max-w-7xl">
+      <div class="grid grid-cols-1 lg:grid-cols-[1.1fr_0.9fr] gap-10 items-center">
+        <section
+          class="hidden lg:flex flex-col items-center justify-center gap-8 pr-8 xl:pr-16 text-slate-900 dark:text-white"
+        >
+          <!-- Finance Illustration SVG -->
+          <svg
+            viewBox="0 0 400 400"
+            class="w-full max-w-md h-auto drop-shadow-lg"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <defs>
+              <linearGradient id="financeGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" style="stop-color: #438eb9; stop-opacity: 1" />
+                <stop offset="100%" style="stop-color: #5bc0de; stop-opacity: 1" />
+              </linearGradient>
+              <linearGradient id="chartGradient" x1="0%" y1="100%" x2="0%" y2="0%">
+                <stop offset="0%" style="stop-color: #438eb9; stop-opacity: 0.3" />
+                <stop offset="100%" style="stop-color: #5bc0de; stop-opacity: 0.8" />
+              </linearGradient>
+            </defs>
+
+            <!-- Background glow -->
+            <circle cx="200" cy="200" r="180" fill="rgba(67, 142, 185, 0.08)" />
+
+            <!-- Wallet/card illustration -->
+            <g id="wallet">
+              <rect
+                x="60"
+                y="120"
+                width="280"
+                height="160"
+                rx="16"
+                fill="white"
+                stroke="url(#financeGradient)"
+                stroke-width="2"
+              />
+              <rect x="60" y="120" width="280" height="50" rx="16" fill="url(#financeGradient)" />
+              <circle cx="280" cy="145" r="12" fill="white" opacity="0.7" />
+              <rect x="80" y="160" width="160" height="16" rx="8" fill="rgba(67, 142, 185, 0.15)" />
+              <rect x="80" y="185" width="120" height="12" rx="6" fill="rgba(91, 192, 222, 0.12)" />
+            </g>
+
+            <!-- Chart/Growth bars -->
+            <g id="chart" transform="translate(200, 280)">
+              <!-- Bar 1 -->
+              <rect
+                x="-70"
+                y="-40"
+                width="25"
+                height="50"
+                rx="4"
+                fill="url(#chartGradient)"
+                opacity="0.6"
+              />
+              <!-- Bar 2 -->
+              <rect
+                x="-35"
+                y="-65"
+                width="25"
+                height="75"
+                rx="4"
+                fill="url(#chartGradient)"
+                opacity="0.8"
+              />
+              <!-- Bar 3 -->
+              <rect x="0" y="-85" width="25" height="95" rx="4" fill="url(#financeGradient)" />
+              <!-- Bar 4 -->
+              <rect
+                x="35"
+                y="-70"
+                width="25"
+                height="80"
+                rx="4"
+                fill="url(#chartGradient)"
+                opacity="0.8"
+              />
+              <!-- Trend line -->
+              <path
+                d="M -60 -35 Q -25 -60 20 -85 Q 45 -70 65 -40"
+                stroke="#5bc0de"
+                stroke-width="2.5"
+                fill="none"
+                stroke-linecap="round"
+              />
+            </g>
+
+            <!-- Floating coins/elements -->
+            <circle cx="100" cy="80" r="12" fill="#5bc0de" opacity="0.3" />
+            <circle cx="310" cy="90" r="8" fill="#438eb9" opacity="0.4" />
+            <circle cx="80" cy="310" r="10" fill="#438eb9" opacity="0.25" />
+
+            <!-- Security lock accent -->
+            <g id="lock" transform="translate(320, 240)">
+              <rect
+                x="-8"
+                y="-2"
+                width="16"
+                height="14"
+                rx="2"
+                fill="none"
+                stroke="#438eb9"
+                stroke-width="1.5"
+              />
+              <path
+                d="M -4 -2 V -6 C -4 -8.2 -2.2 -10 0 -10 C 2.2 -10 4 -8.2 4 -6 V -2"
+                fill="none"
+                stroke="#438eb9"
+                stroke-width="1.5"
+                stroke-linecap="round"
+              />
+            </g>
+          </svg>
+
+          <!-- Text content -->
+          <div class="text-center space-y-3 max-w-sm">
+            <h2 class="text-2xl font-bold text-slate-900 dark:text-white">Secure Login</h2>
+            <p class="text-slate-600 dark:text-slate-300 text-sm leading-relaxed">
+              Bank-level security with a simple, human experience. Your financial data is protected
+              every step of the way.
+            </p>
+          </div>
+        </section>
+
+        <section class="relative mx-auto w-full max-w-md">
+          <div
+            class="relative overflow-hidden rounded-3xl border border-white/40 dark:border-white/5 bg-gradient-to-br from-white/80 via-white/70 to-white/60 dark:from-slate-950/70 dark:via-slate-900/60 dark:to-slate-950/50 p-8 sm:p-10 shadow-[0_30px_80px_rgba(15,23,42,0.18)] backdrop-blur-3xl transition-all duration-300 hover:shadow-[0_40px_100px_rgba(15,23,42,0.22)]"
+          >
+            <div
+              class="absolute inset-x-0 top-0 h-1.5"
+              style="background: linear-gradient(90deg, #438eb9 0%, #5bc0de 100%)"
+            ></div>
+
+            <div class="mb-8">
+              <div
+                class="inline-flex items-center gap-2 rounded-full border border-slate-300/50 dark:border-white/10 bg-gradient-to-r from-blue-50 to-cyan-50 dark:from-slate-800/50 dark:to-slate-800/30 px-3 py-1.5 text-xs font-semibold uppercase tracking-[0.25em] text-slate-600 dark:text-slate-300 backdrop-blur-md"
+              >
+                <span class="w-1.5 h-1.5 rounded-full" style="background: #5bc0de"></span>
+                Welcome back
+              </div>
+              <h2
+                class="mt-5 text-3xl sm:text-4xl font-black text-slate-900 dark:text-white leading-tight"
+              >
+                Sign in to FINXP
+              </h2>
+              <p class="mt-3 text-slate-600 dark:text-slate-400 text-sm leading-relaxed">
+                Manage your finances securely and seamlessly.
+              </p>
+            </div>
+
+            <div
+              *ngIf="error"
+              class="mb-6 rounded-2xl border border-red-200/80 bg-red-50/90 px-4 py-3.5 text-sm font-medium text-red-800 dark:border-red-900/50 dark:bg-red-950/35 dark:text-red-200 flex items-center gap-2"
+              role="alert"
+            >
+              <svg class="w-4 h-4 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                <path
+                  fill-rule="evenodd"
+                  d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z"
+                  clip-rule="evenodd"
+                />
+              </svg>
+              {{ error }}
+            </div>
+
+            <form [formGroup]="loginForm" (ngSubmit)="onLogin()" class="space-y-6">
+              <div class="space-y-2.5">
+                <label
+                  for="email"
+                  class="block text-sm font-semibold text-slate-800 dark:text-slate-100"
+                  >Email address</label
+                >
+                <div class="relative group">
+                  <input
+                    id="email"
+                    type="email"
+                    [formControl]="emailControl"
+                    placeholder="admin@finxp.local"
+                    class="w-full rounded-2xl border px-4 py-3.5 text-sm text-slate-900 placeholder:text-slate-400 outline-none transition duration-300 dark:text-white dark:placeholder:text-slate-500 dark:bg-slate-900/30"
+                    style="
+                      border-color: rgba(148, 163, 184, 0.32);
+                      background: rgba(255, 255, 255, 0.85);
+                      box-shadow: inset 0 1px 2px rgba(255, 255, 255, 0.5);
+                    "
+                    [style.borderColor]="
+                      emailControl.invalid && emailControl.touched ? '#dc2626' : ''
+                    "
+                    [style.boxShadow]="
+                      emailControl.touched
+                        ? '0 0 0 3.5px ' +
+                          (emailControl.invalid ? 'rgba(220,38,38,0.1)' : 'rgba(67,142,185,0.12)')
+                        : 'inset 0 1px 2px rgba(255,255,255,0.5)'
+                    "
+                    [style.borderWidth]="
+                      emailControl.touched && emailControl.invalid ? '1.5px' : '1px'
+                    "
+                    required
+                    autocomplete="email"
+                  />
+                  <svg
+                    class="absolute right-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400 opacity-0 group-focus-within:opacity-100 transition-opacity"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"
+                    ></path>
+                  </svg>
+                </div>
+                <p
+                  *ngIf="emailControl.invalid && emailControl.touched"
+                  class="text-xs font-medium text-red-600 dark:text-red-400 flex items-center gap-1.5 mt-1.5"
+                >
+                  <svg class="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 20 20">
+                    <path
+                      fill-rule="evenodd"
+                      d="M18.101 12.93a.75.75 0 00-1.025-1.093L10 16.186l-4.276-3.68a.75.75 0 10-1.025 1.093l5 4.286a.75.75 0 001.25-.037l8.1-10.772z"
+                      clip-rule="evenodd"
+                    ></path>
+                  </svg>
+                  Please enter a valid email address.
+                </p>
+              </div>
+
+              <div class="space-y-2.5">
+                <div class="flex items-center justify-between gap-4">
+                  <label
+                    for="password"
+                    class="block text-sm font-semibold text-slate-800 dark:text-slate-100"
+                    >Password</label
+                  >
+                  <a
+                    href="#"
+                    class="text-xs font-semibold transition-colors duration-200 hover:text-slate-900 dark:hover:text-slate-100"
+                    style="color: #438eb9"
+                    >Forgot password?</a
+                  >
+                </div>
+                <div class="relative group">
+                  <input
+                    id="password"
+                    type="password"
+                    [formControl]="passwordControl"
+                    placeholder="••••••••"
+                    class="w-full rounded-2xl border px-4 py-3.5 text-sm text-slate-900 placeholder:text-slate-400 outline-none transition duration-300 dark:text-white dark:placeholder:text-slate-500 dark:bg-slate-900/30"
+                    style="
+                      border-color: rgba(148, 163, 184, 0.32);
+                      background: rgba(255, 255, 255, 0.85);
+                      box-shadow: inset 0 1px 2px rgba(255, 255, 255, 0.5);
+                    "
+                    [style.borderColor]="
+                      passwordControl.invalid && passwordControl.touched ? '#dc2626' : ''
+                    "
+                    [style.boxShadow]="
+                      passwordControl.touched
+                        ? '0 0 0 3.5px ' +
+                          (passwordControl.invalid
+                            ? 'rgba(220,38,38,0.1)'
+                            : 'rgba(67,142,185,0.12)')
+                        : 'inset 0 1px 2px rgba(255,255,255,0.5)'
+                    "
+                    [style.borderWidth]="
+                      passwordControl.touched && passwordControl.invalid ? '1.5px' : '1px'
+                    "
+                    required
+                    minlength="6"
+                    autocomplete="current-password"
+                  />
+                  <svg
+                    class="absolute right-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400 opacity-0 group-focus-within:opacity-100 transition-opacity"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"
+                    ></path>
+                  </svg>
+                </div>
+                <p
+                  *ngIf="passwordControl.invalid && passwordControl.touched"
+                  class="text-xs font-medium text-red-600 dark:text-red-400 flex items-center gap-1.5 mt-1.5"
+                >
+                  <svg class="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 20 20">
+                    <path
+                      fill-rule="evenodd"
+                      d="M18.101 12.93a.75.75 0 00-1.025-1.093L10 16.186l-4.276-3.68a.75.75 0 10-1.025 1.093l5 4.286a.75.75 0 001.25-.037l8.1-10.772z"
+                      clip-rule="evenodd"
+                    ></path>
+                  </svg>
+                  Password must be at least 6 characters.
+                </p>
+              </div>
+
+              <label
+                class="flex items-center gap-3 rounded-2xl border border-slate-200/60 dark:border-white/10 bg-gradient-to-r from-slate-50 to-white/80 dark:from-slate-800/30 dark:to-slate-900/20 px-4 py-3.5 text-sm text-slate-700 dark:text-slate-300 backdrop-blur-md cursor-pointer transition-all duration-200 hover:border-slate-300/80 dark:hover:border-white/20"
+              >
+                <input
+                  type="checkbox"
+                  class="h-4 w-4 rounded border-slate-300 text-white focus:ring-2 focus:ring-offset-0 cursor-pointer"
+                  style="accent-color: #438eb9"
+                />
+                <span class="font-medium">Keep me signed in</span>
+              </label>
+
+              <button
+                type="submit"
+                [disabled]="isLoading || loginForm.invalid"
+                class="group mt-4 flex w-full items-center justify-center gap-2 rounded-2xl px-4 py-4 text-sm font-bold text-white shadow-lg transition-all duration-300 disabled:cursor-not-allowed disabled:opacity-55 disabled:shadow-md hover:shadow-xl active:scale-95"
+                style="
+                  background: linear-gradient(135deg, #438eb9 0%, #5bc0de 100%);
+                  box-shadow: 0 16px 40px rgba(67, 142, 185, 0.3);
+                "
+              >
+                <span *ngIf="!isLoading" class="flex items-center gap-2">
+                  <!-- <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M13 10V3L4 14h7v7l9-11h-7z"
+                    ></path>
+                  </svg> -->
+                  Sign in
+                </span>
+                <span *ngIf="isLoading" class="inline-flex items-center gap-2">
+                  <svg class="h-4 w-4 animate-spin" viewBox="0 0 24 24" fill="none">
+                    <circle
+                      class="opacity-25"
+                      cx="12"
+                      cy="12"
+                      r="10"
+                      stroke="currentColor"
+                      stroke-width="4"
+                    ></circle>
+                    <path
+                      class="opacity-75"
+                      fill="currentColor"
+                      d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                    ></path>
+                  </svg>
+                  <span>Signing in...</span>
+                </span>
+              </button>
+            </form>
+
+            <p class="mt-6 text-center text-sm text-slate-600 dark:text-slate-400">
+              New here?
+              <a
+                href="#"
+                class="font-semibold transition-colors duration-200 hover:text-slate-900 dark:hover:text-slate-200"
+                style="color: #438eb9"
+                >Create an account</a
+              >
+            </p>
+
+            <div class="mt-8 flex items-center gap-3 text-xs text-slate-500 dark:text-slate-400">
+              <span
+                class="h-px flex-1 bg-gradient-to-r from-slate-200 to-transparent dark:from-slate-700"
+              ></span>
+              <span class="flex items-center gap-1.5 font-medium">
+                <svg
+                  class="w-3.5 h-3.5"
+                  style="color: #438eb9"
+                  fill="currentColor"
+                  viewBox="0 0 20 20"
+                >
+                  <path
+                    fill-rule="evenodd"
+                    d="M5.293 9.707a1 1 0 010-1.414l4-4a1 1 0 111.414 1.414L7.414 8l3.293 3.293a1 1 0 11-1.414 1.414l-4-4z"
+                    clip-rule="evenodd"
+                  ></path>
+                </svg>
+                Secure access protected by FINXP
+              </span>
+              <span
+                class="h-px flex-1 bg-gradient-to-l from-slate-200 to-transparent dark:from-slate-700"
+              ></span>
+            </div>
+          </div>
+        </section>
+      </div>
+    </div>
+  </div>
+</div>

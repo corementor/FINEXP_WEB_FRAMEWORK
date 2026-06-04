@@ -1,0 +1,108 @@
+<div class="space-y-6">
+  <!-- Header with Add User Button -->
+  <div class="flex justify-between items-center">
+    <app-heading level="h2">Users</app-heading>
+    <app-button
+      label="+ Add User"
+      variant="primary"
+      size="small"
+      (clicked)="openCreateUserModal()"
+    />
+  </div>
+
+  <!-- Loading State -->
+  @if (loading) {
+    <div class="text-center py-8">
+      <app-spinner size="medium" />
+    </div>
+  }
+
+  <!-- Users Table -->
+  @if (!loading && users.length > 0) {
+    <app-table
+      [rows]="users"
+      headerTitle="Users"
+      [columns]="userTableColumns"
+      (itemEdited)="openEditUserModal($event)"
+      (deleteItem)="deleteUser($event.id)"
+    />
+  }
+
+  <!-- Empty State -->
+  @if (!loading && users.length === 0) {
+    <div class="text-center py-8 border border-gray-200 rounded-lg">
+      <app-text size="base" color="secondary">No users found. Create one to get started.</app-text>
+    </div>
+  }
+</div>
+
+<!-- Create/Edit User Modal -->
+@if (showUserModal) {
+  <app-modal
+    [visible]="showUserModal"
+    [header]="editingUser ? 'Edit User' : 'Create User'"
+    (onHide)="closeUserModal()"
+  >
+    <form (ngSubmit)="saveUser()" class="space-y-4">
+      <app-input
+        label="Username"
+        type="text"
+        [(ngModel)]="userForm.username"
+        name="username"
+        [disabled]="!!editingUser"
+      />
+
+      <app-input label="Email" type="email" [(ngModel)]="userForm.email" name="email" required />
+
+      <div class="grid grid-cols-2 gap-4">
+        <app-input
+          label="First Name"
+          type="text"
+          [(ngModel)]="userForm.firstName"
+          name="firstName"
+        />
+        <app-input label="Last Name" type="text" [(ngModel)]="userForm.lastName" name="lastName" />
+      </div>
+
+      <div class="flex gap-2 pt-4 border-t border-gray-200">
+        <app-button label="Cancel" variant="secondary" (clicked)="closeUserModal()" size="small" />
+        <app-button
+          label="{{ editingUser ? 'Update' : 'Create' }}"
+          variant="primary"
+          type="submit"
+          size="small"
+        />
+      </div>
+    </form>
+  </app-modal>
+}
+
+<!-- Assign Roles Modal -->
+@if (showRolesModal && selectedUser) {
+  <app-modal [visible]="showRolesModal" header="Assign Roles" (onHide)="closeRolesModal()">
+    <div class="space-y-4">
+      <div class="max-h-64 overflow-y-auto space-y-2">
+        @for (role of availableRoles; track role.id) {
+          <div class="flex items-center">
+            <input
+              type="checkbox"
+              [id]="'role-' + role.id"
+              [value]="role.id"
+              [checked]="selectedRoleIds.includes(role.id)"
+              (change)="onRoleToggle(role.id)"
+              class="rounded"
+            />
+            <label [for]="'role-' + role.id" class="ml-2 text-sm">
+              {{ role.roleName }}
+            </label>
+          </div>
+        }
+      </div>
+
+      <div class="flex gap-2 pt-4 border-t border-gray-200">
+        <app-button label="Cancel" variant="secondary" (clicked)="closeRolesModal()" size="small" />
+        <app-button label="Save Roles" variant="primary" (clicked)="assignRoles()" size="small" />
+      </div>
+    </div>
+  </app-modal>
+}

@@ -167,7 +167,7 @@ describe('AuthGuard', () => {
   describe('permissionGuard', () => {
     it('should allow users with required permission to access route', () => {
       const mockRoute: any = {
-        data: { permissions: [Permission.CREATE_EMPLOYEE] },
+        data: { permissions: [Permission.PERM_CREATE_EMPLOYEE] },
       };
       const mockState: any = { url: '/create' };
 
@@ -182,7 +182,7 @@ describe('AuthGuard', () => {
 
     it('should deny access if user lacks required permission', () => {
       const mockRoute: any = {
-        data: { permissions: [Permission.DELETE_EMPLOYEE] },
+        data: { permissions: [Permission.PERM_DELETE_EMPLOYEE] },
       };
       const mockState: any = { url: '/delete' };
 
@@ -198,7 +198,7 @@ describe('AuthGuard', () => {
     it('should check all required permissions when permissionMatchType is "all"', () => {
       const mockRoute: any = {
         data: {
-          permissions: [Permission.CREATE_EMPLOYEE, Permission.MANAGE_EMPLOYEES],
+          permissions: [Permission.PERM_CREATE_EMPLOYEE, Permission.MANAGE_EMPLOYEES],
           permissionMatchType: 'all',
         },
       };
@@ -211,7 +211,7 @@ describe('AuthGuard', () => {
 
       expect(result).toBe(true);
       expect(authService.hasAllPermissions).toHaveBeenCalledWith([
-        Permission.CREATE_EMPLOYEE,
+        Permission.PERM_CREATE_EMPLOYEE,
         Permission.MANAGE_EMPLOYEES,
       ]);
     });
@@ -219,7 +219,7 @@ describe('AuthGuard', () => {
     it('should check any required permission when permissionMatchType is "any" (default)', () => {
       const mockRoute: any = {
         data: {
-          permissions: [Permission.CREATE_EMPLOYEE, Permission.MANAGE_EMPLOYEES],
+          permissions: [Permission.PERM_CREATE_EMPLOYEE, Permission.MANAGE_EMPLOYEES],
           permissionMatchType: 'any',
         },
       };
@@ -232,7 +232,7 @@ describe('AuthGuard', () => {
 
       expect(result).toBe(true);
       expect(authService.hasAnyPermission).toHaveBeenCalledWith([
-        Permission.CREATE_EMPLOYEE,
+        Permission.PERM_CREATE_EMPLOYEE,
         Permission.MANAGE_EMPLOYEES,
       ]);
     });
@@ -371,7 +371,7 @@ describe('AuthService Lifecycle', () => {
 
     it('should check permission membership', () => {
       authService.login('test@example.com', 'password123').subscribe();
-      expect(authService.hasAnyPermission([Permission.CREATE_EMPLOYEE])).toBe(true);
+      expect(authService.hasAnyPermission([Permission.PERM_CREATE_EMPLOYEE])).toBe(true);
     });
 
     it('should clear all signals on logout', () => {

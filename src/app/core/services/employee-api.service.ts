@@ -107,10 +107,10 @@ export class EmployeeApiService {
    */
   deactivateEmployee(id: string, comments?: string): Observable<ApiResponse<Employee>> {
     this.logger.debug('Deactivating employee', { id });
+    const body = comments ? { comments } : {};
     return this.http.post<ApiResponse<Employee>>(
       `${this.config.employeeEndpoint}/${id}/deactivate`,
-      comments || null,
-      { headers: { 'Content-Type': 'application/json' } }
+      body,
     );
   }
 }
