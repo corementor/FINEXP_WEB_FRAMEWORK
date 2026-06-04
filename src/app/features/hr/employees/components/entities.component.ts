@@ -13,9 +13,13 @@ import { RouterLink } from '@angular/router';
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { firstValueFrom } from 'rxjs';
 import { injectQuery } from '@tanstack/angular-query-experimental';
-import { MessageService } from 'primeng/api';
+import { ConfirmDialogModule } from 'primeng/confirmdialog';
+import { MessageService, ConfirmationService } from 'primeng/api';
 
-import { EmployeeFacadeService, EmployeeMutationService } from '@app/features/hr/employees/services';
+import {
+  EmployeeFacadeService,
+  EmployeeMutationService,
+} from '@app/features/hr/employees/services';
 import { Employee, ELifeCycle, ESecurityLabel } from '@app/core/models';
 import { LoggerService } from '@app/core/services';
 import {
@@ -29,8 +33,14 @@ import {
   selector: 'app-entities',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  providers: [MessageService],
-  imports: [CommonModule, RouterLink, ReactiveFormsModule, ...APP_UI_COMPONENTS],
+  providers: [MessageService, ConfirmationService],
+  imports: [
+    CommonModule,
+    RouterLink,
+    ReactiveFormsModule,
+    ConfirmDialogModule,
+    ...APP_UI_COMPONENTS,
+  ],
   templateUrl: './entities.component.html',
   styleUrls: ['./entities.component.scss'],
 })
@@ -41,6 +51,7 @@ export class EntitiesComponent implements OnInit {
   private readonly fb = inject(FormBuilder);
   private readonly cdr = inject(ChangeDetectorRef);
   private readonly messageService = inject(MessageService);
+  private readonly confirmationService = inject(ConfirmationService);
 
   @ViewChild('actionsTemplate') actionsTemplate?: TemplateRef<any>;
 
@@ -408,28 +419,29 @@ export class EntitiesComponent implements OnInit {
   }
 
   deactivate(id: string, comments?: string): void {
-    if (confirm('Are you sure you want to deactivate this employee?')) {
-      this.deactivateEmployeeMutation.mutate({ id, comments });
-    }
+    this.confirmationService.confirm({
+      message: 'Are you sure you want to deactivate this employee?',
+      header: 'Confirm',
+      icon: 'pi pi-exclamation-triangle',
+      accept: () => {
+        this.deactivateEmployeeMutation.mutate({ id, comments });
+      },
+    });
   }
 
   delete(id: string): void {
-    this.showDeleteConfirmation(id);
+    this.confirmationService.confirm({
+      message: 'Are you sure you want to delete this employee? This action cannot be undone.',
+      header: 'Confirm Delete',
+      icon: 'pi pi-exclamation-triangle',
+      accept: () => {
+        this.deleteMutation.mutate(id);
+      },
+    });
   }
 
   private showDeleteConfirmation(id: string): void {
-    this.messageService.add({
-      severity: 'warn',
-      summary: 'Confirm Delete',
-      detail: 'Are you sure you want to delete this employee? This action cannot be undone.',
-      sticky: true,
-      closable: true,
-    });
-    // Keep the confirmation dialog approach or use confirmation service
-    // For now, using browser confirm to maintain logic
-    if (confirm('Are you sure you want to delete this employee? This action cannot be undone.')) {
-      this.deleteMutation.mutate(id);
-    }
+    // This method is no longer used - using PrimeNG confirmationService instead
   }
 
   private getErrorMessage(error: unknown): string {

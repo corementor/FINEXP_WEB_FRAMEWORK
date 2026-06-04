@@ -1,14 +1,20 @@
 import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { APP_UI_COMPONENTS } from '@app/shared/components/ui-base';
 import { UserManagementService, RoleManagementService } from '@app/core';
 import { ToastService } from '@app/shared/components/ui-base/toast.service';
-import type { User, Role, CreateUserRequest, AssignRolesRequest } from '@app/core/models/management.models';
+import type {
+  User,
+  Role,
+  CreateUserRequest,
+  AssignRolesRequest,
+} from '@app/core/models/management.models';
 
 @Component({
   selector: 'app-user-list',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, APP_UI_COMPONENTS],
   templateUrl: './user-list.component.html',
 })
 export class UserListComponent implements OnInit {
@@ -25,6 +31,14 @@ export class UserListComponent implements OnInit {
   editingUser: User | null = null;
   selectedUser: User | null = null;
   selectedRoleIds: string[] = [];
+
+  // Table columns configuration
+  userTableColumns: Array<{ field: keyof User; header: string; sortable?: boolean }> = [
+    { field: 'username', header: 'Username', sortable: true },
+    { field: 'email', header: 'Email' },
+    { field: 'firstName', header: 'First Name', sortable: true },
+    { field: 'lastName', header: 'Last Name', sortable: true },
+  ];
 
   userForm: CreateUserRequest = {
     email: '',
@@ -152,7 +166,7 @@ export class UserListComponent implements OnInit {
           this.loadUsers();
         },
         error: (err) => {
-          this.toastService.error('Error',  'Failed to delete user');
+          this.toastService.error('Error', 'Failed to delete user');
         },
       });
     }
@@ -196,6 +210,13 @@ export class UserListComponent implements OnInit {
   }
 
   /**
+   * Wrapper for toggleRole - used by template
+   */
+  onRoleToggle(roleId: string): void {
+    this.toggleRole(roleId);
+  }
+
+  /**
    * Save role assignments
    */
   saveRoles(): void {
@@ -215,5 +236,11 @@ export class UserListComponent implements OnInit {
       });
     }
   }
-}
 
+  /**
+   * Wrapper for saveRoles - used by template
+   */
+  assignRoles(): void {
+    this.saveRoles();
+  }
+}

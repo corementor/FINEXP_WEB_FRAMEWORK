@@ -1,6 +1,7 @@
 import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { APP_UI_COMPONENTS } from '@app/shared/components/ui-base';
 import { RoleManagementService, PermissionManagementService } from '@app/core';
 import { ToastService } from '@app/shared/components/ui-base/toast.service';
 import type {
@@ -13,7 +14,7 @@ import type {
 @Component({
   selector: 'app-role-list',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, APP_UI_COMPONENTS],
   templateUrl: './role-list.component.html',
 })
 export class RoleListComponent implements OnInit {

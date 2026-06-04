@@ -4,13 +4,13 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
 import { provideAngularQuery, QueryClient } from '@tanstack/angular-query-experimental';
 import { EntitiesComponent } from './entities.component';
-import { EmployeeFacadeService } from '../features/employees/services/employee-facade.service';
-import { EmployeeMutationService } from '../features/employees/services/employee-mutation.service';
-import { LoggerService } from '../core/services/logger.service';
-import { ToastService } from '../services/toast.service';
+import { EmployeeFacadeService } from '@app/features/hr/employees/services';
+import { EmployeeMutationService } from '@app/features/hr/employees/services';
+import { LoggerService } from '@app/core/services';
+import { ToastService } from '@app/services/toast.service';
 import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { of, throwError } from 'rxjs';
-import { Employee, ELifeCycle, ESecurityLabel } from '../core/models';
+import { Employee, ELifeCycle, ESecurityLabel } from '@app/core/models';
 
 const mockMutation = (overrides: Record<string, any> = {}) => ({
   mutate: vi.fn(),

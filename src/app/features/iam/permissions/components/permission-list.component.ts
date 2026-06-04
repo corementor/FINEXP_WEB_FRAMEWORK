@@ -1,5 +1,6 @@
 import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { APP_UI_COMPONENTS } from '@app/shared/components/ui-base';
 import { PermissionManagementService } from '@app/core/services/management.service';
 import { ToastService } from '@app/shared/components/ui-base/toast.service';
 import type { PermissionDetail } from '@app/core/models/management.models';
@@ -7,7 +8,7 @@ import type { PermissionDetail } from '@app/core/models/management.models';
 @Component({
   selector: 'app-permission-list',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, APP_UI_COMPONENTS],
   templateUrl: './permission-list.component.html',
 })
 export class PermissionListComponent implements OnInit {

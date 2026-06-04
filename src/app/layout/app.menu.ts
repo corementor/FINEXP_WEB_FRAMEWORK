@@ -66,12 +66,12 @@ const DEFAULT_MENU_MODEL: MenuItem[] = [
         permission: Permission.PERM_MANAGE_ROLES,
       },
 
-      {
-        label: 'examples',
-        icon: 'pi pi-fw pi-cog',
-        routerLink: ['/examples'],
-        permission: Permission.PERM_VIEW_DASHBOARD,
-      },
+      // {
+      //   label: 'examples',
+      //   icon: 'pi pi-fw pi-cog',
+      //   routerLink: ['/examples'],
+      //   permission: Permission.PERM_VIEW_DASHBOARD,
+      // },
 
       // {
       //   label: 'Charts of Accounts',
@@ -97,74 +97,89 @@ const DEFAULT_MENU_MODEL: MenuItem[] = [
     path: '/accounting',
     items: [
       {
-        label: 'Journal Entries',
-        icon: 'pi pi-fw pi-book',
-        routerLink: ['/journal'],
-        permission: Permission.PERM_VIEW_DASHBOARD,
-      },
-      {
         label: 'Chart of Accounts',
         icon: 'pi pi-fw pi-list',
         routerLink: ['/accounting/chart-of-accounts'],
         permission: Permission.PERM_VIEW_DASHBOARD,
       },
       {
+        label: 'Journal Entries',
+        icon: 'pi pi-fw pi-book',
+        path: '/journal',
+        permission: Permission.PERM_VIEW_DASHBOARD,
+        items: [
+          {
+            label: 'Create Entry',
+            icon: 'pi pi-fw pi-plus',
+            routerLink: ['/journal/new'],
+            permission: Permission.PERM_VIEW_DASHBOARD,
+          },
+          {
+            label: 'List Entries',
+            icon: 'pi pi-fw pi-list',
+            routerLink: ['/journal'],
+            permission: Permission.PERM_VIEW_DASHBOARD,
+          },
+        ],
+      },
+
+      {
         label: 'Trial Balance',
         icon: 'pi pi-fw pi-table',
         routerLink: ['/accounting/trial-balance'],
       },
-      {
-        label: 'Financial Statements',
-        icon: 'pi pi-fw pi-file-export',
-        routerLink: ['/accounting/financial-statements'],
-      },
+      // {
+      //   label: 'Financial Statements',
+      //   icon: 'pi pi-fw pi-file-export',
+      //   routerLink: ['/accounting/financial-statements'],
+      // },
     ],
   },
-  { separator: true },
-  {
-    label: 'Charts of Accounts',
-    icon: 'pi pi-fw pi-briefcase',
-    path: '/pages',
-    items: [
-      {
-        label: 'Segment 1',
-        icon: 'pi pi-fw pi-shield',
-        path: '/auth',
-        items: [
-          {
-            label: 'Option 1',
-            icon: 'pi pi-fw pi-shield',
-            path: '/auth/login',
-            routerLink: ['/auth/login'],
-            items: [
-              {
-                label: 'Sub Option 1',
-                icon: 'pi pi-fw pi-shield',
-                path: '/auth/login',
-                routerLink: ['/auth/login'],
-              },
-              {
-                label: 'Sub Option 2',
-                icon: 'pi pi-fw pi-shield',
-                path: '/auth/login',
-                routerLink: ['/auth/login'],
-              },
-            ],
-          },
-          {
-            label: 'Option 2',
-            icon: 'pi pi-fw pi-shield',
-            routerLink: ['/auth/error'],
-          },
-          {
-            label: 'Option 3',
-            icon: 'pi pi-fw pi-lock',
-            routerLink: ['/auth/access-denied'],
-          },
-        ],
-      },
-    ],
-  },
+  // { separator: true },
+  // {
+  //   label: 'Charts of Accounts',
+  //   icon: 'pi pi-fw pi-briefcase',
+  //   path: '/pages',
+  //   items: [
+  //     {
+  //       label: 'Segment 1',
+  //       icon: 'pi pi-fw pi-shield',
+  //       path: '/auth',
+  //       items: [
+  //         {
+  //           label: 'Option 1',
+  //           icon: 'pi pi-fw pi-shield',
+  //           path: '/auth/login',
+  //           routerLink: ['/auth/login'],
+  //           items: [
+  //             {
+  //               label: 'Sub Option 1',
+  //               icon: 'pi pi-fw pi-shield',
+  //               path: '/auth/login',
+  //               routerLink: ['/auth/login'],
+  //             },
+  //             {
+  //               label: 'Sub Option 2',
+  //               icon: 'pi pi-fw pi-shield',
+  //               path: '/auth/login',
+  //               routerLink: ['/auth/login'],
+  //             },
+  //           ],
+  //         },
+  //         {
+  //           label: 'Option 2',
+  //           icon: 'pi pi-fw pi-shield',
+  //           routerLink: ['/auth/error'],
+  //         },
+  //         {
+  //           label: 'Option 3',
+  //           icon: 'pi pi-fw pi-lock',
+  //           routerLink: ['/auth/access-denied'],
+  //         },
+  //       ],
+  //     },
+  //   ],
+  // },
   { separator: true },
   {
     label: 'Budget Formulation',

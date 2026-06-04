@@ -14,7 +14,7 @@ export const environment = {
   },
   // Mock auth config - Set to false when backend is ready
   mockAuth: {
-    enabled: true,
+    enabled: false,
     autoLoginEmail: 'admin@finxp.local',
   },
 };

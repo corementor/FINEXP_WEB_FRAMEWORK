@@ -1,19 +1,19 @@
 <div class="space-y-6">
-  <!-- Add Role Button -->
+  <!-- Header with Add Role Button -->
   <div class="flex justify-between items-center">
-    <h2 class="text-2xl font-bold text-gray-800">Roles</h2>
-    <button
-      (click)="openCreateRoleModal()"
-      class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium"
-    >
-      + Add Role
-    </button>
+    <app-heading level="h2">Roles</app-heading>
+    <app-button
+      label="+ Add Role"
+      variant="primary"
+      size="small"
+      (clicked)="openCreateRoleModal()"
+    />
   </div>
 
   <!-- Loading State -->
   @if (loading) {
     <div class="text-center py-8">
-      <p class="text-gray-600">Loading roles...</p>
+      <app-spinner size="medium" />
     </div>
   }
 
@@ -21,11 +21,11 @@
   @if (!loading && roles.length > 0) {
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
       @for (role of roles; track role.id) {
-        <div class="border border-gray-200 rounded-lg p-4 hover:shadow-lg transition-shadow">
+        <div custom-card>
           <div class="flex justify-between items-start mb-3">
             <div>
-              <h3 class="text-lg font-bold text-gray-800">{{ role.roleName }}</h3>
-              <p class="text-sm text-gray-500">{{ role.roleCode }}</p>
+              <h3 card-title>{{ role.roleName }}</h3>
+              <app-text size="sm" color="secondary">{{ role.roleCode }}</app-text>
             </div>
             <span
               class="px-2 py-1 text-xs rounded-full"
@@ -38,15 +38,15 @@
           </div>
 
           @if (role.description) {
-            <p class="text-sm text-gray-600 mb-3">{{ role.description }}</p>
+            <app-text size="base" color="secondary" class="mb-3">{{ role.description }}</app-text>
           }
 
           <!-- Permissions List -->
           @if (role.permissions && role.permissions.length > 0) {
             <div class="mb-4">
-              <p class="text-xs font-semibold text-gray-700 mb-2">
+              <app-text size="sm" class="mb-2">
                 Permissions ({{ role.permissions.length }})
-              </p>
+              </app-text>
               <div class="flex flex-wrap gap-2">
                 @for (perm of role.permissions | slice: 0 : 3; track perm.id) {
                   <span class="px-2 py-1 bg-blue-50 text-blue-700 text-xs rounded">{{
@@ -63,25 +63,25 @@
           }
 
           <!-- Actions -->
-          <div class="flex gap-2 pt-4 border-t border-gray-200">
-            <button
-              (click)="openEditRoleModal(role)"
-              class="flex-1 px-3 py-2 bg-gray-200 text-gray-800 rounded hover:bg-gray-300 transition-colors text-xs font-medium"
-            >
-              Edit
-            </button>
-            <button
-              (click)="openPermissionsModal(role)"
-              class="flex-1 px-3 py-2 bg-purple-200 text-purple-800 rounded hover:bg-purple-300 transition-colors text-xs font-medium"
-            >
-              Permissions
-            </button>
-            <button
-              (click)="deleteRole(role.id)"
-              class="flex-1 px-3 py-2 bg-red-200 text-red-800 rounded hover:bg-red-300 transition-colors text-xs font-medium"
-            >
-              Delete
-            </button>
+          <div card-action class="flex gap-2 pt-4 border-t border-gray-200">
+            <app-button
+              label="Edit"
+              variant="secondary"
+              size="small"
+              (clicked)="openEditRoleModal(role)"
+            />
+            <app-button
+              label="Permissions"
+              variant="secondary"
+              size="small"
+              (clicked)="openPermissionsModal(role)"
+            />
+            <app-button
+              label="Delete"
+              variant="danger"
+              size="small"
+              (clicked)="deleteRole(role.id)"
+            />
           </div>
         </div>
       }
@@ -91,112 +91,82 @@
   <!-- Empty State -->
   @if (!loading && roles.length === 0) {
     <div class="text-center py-8 border border-gray-200 rounded-lg">
-      <p class="text-gray-600">No roles found. Create one to get started.</p>
+      <app-text size="base" color="secondary">No roles found. Create one to get started.</app-text>
     </div>
   }
 </div>
 
 <!-- Create/Edit Role Modal -->
 @if (showRoleModal) {
-  <div class="fixed inset-0 bg-black/30 backdrop-blur-sm flex items-center justify-center z-50">
-    <div class="bg-white rounded-lg p-6 w-96 shadow-lg">
-      <h3 class="text-xl font-bold text-gray-800 mb-4">
-        {{ editingRole ? 'Edit Role' : 'Create Role' }}
-      </h3>
+  <app-modal [visible]="showRoleModal" header="Create Role" (onHide)="closeRoleModal()">
+    <form (ngSubmit)="saveRole()" class="space-y-4">
+      <app-input
+        label="Role Code"
+        type="text"
+        [(ngModel)]="roleForm.roleCode"
+        name="roleCode"
+        [disabled]="!!editingRole"
+        required
+      />
 
-      <form (ngSubmit)="saveRole()" class="space-y-4">
-        <div>
-          <label class="block text-sm font-medium text-gray-700 mb-1">Role Code</label>
-          <input
-            [(ngModel)]="roleForm.roleCode"
-            name="roleCode"
-            type="text"
-            class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 uppercase"
-            [disabled]="!!editingRole"
-            required
-          />
-        </div>
+      <app-input
+        label="Role Name"
+        type="text"
+        [(ngModel)]="roleForm.roleName"
+        name="roleName"
+        required
+      />
 
-        <div>
-          <label class="block text-sm font-medium text-gray-700 mb-1">Role Name</label>
-          <input
-            [(ngModel)]="roleForm.roleName"
-            name="roleName"
-            type="text"
-            class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-            required
-          />
-        </div>
+      <div>
+        <app-label>Description</app-label>
+        <textarea
+          [(ngModel)]="roleForm.description"
+          name="description"
+          class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+          rows="3"
+        ></textarea>
+      </div>
 
-        <div>
-          <label class="block text-sm font-medium text-gray-700 mb-1">Description</label>
-          <textarea
-            [(ngModel)]="roleForm.description"
-            name="description"
-            class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-            rows="3"
-          ></textarea>
-        </div>
-
-        <div class="flex gap-2 pt-4">
-          <button
-            type="submit"
-            class="flex-1 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium"
-          >
-            {{ editingRole ? 'Update' : 'Create' }}
-          </button>
-          <button
-            type="button"
-            (click)="closeRoleModal()"
-            class="flex-1 px-4 py-2 bg-gray-200 text-gray-800 rounded-lg hover:bg-gray-300 transition-colors font-medium"
-          >
-            Cancel
-          </button>
-        </div>
-      </form>
-    </div>
-  </div>
+      <div class="flex gap-2 pt-4 border-t border-gray-200">
+        <app-button label="Cancel" variant="secondary" (clicked)="closeRoleModal()" size="small" />
+        <app-button
+          label="{{ editingRole ? 'Update' : 'Create' }}"
+          variant="primary"
+          type="submit"
+          size="small"
+        />
+      </div>
+    </form>
+  </app-modal>
 }
 
 <!-- Assign Permissions Modal -->
 @if (showPermissionsModal && selectedRole) {
-  <div class="fixed inset-0 bg-black/30 backdrop-blur-sm flex items-center justify-center z-50">
-    <div class="bg-white rounded-lg p-6 w-96 shadow-lg">
-      <h3 class="text-xl font-bold text-gray-800 mb-4">
-        Assign Permissions to {{ selectedRole.roleName }}
-      </h3>
-
-      <div class="space-y-3 max-h-96 overflow-y-auto mb-4">
-        @for (permission of availablePermissions; track permission.id) {
-          <label class="flex items-start gap-3 p-2 hover:bg-gray-50 rounded">
-            <input
-              type="checkbox"
-              [checked]="isPermissionSelected(permission.id)"
-              (change)="togglePermission(permission.id)"
-              class="w-4 h-4 text-blue-600 rounded focus:ring-2 focus:ring-blue-500 mt-1"
-            />
-            <div class="flex-1">
-              <p class="text-sm font-medium text-gray-800">{{ permission.permissionName }}</p>
-              <p class="text-xs text-gray-500">{{ permission.permissionCode }}</p>
-            </div>
-          </label>
-        }
-      </div>
-
-      <div class="flex gap-2 pt-4">
-        <button
-          (click)="savePermissions()"
-          class="flex-1 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium"
-        >
-          Save Permissions
-        </button>
-        <button
-          (click)="closePermissionsModal()"
-          class="flex-1 px-4 py-2 bg-gray-200 text-gray-800 rounded-lg hover:bg-gray-300 transition-colors font-medium"
-        >
-          Cancel
-        </button>
-      </div>
+  <app-modal
+    [visible]="showPermissionsModal"
+    header="Assign Permissions"
+    (onHide)="closePermissionsModal()"
+  >
+    <div class="space-y-3 max-h-96 overflow-y-auto mb-4">
+      @for (permission of availablePermissions; track permission.id) {
+        <label class="flex items-start gap-3 p-2 hover:bg-gray-50 rounded">
+          <input
+            type="checkbox"
+            [checked]="isPermissionSelected(permission.id)"
+            (change)="togglePermission(permission.id)"
+            class="w-4 h-4 text-blue-600 rounded focus:ring-2 focus:ring-blue-500 mt-1"
+          />
+          <div class="flex-1">
+            <p class="text-sm font-medium text-gray-800">{{ permission.permissionName }}</p>
+            <app-text size="sm" color="secondary">{{ permission.permissionCode }}</app-text>
+          </div>
+        </label>
+      }
     </div>
-  </div>
+
+    <div class="flex gap-2 pt-4 border-t border-gray-200">
+      <app-button label="Cancel" variant="secondary" (clicked)="closePermissionsModal()" />
+      <app-button label="Save Permissions" variant="primary" (clicked)="savePermissions()" />
+    </div>
+  </app-modal>
 }

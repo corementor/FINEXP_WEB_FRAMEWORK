@@ -28,7 +28,7 @@ import { AppRightMenu } from './app.rightmenu';
     IconFieldModule,
     InputIconModule,
     // Avatar,
-    AppNotifications,
+    // AppNotifications,
     // AppProfile,
     AppRightMenu,
   ],

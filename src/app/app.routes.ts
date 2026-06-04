@@ -23,7 +23,11 @@ export const routes: Routes = [
     canActivate: [authGuard],
     children: [
       { path: 'dashboard', component: DashboardComponent },
-      { path: 'entities', component: EntitiesComponent },
+      {
+        path: 'entities',
+        component: EntitiesComponent,
+        data: { permissions: [Permission.PERM_VIEW_EMPLOYEE] },
+      },
       {
         path: 'workflows',
         component: WorkflowsComponent,
