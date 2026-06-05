@@ -1,0 +1,82 @@
+<!-- Backdrop with blur effect -->
+<div
+  *ngIf="isOpen"
+  class="fixed inset-0 z-40 bg-black/30 backdrop-blur-sm transition-all duration-300 ease-out"
+  (click)="onBackdropClick($event)"
+  role="presentation"
+></div>
+
+<!-- Modal with glassmorphism effect -->
+<div
+  *ngIf="isOpen"
+  class="fixed inset-0 z-50 flex items-center justify-center p-4"
+  role="dialog"
+  [attr.aria-modal]="true"
+  [attr.aria-labelledby]="title ? 'modal-title' : null"
+  (keydown)="onKeydown($event)"
+  tabindex="-1"
+>
+  <div
+    [ngClass]="
+      'w-full rounded-2xl border border-white/40 bg-white/80 backdrop-blur-2xl shadow-2xl overflow-hidden transition-all duration-300 ease-out ' +
+      sizeClass[size]
+    "
+    role="document"
+  >
+    <!-- Header -->
+    <div class="border-b border-white/30 px-6 py-5 bg-gradient-to-r from-white/40 to-white/20">
+      <h2 id="modal-title" class="text-lg font-bold text-gray-900">
+        {{ title }}
+      </h2>
+    </div>
+
+    <!-- Body -->
+    <div class="px-6 py-6 text-gray-900 bg-white/40">
+      <ng-content></ng-content>
+    </div>
+
+    <!-- Footer -->
+    <div
+      class="border-t border-white/30 flex justify-end gap-3 px-6 py-4 bg-gradient-to-r from-white/20 to-white/10 backdrop-blur-md"
+    >
+      <button
+        *ngIf="showCancelButton"
+        (click)="close()"
+        class="px-5 py-2.5 rounded-lg text-sm font-medium text-gray-700 bg-white/40 hover:bg-white/60 transition-all duration-200 border border-white/50 hover:border-white/70 focus:outline-none focus:ring-2 focus:ring-blue-400/50 disabled:opacity-50 disabled:cursor-not-allowed"
+        [disabled]="isLoading"
+      >
+        {{ closeText }}
+      </button>
+      <button
+        *ngIf="showConfirmButton"
+        (click)="confirm()"
+        class="px-5 py-2.5 rounded-lg text-sm font-medium text-white bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 transition-all duration-200 shadow-lg hover:shadow-xl focus:outline-none focus:ring-2 focus:ring-blue-400/50 disabled:opacity-50 disabled:cursor-not-allowed"
+        [disabled]="isLoading"
+      >
+        <span *ngIf="isLoading" class="mr-2 inline-block">
+          <svg
+            class="inline-block h-4 w-4 animate-spin"
+            viewBox="0 0 24 24"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <circle
+              cx="12"
+              cy="12"
+              r="10"
+              stroke="currentColor"
+              stroke-width="4"
+              class="opacity-25"
+            ></circle>
+            <path
+              fill="currentColor"
+              d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+              class="opacity-75"
+            ></path>
+          </svg>
+        </span>
+        {{ confirmText }}
+      </button>
+    </div>
+  </div>
+</div>

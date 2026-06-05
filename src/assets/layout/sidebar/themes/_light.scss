@@ -1,0 +1,25 @@
+:root {
+    --sidebar-text-color: var(--text-color);
+    --sidebar-menu-item-hover: var(--p-primary-200);
+    --sidebar-compact-parent-active: var(--p-primary-300);
+    --sidebar-active-item-text: #ffffff;
+    --popover-background: var(--surface-0);
+    --popover-border-color: var(--surface-border);
+    --popover-item-text-color: var(--text-color);
+    --popover-item-hover-background-color: var(--surface-hover);
+    --popover-item-active-text-color: var(--primary-color);
+    --popover-item-active-background-color: var(--p-primary-50);
+}
+
+.layout-sidebar-light {
+    --sidebar-text-color: var(--text-color);
+    --sidebar-menu-item-hover: var(--p-primary-200);
+    --sidebar-compact-parent-active: var(--p-primary-300);
+    --sidebar-active-item-text: #ffffff;
+}
+
+.layout-drawer,
+.layout-reveal {
+    --sidebar-bg-color: var(--surface-card);
+    --sidebar-border: 1px solid var(--surface-border);
+}

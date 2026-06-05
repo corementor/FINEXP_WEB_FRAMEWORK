@@ -1,0 +1,125 @@
+@use '../_sass_variables' as *;
+@use 'mixins' as *;
+
+@media screen and (min-width: $breakpoint) {
+    .layout-horizontal {
+        flex-direction: column;
+        width: 100%;
+
+        .layout-content {
+            .layout-breadcrumb {
+                display: flex;
+                margin-bottom: 1rem;
+            }
+        }
+
+        .layout-content-wrapper {
+            position: relative;
+            z-index: 1;
+        }
+
+        .layout-sidebar {
+            width: 100%;
+            max-width: 122.857rem;
+            height: auto;
+            overflow: visible;
+            flex-direction: row;
+            align-items: center;
+            position: relative;
+            z-index: 100;
+            box-shadow: none;
+            border: 0 none;
+            transition: none;
+            padding: 0;
+            border-radius: 0 0 1.5rem 1.5rem;
+            border-right: none;
+            margin: 0 auto;
+
+            .sidebar-header {
+                width: auto;
+                padding-left: 1.5rem;
+            }
+
+            .layout-menu-container {
+                overflow: auto;
+                flex: 1;
+
+                @include hidden-scrollbar;
+            }
+        }
+
+        .layout-menu {
+            display: flex;
+            flex-wrap: nowrap;
+            flex-direction: row;
+            align-items: center;
+            justify-content: flex-start;
+            gap: $menu-item-gap;
+            width: fit-content;
+            height: 100%;
+
+            @include hidden-submenu;
+
+            li.active-menuitem {
+                @include submenu-toggler-rotation;
+            }
+
+            .layout-root-menuitem {
+                border-radius: $menu-border-radius;
+                position: relative;
+
+                @include hidden-root-text;
+
+                > a {
+                    display: flex;
+                    align-items: center;
+                    padding: 0.75rem;
+                    border-radius: $menu-border-radius;
+                    cursor: pointer;
+                    outline: none;
+                    transition: background-color var(--transition-duration);
+                    font-weight: 500;
+
+                    @include menuitem-hover;
+
+                    .layout-submenu-toggler {
+                        display: block;
+                        margin-left: auto;
+                        transition: transform 0.2s;
+                    }
+
+                    .layout-menuitem-icon {
+                        font-size: 1.25rem;
+                    }
+
+                    .layout-menuitem-text {
+                        font-size: 0.875rem;
+                        display: block;
+                        margin-left: 0.75rem;
+                        margin-right: 0.75rem;
+                        white-space: nowrap;
+                    }
+                }
+
+                @include root-menuitem-active;
+                @include parent-active-on-child;
+
+                > ul {
+                    @include horizontal-submenu-popup($transform: translateX(var(--menu-scroll-x, 0px)) translateY(1rem));
+                    @include horizontal-submenu-active;
+                    @include nested-submenu-padding;
+
+                    a {
+                        @include horizontal-submenu-link;
+                    }
+
+                    ul {
+                        li:first-child {
+                            margin-top: 7px;
+                        }
+                    }
+                }
+            }
+        }
+    }
+}

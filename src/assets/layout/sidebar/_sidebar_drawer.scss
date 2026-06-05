@@ -1,0 +1,223 @@
+@use '../_sass_variables' as *;
+@use 'mixins' as *;
+
+@media screen and (min-width: $breakpoint) {
+    .layout-drawer {
+        .topbar-left {
+            @include compact-topbar-hidden-elements;
+        }
+
+        .layout-sidebar {
+            height: 100%;
+            top: 0;
+            transition: width 0.3s cubic-bezier(0, 0, 0.2, 1);
+            width: 6rem;
+            z-index: 999;
+
+            .sidebar-header {
+                width: 100%;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                gap: 1rem;
+                padding: 0.5rem 0;
+
+                .logo {
+                    width: 100%;
+                    border: none;
+                    padding: 0.5rem 1rem;
+                    display: flex;
+                    justify-content: center;
+                    align-items: center;
+                    margin: 0;
+                    transition: all 0.15s;
+
+                    .logo-image {
+                        display: inline;
+                        margin-right: 0.125rem;
+                    }
+
+                    .app-name {
+                        display: flex;
+                        align-items: center;
+                        width: 0;
+                        max-width: 0;
+                        height: 0;
+                        opacity: 0;
+                        overflow: hidden;
+                        transition: width 0.1s cubic-bezier(0, 0, 0.2, 1);
+                        transition-delay: 50ms;
+                    }
+                }
+
+                .layout-sidebar-anchor {
+                    display: none;
+                    flex-shrink: 0;
+                    width: 1.15rem;
+                    margin-right: 1.5rem;
+                    height: 1.15rem;
+                    border-radius: 50%;
+                    border: 2px solid var(--surface-border);
+                    background-color: transparent;
+                    outline: none;
+                    cursor: pointer;
+                    transition:
+                        background-color var(--transition-duration),
+                        transform 0.3s;
+                }
+            }
+
+            .layout-menu-container {
+                overflow: hidden;
+            }
+
+            .layout-menu {
+                transition: all 0.4s;
+
+                .layout-root-menuitem {
+                    > .layout-menuitem-root-text {
+                        opacity: 0;
+                        white-space: nowrap;
+                        display: flex;
+                        transition: all 0.1s;
+                        font-size: 0.75rem;
+
+                        > span {
+                            margin-right: auto;
+                        }
+
+                        .layout-menuitem-icon {
+                            display: none;
+                        }
+
+                        > .layout-menuitem-root-icon {
+                            display: none;
+                            margin-right: 0.125rem;
+                            font-size: 1.25rem;
+                        }
+                    }
+                }
+
+                ul {
+                    margin: 0 auto;
+                    padding: 0;
+                    list-style-type: none;
+                    width: 3rem;
+
+                    a {
+                        border: none;
+                        width: 3rem;
+                        padding: 0.5rem 1rem;
+
+                        span {
+                            opacity: 0;
+                            white-space: nowrap;
+                            transition: all 0.1s;
+                        }
+
+                        .layout-menuitem-icon {
+                            font-size: 1rem;
+                        }
+                    }
+                }
+            }
+        }
+
+        &.layout-sidebar-expanded {
+            .layout-sidebar {
+                width: 17rem;
+
+                .layout-menu-container {
+                    overflow: auto;
+                }
+
+                .sidebar-header {
+                    padding: 0.5rem 0;
+                    justify-content: space-between;
+
+                    .logo {
+                        width: 100%;
+                        border: none;
+                        padding: 0.5rem 1rem;
+                        margin: 0 !important;
+                        justify-content: flex-start;
+
+                        .logo-image {
+                            margin-right: 0.5rem;
+                        }
+
+                        .app-name {
+                            display: inline-block;
+                            height: auto;
+                            width: auto;
+                            max-width: none;
+                            opacity: 1;
+                            transition: width 0.1s cubic-bezier(0, 0, 0.2, 1);
+                            transition-delay: 50ms;
+                        }
+                    }
+
+                    .layout-sidebar-anchor {
+                        display: flex;
+                        flex-shrink: 0;
+                    }
+                }
+
+                .layout-menu {
+                    .layout-root-menuitem {
+                        > .layout-menuitem-root-text {
+                            font-size: 0.75rem;
+                            text-transform: uppercase;
+                            font-weight: 500;
+                            opacity: 1;
+                            transition: all 0.3s;
+
+                            > .layout-menuitem-root-icon {
+                                display: none;
+                            }
+                        }
+                    }
+
+                    ul {
+                        width: auto;
+
+                        li {
+                            width: auto;
+                        }
+
+                        a {
+                            width: auto;
+                            padding: 0.5rem 1rem;
+
+                            .layout-submenu-toggler {
+                                display: block;
+                            }
+
+                            span {
+                                opacity: 1;
+                                white-space: nowrap;
+                                transition: all 0.3s;
+                            }
+                        }
+
+                        ul {
+                            overflow: hidden;
+                            border-radius: var(--border-radius);
+
+                            @include nested-submenu-padding;
+                        }
+                    }
+                }
+            }
+        }
+
+        &.layout-sidebar-anchored {
+            .sidebar-header {
+                .layout-sidebar-anchor {
+                    background-color: var(--primary-color);
+                    border: 2px solid var(--primary-color);
+                }
+            }
+        }
+    }
+}

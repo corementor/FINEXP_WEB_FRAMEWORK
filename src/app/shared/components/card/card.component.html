@@ -1,0 +1,18 @@
+<div [ngClass]="'bg-white rounded-lg shadow ' + borderClass + ' ' + hoverClass" role="article">
+  <!-- Header -->
+  <div *ngIf="title" class="border-b border-gray-200 bg-gray-50 px-6 py-4">
+    <h2 class="text-lg font-semibold text-gray-900">{{ title }}</h2>
+    <p *ngIf="subtitle" class="mt-1 text-sm text-gray-600">{{ subtitle }}</p>
+  </div>
+
+  <!-- Body (default content) -->
+  <div class="px-6 py-4">
+    <ng-content select="[card-body]"></ng-content>
+    <ng-content></ng-content>
+  </div>
+
+  <!-- Footer -->
+  <div class="border-t border-gray-200 bg-gray-50 px-6 py-3">
+    <ng-content select="[card-footer]"></ng-content>
+  </div>
+</div>

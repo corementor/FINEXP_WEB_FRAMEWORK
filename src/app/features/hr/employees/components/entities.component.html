@@ -1,0 +1,136 @@
+<div class="space-y-6 p-6">
+  <!-- Confirmation Dialog -->
+  <p-confirmDialog></p-confirmDialog>
+
+  <!-- Header -->
+  <div custom-card>
+    <h3 card-title class="text-2xl">Employee Management</h3>
+    <div card-action>
+      <app-button
+        label="Create Employee"
+        icon="pi pi-plus"
+        variant="primary"
+        size="small"
+        (clicked)="openCreateModal()"
+      />
+    </div>
+  </div>
+
+  <!-- Loading Spinner -->
+  <div *ngIf="isLoading && employees.length === 0" class="flex justify-center py-12">
+    <app-spinner size="large"></app-spinner>
+  </div>
+
+  <!-- Stats Grid -->
+  <div *ngIf="!isLoading || employees.length > 0" class="grid grid-cols-1 md:grid-cols-4 gap-4">
+    <div custom-card class="text-center">
+      <h3 card-title class="text-sm">Total Employees</h3>
+      <p class="text-4xl font-bold text-primary-600 dark:text-primary-400 p-4">
+        {{ employees.length }}
+      </p>
+    </div>
+    <div custom-card class="text-center">
+      <h3 card-title class="text-sm">Active</h3>
+      <p class="text-4xl font-bold text-green-600 dark:text-green-400 p-4">
+        {{ getCount(lifeCycle.ACTIVE) }}
+      </p>
+    </div>
+    <div custom-card class="text-center">
+      <h3 card-title class="text-sm">Created</h3>
+      <p class="text-4xl font-bold text-blue-600 dark:text-blue-400 p-4">
+        {{ getCount(lifeCycle.CREATED) }}
+      </p>
+    </div>
+    <div custom-card class="text-center">
+      <h3 card-title class="text-sm">Inactive</h3>
+      <p class="text-4xl font-bold text-red-600 dark:text-red-400 p-4">
+        {{ getCount(lifeCycle.INACTIVE) }}
+      </p>
+    </div>
+  </div>
+
+  <!-- Filters -->
+  <div custom-card>
+    <h3 card-title>Filters</h3>
+    <div class="p-6 grid grid-cols-1 md:grid-cols-2 gap-4">
+      <app-input
+        type="text"
+        placeholder="Search employees..."
+        [value]="searchQuery"
+        (changed)="onSearchChange($event)"
+        label="Search"
+      />
+      <div>
+        <app-label [required]="false">Security Label</app-label>
+        <select
+          [value]="securityLabelFilter"
+          (change)="onLabelFilterChange($event)"
+          class="w-full px-4 py-2.5 border border-surface-200 dark:border-surface-700 rounded-lg bg-surface-0 dark:bg-surface-800 text-surface-900 dark:text-surface-0 focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all"
+        >
+          <option value="All">All Security Labels</option>
+          <option *ngFor="let label of securityLabels" [value]="label">{{ label }}</option>
+        </select>
+      </div>
+    </div>
+  </div>
+
+  <!-- Employees Table -->
+  <app-table
+    *ngIf="filteredEmployees.length > 0"
+    [rows]="filteredEmployees"
+    [columns]="employeeColumns"
+    headerTitle="Employees"
+    [pageSize]="10"
+    [paginator]="true"
+    [actionsTemplate]="actionsTemplate"
+    (addNew)="openCreateModal()"
+    (itemEdited)="openEditModal($event)"
+    (deleteItem)="delete($event.id)"
+  >
+  </app-table>
+
+  <!-- Empty State -->
+  <div custom-card *ngIf="filteredEmployees.length === 0 && !isLoading">
+    <div class="p-12 text-center">
+      <p class="text-surface-500 dark:text-surface-400 font-medium text-lg">No employees found</p>
+      <p class="text-surface-400 dark:text-surface-500 text-sm mt-1">
+        Start by creating your first employee.
+      </p>
+    </div>
+  </div>
+
+  <!-- Create / Edit Modal — single modal, config-driven form -->
+  <app-modal
+    [visible]="showModal"
+    [header]="modalHeader"
+    [headerIcon]="modalHeaderIcon"
+    [modal]="true"
+    [draggable]="true"
+    [closable]="true"
+    width="50vw"
+    (onHide)="closeModal()"
+  >
+    <app-form
+      [form]="employeeForm"
+      [config]="{
+        ...employeeFormConfig,
+        submitLabel: submitLabel,
+        loading: createEmployeeMutation.isPending() || updateEmployeeMutation.isPending(),
+      }"
+      (submitted)="onSubmit($event)"
+      (cancelled)="closeModal()"
+    />
+  </app-modal>
+
+  <!-- Custom Actions Template for Table -->
+  <ng-template #actionsTemplate let-employee>
+    <a
+      [routerLink]="['/employee', employee.id, 'audit']"
+      [queryParams]="{ name: employee.name }"
+      class="inline-flex items-center gap-2 px-3 py-2 text-sm font-medium text-primary-600 dark:text-primary-400 hover:text-primary-800 dark:hover:text-primary-300 hover:bg-primary-50 dark:hover:bg-primary-900 rounded-lg transition-all ml-2"
+      title="View audit logs"
+    >
+      <i class="pi pi-history"></i>
+    </a>
+  </ng-template>
+</div>

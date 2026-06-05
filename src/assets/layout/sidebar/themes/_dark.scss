@@ -1,0 +1,27 @@
+.app-dark {
+    --sidebar-text-color: var(--text-color);
+    --sidebar-menu-item-hover: var(--surface-hover);
+    --sidebar-compact-parent-active: var(--surface-hover);
+    --sidebar-active-item-text: var(--p-surface-900);
+    --popover-background: var(--surface-900);
+    --popover-border-color: var(--surface-border);
+    --popover-item-text-color: var(--text-color);
+    --popover-item-hover-background-color: var(--surface-hover);
+    --popover-item-active-text-color: var(--primary-color);
+    --popover-item-active-background-color: rgba(255, 255, 255, 0.08);
+}
+
+.layout-sidebar-dark {
+    --sidebar-text-color: var(--text-color);
+    --sidebar-menu-item-hover: var(--surface-hover);
+    --sidebar-compact-parent-active: var(--surface-hover);
+    --sidebar-active-item-text: var(--p-surface-900);
+}
+
+.app-dark {
+    &.layout-drawer,
+    &.layout-reveal {
+        --sidebar-bg-color: var(--surface-card);
+        --sidebar-border: 1px solid var(--surface-border);
+    }
+}

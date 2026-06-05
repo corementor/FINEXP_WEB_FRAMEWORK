@@ -1,0 +1,101 @@
+<div class="overflow-x-auto rounded-lg border border-gray-200">
+  <!-- Loading state -->
+  <div *ngIf="isLoading" class="flex h-32 items-center justify-center">
+    <div class="text-center">
+      <div class="mb-2 inline-block">
+        <svg
+          class="h-8 w-8 animate-spin text-blue-600"
+          viewBox="0 0 24 24"
+          fill="none"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <circle
+            cx="12"
+            cy="12"
+            r="10"
+            stroke="currentColor"
+            stroke-width="4"
+            class="opacity-25"
+          ></circle>
+          <path
+            fill="currentColor"
+            d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+            class="opacity-75"
+          ></path>
+        </svg>
+      </div>
+      <p class="text-sm text-gray-600">Loading...</p>
+    </div>
+  </div>
+
+  <!-- Empty state -->
+  <div *ngIf="!isLoading && rows.length === 0" class="flex h-32 items-center justify-center">
+    <p class="text-gray-500">{{ emptyMessage }}</p>
+  </div>
+
+  <!-- Table -->
+  <table *ngIf="!isLoading && rows.length > 0" class="w-full" role="grid">
+    <thead>
+      <tr class="border-b border-gray-200 bg-gray-50">
+        <th
+          *ngFor="let column of columns"
+          [style.width]="column.width"
+          class="px-6 py-3 text-left font-semibold text-gray-700"
+          [attr.role]="column.sortable ? 'columnheader' : 'columnheader'"
+          [attr.aria-sort]="
+            sortBy === column.key ? (sortDirection === 'asc' ? 'ascending' : 'descending') : 'none'
+          "
+        >
+          <button
+            *ngIf="column.sortable"
+            (click)="sort(column)"
+            class="flex items-center gap-2 hover:text-blue-600"
+            [attr.aria-label]="column.header + ' sort'"
+          >
+            {{ column.header }}
+            <span class="text-xs">{{ getSortIcon(column) }}</span>
+          </button>
+          <span *ngIf="!column.sortable">{{ column.header }}</span>
+        </th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr
+        *ngFor="let row of paginatedRows; let i = index"
+        class="border-b border-gray-200 hover:bg-gray-50"
+        [attr.role]="'row'"
+      >
+        <td *ngFor="let column of columns" class="px-6 py-4 text-gray-900" [attr.role]="'gridcell'">
+          {{ getColumnValue(row, column) }}
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- Pagination -->
+<div
+  *ngIf="!isLoading && rows.length > 0 && totalPages > 1"
+  class="mt-4 flex items-center justify-between"
+>
+  <div class="text-sm text-gray-600">
+    Page {{ currentPage }} of {{ totalPages }}
+    <span class="ml-4">Total: {{ rows.length }} rows</span>
+  </div>
+  <div class="flex gap-2">
+    <button
+      (click)="previousPage()"
+      [disabled]="currentPage === 1"
+      class="rounded border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+    >
+      Previous
+    </button>
+    <button
+      (click)="nextPage()"
+      [disabled]="currentPage === totalPages"
+      class="rounded border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+    >
+      Next
+    </button>
+  </div>
+</div>

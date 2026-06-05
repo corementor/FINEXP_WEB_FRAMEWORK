@@ -1,0 +1,49 @@
+<div class="space-y-6">
+  <app-heading level="h2">System Permissions</app-heading>
+
+  <!-- Loading State -->
+  @if (loading) {
+    <div class="text-center py-8">
+      <app-spinner size="medium" />
+    </div>
+  }
+
+  <!-- Permissions by Resource Type -->
+  @if (!loading && permissionsByResource.size > 0) {
+    <div class="space-y-6">
+      @for (resourceType of Array.from(permissionsByResource.keys()); track resourceType) {
+        <div class="border border-gray-200 rounded-lg p-4">
+          <app-heading level="h3" class="mb-4 capitalize">{{
+            resourceType | lowercase
+          }}</app-heading>
+
+          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            @for (permission of permissionsByResource.get(resourceType); track permission.id) {
+              <div custom-card>
+                <p class="font-medium text-gray-800">{{ permission.permissionName }}</p>
+                <app-text size="sm" color="secondary" class="mb-2">{{
+                  permission.permissionCode
+                }}</app-text>
+                @if (permission.description) {
+                  <app-text size="sm" color="secondary">{{ permission.description }}</app-text>
+                }
+                <div class="flex gap-2 mt-2 pt-2 border-t border-gray-100">
+                  <span class="px-2 py-1 bg-blue-50 text-blue-700 text-xs rounded">{{
+                    permission.actionType
+                  }}</span>
+                </div>
+              </div>
+            }
+          </div>
+        </div>
+      }
+    </div>
+  }
+
+  <!-- Empty State -->
+  @if (!loading && permissionsByResource.size === 0) {
+    <div class="text-center py-8 border border-gray-200 rounded-lg">
+      <app-text size="base" color="secondary">No permissions found in the system.</app-text>
+    </div>
+  }
+</div>
