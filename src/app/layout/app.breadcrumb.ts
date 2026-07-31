@@ -1,8 +1,8 @@
 import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
+import { ActivatedRouteSnapshot, NavigationEnd, Router } from '@angular/router';
 import { toSignal } from '@angular/core/rxjs-interop';
-import { filter, map } from 'rxjs/operators';
+import { filter, map, startWith } from 'rxjs/operators';
 
 @Component({
     selector: '[app-breadcrumb]',
@@ -25,32 +25,27 @@ import { filter, map } from 'rxjs/operators';
 })
 export class AppBreadcrumb {
     private router = inject(Router);
-    private activatedRoute = inject(ActivatedRoute);
 
     private breadcrumbs$ = this.router.events.pipe(
         filter((event): event is NavigationEnd => event instanceof NavigationEnd),
-        map(() => this.buildBreadcrumbs(this.activatedRoute.root))
+        startWith(null),
+        map(() => this.buildBreadcrumbs(this.router.routerState.snapshot.root))
     );
 
     breadcrumbs = toSignal(this.breadcrumbs$, { initialValue: [] as string[] });
 
-    private buildBreadcrumbs(route: ActivatedRoute, breadcrumbs: string[] = []): string[] {
-        const children = route.children;
-
-        if (children.length === 0) {
-            return breadcrumbs;
+    private buildBreadcrumbs(snapshot: ActivatedRouteSnapshot, breadcrumbs: string[] = []): string[] {
+        const breadcrumb = snapshot.data['breadcrumb'];
+        if (breadcrumb) {
+            if (Array.isArray(breadcrumb)) {
+                breadcrumbs.push(...breadcrumb);
+            } else {
+                breadcrumbs.push(breadcrumb);
+            }
         }
 
-        for (const child of children) {
-            const breadcrumb = child.snapshot.data['breadcrumb'];
-            if (breadcrumb) {
-                if (Array.isArray(breadcrumb)) {
-                    breadcrumbs.push(...breadcrumb);
-                } else {
-                    breadcrumbs.push(breadcrumb);
-                }
-            }
-            return this.buildBreadcrumbs(child, breadcrumbs);
+        if (snapshot.firstChild) {
+            return this.buildBreadcrumbs(snapshot.firstChild, breadcrumbs);
         }
 
         return breadcrumbs;

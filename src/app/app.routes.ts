@@ -22,41 +22,41 @@ export const routes: Routes = [
     component: LayoutComponent,
     canActivate: [authGuard],
     children: [
-      { path: 'dashboard', component: DashboardComponent },
+      { path: 'dashboard', component: DashboardComponent, data: { breadcrumb: 'Dashboard' } },
       {
         path: 'entities',
         component: EntitiesComponent,
-        data: { permissions: [Permission.PERM_VIEW_EMPLOYEE] },
+        data: { breadcrumb: ['Apps', 'Employees'], permissions: [Permission.PERM_VIEW_EMPLOYEE] },
       },
       {
         path: 'workflows',
         component: WorkflowsComponent,
-        data: { permissions: [Permission.PERM_MANAGE_WORKFLOWS] },
+        data: { breadcrumb: ['Apps', 'Workflows'], permissions: [Permission.PERM_MANAGE_WORKFLOWS] },
       },
       {
         path: 'audit',
         component: AuditTrailComponent,
-        data: { permissions: [Permission.PERM_VIEW_AUDIT] },
+        data: { breadcrumb: ['Apps', 'Audit Trail'], permissions: [Permission.PERM_VIEW_AUDIT] },
       },
       {
         path: 'employee/:employeeId/audit',
         component: EmployeeAuditComponent,
-        data: { permissions: [Permission.PERM_VIEW_AUDIT] },
+        data: { breadcrumb: ['Apps', 'Employees', 'Audit'], permissions: [Permission.PERM_VIEW_AUDIT] },
       },
       {
         path: 'management',
         component: ManagementComponent,
-        data: { permissions: [Permission.PERM_MANAGE_ROLES] },
+        data: { breadcrumb: ['Apps', 'Management'], permissions: [Permission.PERM_MANAGE_ROLES] },
       },
       {
         path: 'examples',
         component: DashboardExampleComponent,
-        data: { permissions: [Permission.PERM_VIEW_DASHBOARD] },
+        data: { breadcrumb: 'Examples', permissions: [Permission.PERM_VIEW_DASHBOARD] },
       },
       // ── Accounting — lazy loaded to break circular dependency ──────────
       {
         path: 'journal',
-        data: { permissions: [Permission.PERM_VIEW_DASHBOARD] },
+        data: { breadcrumb: ['Accounting', 'Journal Entries'], permissions: [Permission.PERM_VIEW_DASHBOARD] },
         children: [
           {
             path: '',
@@ -67,6 +67,7 @@ export const routes: Routes = [
           },
           {
             path: 'new',
+            data: { breadcrumb: 'New Entry' },
             loadComponent: () =>
               import('./features/accounting/journal/components/journal-entry-page/journal-entry-page.component').then(
                 (m) => m.JournalEntryPageComponent,
@@ -74,6 +75,7 @@ export const routes: Routes = [
           },
           {
             path: ':id/edit',
+            data: { breadcrumb: 'Edit Entry' },
             loadComponent: () =>
               import('./features/accounting/journal/components/journal-entry-page/journal-entry-page.component').then(
                 (m) => m.JournalEntryPageComponent,
@@ -88,7 +90,7 @@ export const routes: Routes = [
           import('./features/accounting/chart-of-accounts/components/chart-of-accounts.component').then(
             (m) => m.ChartOfAccountsComponent,
           ),
-        data: { permissions: [Permission.PERM_VIEW_DASHBOARD] },
+        data: { breadcrumb: ['Accounting', 'Chart of Accounts'], permissions: [Permission.PERM_VIEW_DASHBOARD] },
       },
       {
         path: 'accounting/balance-sheet',
@@ -96,7 +98,7 @@ export const routes: Routes = [
           import('./features/accounting/balance-sheet/components/balance-sheet.component').then(
             (m) => m.BalanceSheetComponent,
           ),
-        data: { permissions: [Permission.PERM_VIEW_DASHBOARD] },
+        data: { breadcrumb: ['Accounting', 'Balance Sheet'], permissions: [Permission.PERM_VIEW_DASHBOARD] },
       },
       {
         path: 'accounting/trial-balance',
@@ -104,7 +106,7 @@ export const routes: Routes = [
           import('./features/accounting/trial-balance/trial-balance.component').then(
             (m) => m.TrialBalanceComponent,
           ),
-        data: { permissions: [Permission.PERM_VIEW_TRIAL_BALANCE] },
+        data: { breadcrumb: ['Accounting', 'Trial Balance'], permissions: [Permission.PERM_VIEW_TRIAL_BALANCE] },
       },
       { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
     ],

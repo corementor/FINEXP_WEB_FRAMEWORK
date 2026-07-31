@@ -5,6 +5,7 @@ import { NavigationEnd, Router, RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { filter, Subject, takeUntil } from 'rxjs';
 import { Logo } from './icons';
+import { AuthService } from '../core/services/auth.service';
 
 const BREAKPOINT = 992;
 
@@ -28,6 +29,25 @@ const BREAKPOINT = 992;
     <div #menuContainer class="layout-menu-container" (scroll)="onMenuScroll()">
       <div app-menu></div>
     </div>
+
+    <div class="p-3 border-t border-surface-200 dark:border-surface-700 mt-auto">
+      <div class="flex items-center gap-3 px-2 py-2 rounded-xl mb-1 overflow-hidden">
+        <div class="w-8 h-8 rounded-full bg-primary-500 flex items-center justify-center text-white text-sm font-semibold flex-shrink-0">
+          {{ userInitial() }}
+        </div>
+        <span class="text-sm font-medium text-surface-900 dark:text-surface-0 truncate sidebar-user-name">
+          {{ currentUser() }}
+        </span>
+      </div>
+      <button
+        type="button"
+        (click)="onLogout()"
+        class="w-full flex items-center gap-3 px-3 py-2 rounded-xl text-surface-500 dark:text-surface-400 hover:text-red-600 dark:hover:text-red-400 hover:bg-red-50 dark:hover:bg-red-950/30 transition-colors duration-150 group"
+      >
+        <i class="pi pi-sign-out text-base flex-shrink-0"></i>
+        <span class="text-sm font-medium sidebar-logout-label">Sign Out</span>
+      </button>
+    </div>
   </div>`,
 })
 export class AppSidebar {
@@ -36,6 +56,23 @@ export class AppSidebar {
   router = inject(Router);
 
   el = inject(ElementRef);
+
+  private authService = inject(AuthService);
+
+  currentUser = computed(() => {
+    const user = this.authService.currentUser$();
+    return user ? user.username || user.email : '';
+  });
+
+  userInitial = computed(() => {
+    const name = this.currentUser();
+    return name ? name.charAt(0).toUpperCase() : 'U';
+  });
+
+  onLogout(): void {
+    this.authService.logout();
+    this.router.navigate(['/login']);
+  }
 
   @ViewChild('menuContainer') menuContainer!: ElementRef;
 

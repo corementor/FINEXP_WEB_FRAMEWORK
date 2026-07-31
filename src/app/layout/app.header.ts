@@ -28,7 +28,7 @@ import { AppRightMenu } from './app.rightmenu';
     IconFieldModule,
     InputIconModule,
     // Avatar,
-    // AppNotifications,
+    AppNotifications,
     // AppProfile,
     AppRightMenu,
   ],
@@ -68,7 +68,7 @@ import { AppRightMenu } from './app.rightmenu';
           <i class="pi pi-cog"></i>
         </button> -->
 
-        <!-- <div class="relative">
+     <div class="relative">
           <a
             pStyleClass="@next"
             enterFromClass="hidden"
@@ -82,7 +82,7 @@ import { AppRightMenu } from './app.rightmenu';
           <div class="absolute hidden min-w-72 top-auto right-0 z-20 mt-2">
             <div app-notifications styleClass="w-full sm:w-[22rem]"></div>
           </div>
-        </div> -->
+        </div>
 
         <!-- <div class="relative">
           <a
@@ -104,12 +104,12 @@ import { AppRightMenu } from './app.rightmenu';
           </div>
         </div> -->
 
-        <p-button
-          (click)="onLogout()"
-          icon="pi pi-sign-out"
-          severity="secondary"
-          [outlined]="true"
-        />
+<!--        <p-button-->
+<!--          (click)="onLogout()"-->
+<!--          icon="pi pi-sign-out"-->
+<!--          severity="secondary"-->
+<!--          [outlined]="true"-->
+<!--        />-->
 
         <!-- <p-button
           (click)="layoutService.toggleRightMenu()"
