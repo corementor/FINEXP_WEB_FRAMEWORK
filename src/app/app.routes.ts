@@ -24,6 +24,11 @@ export const routes: Routes = [
     children: [
       { path: 'dashboard', component: DashboardComponent, data: { breadcrumb: 'Dashboard' } },
       {
+        path: 'dashboard/banking',
+        loadComponent: () => import('./features/dashboard/banking/bankingdashboard').then((m) => m.BankingDashboard),
+        data: { breadcrumb: 'Banking Dashboard' }
+      },
+      {
         path: 'entities',
         component: EntitiesComponent,
         data: { breadcrumb: ['Apps', 'Employees'], permissions: [Permission.PERM_VIEW_EMPLOYEE] },

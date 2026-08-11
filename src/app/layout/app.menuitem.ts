@@ -5,6 +5,7 @@ import { CommonModule } from '@angular/common';
 import { RippleModule } from 'primeng/ripple';
 import { LayoutService } from './service/layout.service';
 
+// @ts-ignore
 @Component({
     selector: '[app-menuitem]',
     imports: [CommonModule, RouterModule, RippleModule, TooltipModule],
