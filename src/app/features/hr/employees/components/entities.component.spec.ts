@@ -50,6 +50,7 @@ describe('EntitiesComponent', () => {
     activateMutation: vi.fn(() => mockMutation()),
     deactivateMutation: vi.fn(() => mockMutation()),
     deleteMutation: vi.fn(() => mockMutation()),
+    bulkDeleteMutation: vi.fn(() => mockMutation()),
   };
 
   beforeEach(async () => {

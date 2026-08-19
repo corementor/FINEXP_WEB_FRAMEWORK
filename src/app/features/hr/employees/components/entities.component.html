@@ -5,7 +5,43 @@
   <!-- Header -->
   <div custom-card>
     <h3 card-title class="text-2xl">Employee Management</h3>
-    <div card-action>
+    <div card-action class="flex flex-wrap items-center gap-2">
+      <span
+        *ngIf="selectedCount > 0"
+        class="text-sm font-medium text-surface-600 dark:text-surface-300"
+      >
+        {{ selectedCount }} selected
+      </span>
+      <app-button
+        *ngIf="selectedCount > 0"
+        label="Delete Selected"
+        icon="pi pi-trash"
+        variant="danger"
+        size="small"
+        [outlined]="true"
+        [loading]="bulkDeleteMutation.isPending()"
+        (clicked)="bulkDelete()"
+      />
+      <app-button
+        [label]="'Export PDF' + exportLabelSuffix"
+        icon="pi pi-file-pdf"
+        variant="secondary"
+        size="small"
+        [outlined]="true"
+        [loading]="exportingFormat === 'PDF'"
+        [disabled]="exportingFormat !== null"
+        (clicked)="exportReport('PDF')"
+      />
+      <app-button
+        [label]="'Export Excel' + exportLabelSuffix"
+        icon="pi pi-file-excel"
+        variant="secondary"
+        size="small"
+        [outlined]="true"
+        [loading]="exportingFormat === 'XLSX'"
+        [disabled]="exportingFormat !== null"
+        (clicked)="exportReport('XLSX')"
+      />
       <app-button
         label="Create Employee"
         icon="pi pi-plus"
@@ -76,6 +112,7 @@
 
   <!-- Employees Table -->
   <app-table
+    #employeesTable
     *ngIf="filteredEmployees.length > 0"
     [rows]="filteredEmployees"
     [columns]="employeeColumns"
@@ -86,6 +123,8 @@
     (addNew)="openCreateModal()"
     (itemEdited)="openEditModal($event)"
     (deleteItem)="delete($event.id)"
+    (selectionChanged)="onSelectionChange($event)"
+    (deleteSelected)="bulkDeleteFromTable($event)"
   >
   </app-table>
 

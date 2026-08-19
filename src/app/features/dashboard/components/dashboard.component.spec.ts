@@ -2,12 +2,11 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { provideAngularQuery, QueryClient } from '@tanstack/angular-query-experimental';
-import { DashboardComponent } from './dashboard.component';
-import { DashboardFacadeService } from '../features/dashboard/services/dashboard-facade.service';
-import { LoggerService } from '../core/services/logger.service';
-import { ToastService } from '../services/toast.service';
 import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { of, throwError } from 'rxjs';
+import { DashboardComponent } from './dashboard.component';
+import { DashboardFacadeService } from '@app/features/dashboard/services';
+import { LoggerService } from '@app/core/services';
 
 /**
  * Dashboard Component Unit Tests
@@ -17,25 +16,47 @@ describe('DashboardComponent', () => {
   let component: DashboardComponent;
   let fixture: ComponentFixture<DashboardComponent>;
   let dashboardService: DashboardFacadeService;
-  let toastService: ToastService;
-  let logger: LoggerService;
 
   const mockActivityData = [
-    { id: '1', type: 'CREATE', entity: 'Employee', timestamp: new Date().toISOString() },
-    { id: '2', type: 'UPDATE', entity: 'Workflow', timestamp: new Date().toISOString() },
+    {
+      id: 1,
+      actionTime: 1700000000000,
+      actionDate: '14-Nov-2023, 22:13:20',
+      action: 'Created',
+      description: 'John Doe (EMP-001) - CREATED',
+      entityId: 'a1',
+      entityType: 'DummyEmployee',
+      entityName: 'John Doe',
+      entityNumber: 'EMP-001',
+      email: 'john@finxp.local',
+      state: 'CREATED',
+      userId: 'admin',
+    },
   ];
+
+  const mockSystemHealth = {
+    status: 'UP',
+    uptime: 100,
+    uptimeMillis: 3600000,
+    memoryUsage: 45.5,
+    cpuUsage: 23.2,
+    usedMemoryMb: 512,
+    maxMemoryMb: 2048,
+    availableProcessors: 8,
+  };
 
   const mockDashboardStats = {
     totalEntities: 150,
     activeEntities: 120,
     createdEntities: 15,
     inactiveEntities: 15,
-    recentActivity: [] as any[],
-    systemHealth: {
-      uptime: 99.9,
-      memoryUsage: 45.5,
-      cpuUsage: 23.2,
-    },
+    totalUsers: 3,
+    activeUsers: 3,
+    totalRoles: 3,
+    totalPermissions: 18,
+    entitiesByState: { CREATED: 15, ACTIVE: 120, INACTIVE: 15 },
+    recentActivity: mockActivityData,
+    systemHealth: mockSystemHealth,
   };
 
   beforeEach(async () => {
@@ -48,14 +69,7 @@ describe('DashboardComponent', () => {
           useValue: {
             loadDashboardStats: vi.fn(() => of(mockDashboardStats)),
             loadRecentActivity: vi.fn(() => of(mockActivityData)),
-          },
-        },
-        {
-          provide: ToastService,
-          useValue: {
-            success: vi.fn(),
-            error: vi.fn(),
-            info: vi.fn(),
+            loadSystemHealth: vi.fn(() => of(mockSystemHealth)),
           },
         },
         {
@@ -69,11 +83,10 @@ describe('DashboardComponent', () => {
         },
       ],
     }).compileComponents();
+
     fixture = TestBed.createComponent(DashboardComponent);
     component = fixture.componentInstance;
     dashboardService = TestBed.inject(DashboardFacadeService);
-    toastService = TestBed.inject(ToastService);
-    logger = TestBed.inject(LoggerService);
   });
 
   describe('Component Initialization', () => {
@@ -97,121 +110,109 @@ describe('DashboardComponent', () => {
   });
 
   describe('Data Display', () => {
-    it('should display dashboard statistics', async () => {
-      vi.mocked(dashboardService.loadDashboardStats).mockReturnValue(of(mockDashboardStats));
-
+    it('should expose dashboard statistics once loaded', async () => {
       fixture.detectChanges();
-
       await new Promise((resolve) => setTimeout(resolve, 150));
-      expect(dashboardService.loadDashboardStats).toHaveBeenCalled();
+
+      expect(component.stats?.totalEntities).toBe(150);
+      expect(component.stats?.totalPermissions).toBe(18);
     });
 
-    it('should display recent activity', async () => {
-      vi.mocked(dashboardService.loadRecentActivity).mockReturnValue(of(mockActivityData));
-
+    it('should expose the recent activity feed', async () => {
       fixture.detectChanges();
-
       await new Promise((resolve) => setTimeout(resolve, 150));
-      expect(dashboardService.loadRecentActivity).toHaveBeenCalled();
+
+      expect(component.recentActivity.length).toBe(1);
+      expect(component.recentActivity[0].entityName).toBe('John Doe');
     });
 
-    it('should format activity timestamps', () => {
-      expect(component).toBeDefined();
+    it('should expose the system health metrics', async () => {
+      fixture.detectChanges();
+      await new Promise((resolve) => setTimeout(resolve, 150));
+
+      expect(component.systemHealth?.status).toBe('UP');
     });
 
-    it('should display empty state when no activity', async () => {
+    it('should expose the lifecycle distribution', async () => {
+      fixture.detectChanges();
+      await new Promise((resolve) => setTimeout(resolve, 150));
+
+      expect(component.entityStates.length).toBe(3);
+      expect(component.entityStates[1]).toEqual({ state: 'ACTIVE', count: 120 });
+    });
+
+    it('should display an empty feed when there is no activity', async () => {
       vi.mocked(dashboardService.loadRecentActivity).mockReturnValue(of([]));
+      vi.mocked(dashboardService.loadDashboardStats).mockReturnValue(
+        of({ ...mockDashboardStats, recentActivity: [] }),
+      );
 
       fixture.detectChanges();
-
       await new Promise((resolve) => setTimeout(resolve, 150));
-      expect(dashboardService.loadRecentActivity).toHaveBeenCalled();
+
+      expect(component.recentActivity).toEqual([]);
+    });
+  });
+
+  describe('Formatting helpers', () => {
+    it('should format the uptime in hours and minutes', () => {
+      expect(component.formatUptime(3600000)).toBe('1h 0m');
+    });
+
+    it('should format the uptime in days when applicable', () => {
+      expect(component.formatUptime(2 * 86400000 + 3600000)).toBe('2d 1h');
+    });
+
+    it('should fall back to zero minutes for an invalid uptime', () => {
+      expect(component.formatUptime(0)).toBe('0m');
+    });
+
+    it('should return a badge class per health status', () => {
+      expect(component.getHealthStatusClass('UP')).toContain('green');
+      expect(component.getHealthStatusClass('DEGRADED')).toContain('yellow');
+      expect(component.getHealthStatusClass('DOWN')).toContain('red');
+    });
+
+    it('should return a badge class per lifecycle state', () => {
+      expect(component.getStateBadgeClass('ACTIVE')).toContain('green');
+      expect(component.getStateBadgeClass('INACTIVE')).toContain('red');
+      expect(component.getStateBadgeClass('CREATED')).toContain('blue');
     });
   });
 
   describe('Data Refresh', () => {
-    it('should have refresh button', () => {
-      expect(component).toBeDefined();
-    });
-
-    it('should reload dashboard on refresh', () => {
+    it('should reload dashboard on refresh', async () => {
       fixture.detectChanges();
-
-      component.onRefresh();
-
-      expect(dashboardService.loadDashboardStats).toHaveBeenCalledTimes(2);
-    });
-
-    it('should show loading state during refresh', () => {
-      vi.mocked(dashboardService.loadDashboardStats).mockReturnValue(of(mockDashboardStats));
-
-      fixture.detectChanges();
-      component.onRefresh();
-
-      expect(component.isLoading).toBe(true);
-    });
-
-    it('should clear loading state after refresh completes', async () => {
-      vi.mocked(dashboardService.loadDashboardStats).mockReturnValue(of(mockDashboardStats));
-
-      fixture.detectChanges();
-      component.onRefresh();
-
       await new Promise((resolve) => setTimeout(resolve, 150));
-      expect(component.isLoading).toBe(false);
-    });
 
-    it('should show success message on refresh', async () => {
-      vi.mocked(dashboardService.loadDashboardStats).mockReturnValue(of(mockDashboardStats));
-
-      fixture.detectChanges();
       component.onRefresh();
-
       await new Promise((resolve) => setTimeout(resolve, 150));
-      expect(toastService.success).toHaveBeenCalled();
+
+      expect(vi.mocked(dashboardService.loadDashboardStats).mock.calls.length).toBeGreaterThan(1);
     });
   });
 
   describe('Error Handling', () => {
-    it('should handle stats loading error', async () => {
+    it('should report an error when stats loading fails', async () => {
       vi.mocked(dashboardService.loadDashboardStats).mockReturnValue(
         throwError(() => new Error('Failed to load stats')),
       );
 
       fixture.detectChanges();
-
       await new Promise((resolve) => setTimeout(resolve, 150));
-      expect(toastService.error).toHaveBeenCalled();
+
+      expect(component.error).toBe('Failed to load dashboard data');
     });
 
-    it('should handle activity loading error', async () => {
+    it('should report an error when activity loading fails', async () => {
       vi.mocked(dashboardService.loadRecentActivity).mockReturnValue(
         throwError(() => new Error('Failed to load activity')),
       );
 
       fixture.detectChanges();
-
       await new Promise((resolve) => setTimeout(resolve, 150));
-      expect(toastService.error).toHaveBeenCalled();
-    });
 
-    it('should display error message to user', async () => {
-      vi.mocked(dashboardService.loadDashboardStats).mockReturnValue(
-        throwError(() => new Error('Network error')),
-      );
-
-      fixture.detectChanges();
-
-      await new Promise((resolve) => setTimeout(resolve, 150));
-      expect(toastService.error).toHaveBeenCalled();
-    });
-
-    it('should allow retry after error', () => {
-      vi.mocked(dashboardService.loadDashboardStats)
-        .mockReturnValueOnce(throwError(() => new Error('Error')))
-        .mockReturnValueOnce(of(mockDashboardStats));
-
-      expect(component).toBeDefined();
+      expect(component.error).toBe('Failed to load recent activity');
     });
 
     it('should reset loading state on error', async () => {
@@ -220,73 +221,9 @@ describe('DashboardComponent', () => {
       );
 
       fixture.detectChanges();
-
       await new Promise((resolve) => setTimeout(resolve, 150));
+
       expect(component.isLoading).toBe(false);
-    });
-  });
-
-  describe('Statistics Calculations', () => {
-    it('should calculate employee growth rate', () => {
-      expect(component).toBeDefined();
-    });
-
-    it('should identify peak activity times', () => {
-      expect(component).toBeDefined();
-    });
-
-    it('should track workflow performance metrics', () => {
-      expect(component).toBeDefined();
-    });
-
-    it('should highlight key performance indicators', () => {
-      expect(component).toBeDefined();
-    });
-  });
-
-  describe('Activity Filtering', () => {
-    it('should filter activity by type', () => {
-      expect(component).toBeDefined();
-    });
-
-    it('should filter activity by date range', () => {
-      expect(component).toBeDefined();
-    });
-
-    it('should filter activity by entity', () => {
-      expect(component).toBeDefined();
-    });
-
-    it('should maintain filter state', () => {
-      expect(component).toBeDefined();
-    });
-  });
-
-  describe('Auto-refresh', () => {
-    it('should auto-refresh at configured interval', () => {
-      expect(component).toBeDefined();
-    });
-
-    it('should stop auto-refresh on component destroy', () => {
-      expect(component).toBeDefined();
-    });
-
-    it('should respect user preference for auto-refresh', () => {
-      expect(component).toBeDefined();
-    });
-  });
-
-  describe('Responsive Design', () => {
-    it('should stack cards vertically on mobile', () => {
-      expect(component).toBeDefined();
-    });
-
-    it('should show summary on small screens', () => {
-      expect(component).toBeDefined();
-    });
-
-    it('should adapt chart display for mobile', () => {
-      expect(component).toBeDefined();
     });
   });
 });

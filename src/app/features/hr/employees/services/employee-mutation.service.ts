@@ -159,6 +159,31 @@ export class EmployeeMutationService {
   }
 
   /**
+   * Bulk Delete Employees Mutation
+   * Removes every selected employee and invalidates cache
+   */
+  bulkDeleteMutation(onSuccess?: () => void, onError?: (error: unknown) => void) {
+    return injectMutation(() => ({
+      mutationKey: ['employees', 'bulk-delete'],
+      mutationFn: (ids: string[]) => {
+        this.logger.debug('Mutation: deleting employees', { count: ids.length });
+        return firstValueFrom(this.employeeFacade.deleteEmployees(ids));
+      },
+      onSuccess: async (ids: string[]) => {
+        this.logger.info('Mutation: employees deleted successfully', { count: ids.length });
+        this.toast.success('Success', `${ids.length} employee(s) deleted successfully!`);
+        await this.queryClient.invalidateQueries({ queryKey: this.employeeQueryKey });
+        onSuccess?.();
+      },
+      onError: (error: unknown) => {
+        this.logger.error('Mutation: failed to delete employees', error);
+        this.toast.error('Error', 'Failed to delete the selected employees');
+        onError?.(error);
+      },
+    }));
+  }
+
+  /**
    * Batch State Transition Mutation
    * Transitions multiple employees to a specific state
    */

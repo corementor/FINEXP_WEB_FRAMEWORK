@@ -24,10 +24,11 @@ export const routes: Routes = [
     children: [
       { path: 'dashboard', component: DashboardComponent, data: { breadcrumb: 'Dashboard' } },
       {
-        path: 'dashboard/banking',
+        path: 'dashboard/finance',
         loadComponent: () => import('./features/dashboard/banking/bankingdashboard').then((m) => m.BankingDashboard),
-        data: { breadcrumb: 'Banking Dashboard' }
+        data: { breadcrumb: 'Finance Dashboard' }
       },
+      { path: 'dashboard/banking', redirectTo: 'dashboard/finance', pathMatch: 'full' },
       {
         path: 'entities',
         component: EntitiesComponent,

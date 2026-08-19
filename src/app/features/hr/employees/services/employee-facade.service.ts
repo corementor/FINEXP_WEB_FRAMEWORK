@@ -152,6 +152,26 @@ export class EmployeeFacadeService {
   }
 
   /**
+   * Delete several employees at once
+   */
+  deleteEmployees(ids: string[]): Observable<string[]> {
+    this.logger.debug('Facade: deleting employees', { count: ids.length });
+
+    return this.employeeApi.deleteEmployees(ids).pipe(
+      tap(() => {
+        ids.forEach((id) => this.store.removeEmployee(id));
+        this.logger.info('Facade: employees deleted', { count: ids.length });
+      }),
+      map(() => ids),
+      catchError((error) => {
+        this.logger.error('Facade: failed to delete employees', error);
+        this.store.setError('Failed to delete the selected employees');
+        throw error;
+      }),
+    );
+  }
+
+  /**
    * Search employees
    */
   searchEmployees(query: string): Observable<Employee[]> {

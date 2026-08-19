@@ -74,6 +74,41 @@
       </app-card>
     </div>
 
+    <!-- Identity & Access Grid -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+      <app-card>
+        <div class="text-center py-2" card-body>
+          <p class="text-sm font-medium text-gray-500 uppercase">User Accounts</p>
+          <p class="mt-2 text-3xl font-bold text-gray-900">{{ stats.totalUsers || 0 }}</p>
+          <p class="mt-1 text-xs text-gray-600">Registered accounts</p>
+        </div>
+      </app-card>
+
+      <app-card borderColor="blue">
+        <div class="text-center py-2" card-body>
+          <p class="text-sm font-medium text-blue-600 uppercase">Active Users</p>
+          <p class="mt-2 text-3xl font-bold text-blue-900">{{ stats.activeUsers || 0 }}</p>
+          <p class="mt-1 text-xs text-blue-600">Able to sign in</p>
+        </div>
+      </app-card>
+
+      <app-card borderColor="gray">
+        <div class="text-center py-2" card-body>
+          <p class="text-sm font-medium text-gray-500 uppercase">Roles</p>
+          <p class="mt-2 text-3xl font-bold text-gray-900">{{ stats.totalRoles || 0 }}</p>
+          <p class="mt-1 text-xs text-gray-600">Configured roles</p>
+        </div>
+      </app-card>
+
+      <app-card borderColor="gray">
+        <div class="text-center py-2" card-body>
+          <p class="text-sm font-medium text-gray-500 uppercase">Permissions</p>
+          <p class="mt-2 text-3xl font-bold text-gray-900">{{ stats.totalPermissions || 0 }}</p>
+          <p class="mt-1 text-xs text-gray-600">Granted capabilities</p>
+        </div>
+      </app-card>
+    </div>
+
     <!-- Content Grid -->
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
       <!-- Recent Activity Card (spans 2 columns) -->
@@ -83,8 +118,8 @@
             <div *ngIf="recentActivity.length > 0" class="space-y-3">
               <a
                 *ngFor="let activity of recentActivity"
-                [routerLink]="['/employee', activity.employeeId, 'audit']"
-                [queryParams]="{ name: activity.employee }"
+                [routerLink]="['/employee', activity.entityId, 'audit']"
+                [queryParams]="{ name: activity.entityName }"
                 class="block border-l-4 border-blue-500 pl-4 py-2 hover:bg-blue-50 rounded transition cursor-pointer"
               >
                 <div class="flex justify-between items-start">
@@ -93,7 +128,7 @@
                     <p class="text-sm text-gray-600 mt-1">{{ activity.description }}</p>
                     <p class="text-xs text-gray-500 mt-2">
                       <span *ngIf="activity.email" class="mr-3">{{ activity.email }}</span>
-                      <span class="text-blue-600">{{ activity.timestamp }}</span>
+                      <span class="text-blue-600">{{ activity.actionDate }}</span>
                     </p>
                   </div>
                   <div class="ml-4 text-right">
@@ -138,19 +173,53 @@
     </div>
 
     <!-- System Health Card -->
-    <app-card title="System Health">
-      <div class="grid grid-cols-3 gap-4" card-body>
+    <app-card title="System Health" *ngIf="systemHealth as health">
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-4" card-body>
         <div class="text-center">
-          <p class="text-2xl font-bold text-green-600">{{ stats.systemHealth.uptime || 0 }}%</p>
+          <span
+            [ngClass]="getHealthStatusClass(health.status)"
+            class="inline-block px-2 py-1 rounded text-xs font-semibold"
+          >
+            {{ health.status }}
+          </span>
+          <p class="text-xs text-gray-600 mt-1">Status</p>
+        </div>
+        <div class="text-center">
+          <p class="text-2xl font-bold text-green-600">{{ formatUptime(health.uptimeMillis) }}</p>
           <p class="text-xs text-gray-600 mt-1">Uptime</p>
         </div>
         <div class="text-center">
-          <p class="text-2xl font-bold text-blue-600">{{ stats.systemHealth.memoryUsage || 0 }}%</p>
-          <p class="text-xs text-gray-600 mt-1">Memory Usage</p>
+          <p class="text-2xl font-bold text-blue-600">{{ health.memoryUsage || 0 }}%</p>
+          <p class="text-xs text-gray-600 mt-1">
+            Memory ({{ health.usedMemoryMb }} / {{ health.maxMemoryMb }} MB)
+          </p>
         </div>
         <div class="text-center">
-          <p class="text-2xl font-bold text-purple-600">{{ stats.systemHealth.cpuUsage || 0 }}%</p>
-          <p class="text-xs text-gray-600 mt-1">CPU Usage</p>
+          <p class="text-2xl font-bold text-purple-600">{{ health.cpuUsage || 0 }}%</p>
+          <p class="text-xs text-gray-600 mt-1">CPU ({{ health.availableProcessors }} cores)</p>
+        </div>
+      </div>
+    </app-card>
+
+    <!-- Lifecycle Distribution Card -->
+    <app-card title="Employees by Lifecycle State" *ngIf="entityStates.length > 0">
+      <div class="space-y-3" card-body>
+        <div *ngFor="let entry of entityStates" class="flex items-center gap-3">
+          <span
+            [ngClass]="getStateBadgeClass(entry.state)"
+            class="inline-block px-2 py-1 rounded text-xs font-semibold w-24 text-center"
+          >
+            {{ entry.state }}
+          </span>
+          <div class="flex-1 bg-gray-100 rounded h-2">
+            <div
+              class="bg-blue-500 h-2 rounded"
+              [style.width.%]="
+                stats.totalEntities ? (entry.count / stats.totalEntities) * 100 : 0
+              "
+            ></div>
+          </div>
+          <span class="text-sm font-medium text-gray-700 w-10 text-right">{{ entry.count }}</span>
         </div>
       </div>
     </app-card>

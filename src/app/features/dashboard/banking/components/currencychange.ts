@@ -4,14 +4,7 @@ import { CustomCard } from '../../../../shared/components/ui/customcard';
 import { ButtonModule } from 'primeng/button';
 import { Menu } from 'primeng/menu';
 import { Tag } from 'primeng/tag';
-
-export interface CurrencyChangeData {
-    currency: string;
-    change: number;
-    increase: boolean;
-    value: number;
-    comparedToLastMonth: number;
-}
+import { FinanceKpi } from '@app/core/models';
 
 @Component({
     selector: '[currency-change]',
@@ -19,19 +12,19 @@ export interface CurrencyChangeData {
     imports: [CommonModule, CustomCard, ButtonModule, Menu, Tag],
     template: `
         <div custom-card>
-            <h3 card-title>{{ data().currency }}</h3>
+            <h3 card-title>{{ data().label }}</h3>
             <div card-action>
                 <p-button type="button" icon="pi pi-ellipsis-h" (click)="menu.toggle($event)" severity="secondary" [text]="true" />
                 <p-menu #menu [model]="menuItems()" [popup]="true" />
             </div>
             <div class="p-5">
                 <div class="flex items-center gap-4">
-                    <div class="text-2xl font-semibold">{{ formatCurrency(data().value, data().currency) }}</div>
-                    <p-tag [severity]="data().increase ? 'success' : 'danger'" [value]="data().change + '%'" />
+                    <div class="text-2xl font-semibold">{{ formatCurrency(data().value, currency()) }}</div>
+                    <p-tag [severity]="data().increase ? 'success' : 'danger'" [value]="data().changePercent + '%'" />
                 </div>
                 <div class="mt-2 flex items-center gap-1 text-sm">
                     <div class="text-surface-500">Compared to last month</div>
-                    <div [class]="data().increase ? 'text-green-600' : 'text-red-600'">{{ formatCurrency(data().comparedToLastMonth, data().currency, 2) }}</div>
+                    <div [class]="data().increase ? 'text-green-600' : 'text-red-600'">{{ formatCurrency(data().comparedToLastMonth, currency(), 2) }}</div>
                 </div>
             </div>
         </div>
@@ -41,7 +34,9 @@ export interface CurrencyChangeData {
     }
 })
 export class CurrencyChange {
-    data = input.required<CurrencyChangeData>();
+    data = input.required<FinanceKpi>();
+
+    currency = input<string>('USD');
 
     menuItems = signal([
         {

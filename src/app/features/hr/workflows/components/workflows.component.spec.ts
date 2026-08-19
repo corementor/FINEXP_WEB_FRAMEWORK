@@ -2,7 +2,7 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { CommonModule } from '@angular/common';
 import { provideAngularQuery, QueryClient } from '@tanstack/angular-query-experimental';
 import { WorkflowsComponent } from './workflows.component';
-import { EmployeeFacadeService } from '@app/features/employees/services';
+import { EmployeeFacadeService } from '@app/features/hr/employees/services';
 import { LoggerService } from '@app/core/services';
 import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { of, throwError } from 'rxjs';

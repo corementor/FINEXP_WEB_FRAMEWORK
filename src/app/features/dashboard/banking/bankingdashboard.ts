@@ -1,6 +1,8 @@
-import { Component, signal } from '@angular/core';
+import { Component, OnInit, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { TotalBalance, CurrencyChange, CurrencyChangeData, Overview, CreditCards, GlobalTransfer, CreditScore, AccountTransactions } from './components';
+import { FinanceDashboardSummary } from '@app/core/models';
+import { FinanceDashboardFacadeService } from '@app/features/dashboard/services';
+import { TotalBalance, CurrencyChange, Overview, CreditCards, GlobalTransfer, CreditScore, AccountTransactions } from './components';
 
 @Component({
     selector: 'app-banking',
@@ -8,49 +10,30 @@ import { TotalBalance, CurrencyChange, CurrencyChangeData, Overview, CreditCards
     imports: [CommonModule, TotalBalance, CurrencyChange, Overview, CreditCards, GlobalTransfer, CreditScore, AccountTransactions],
     template: `
         <div class="grid grid-cols-12 gap-4">
-            <div total-balance></div>
+            <div total-balance [data]="summary()?.cashPosition ?? null"></div>
             <div class="col-span-12 grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4">
-                @for (item of currencyChange(); track item.currency) {
-                    <div currency-change [data]="item"></div>
+                @for (kpi of summary()?.kpis ?? []; track kpi.key) {
+                    <div currency-change [data]="kpi" [currency]="currency()"></div>
                 }
             </div>
-            <div overview></div>
-            <div credit-cards></div>
-            <div global-transfer></div>
-            <div credit-score></div>
-            <div account-transactions></div>
+            <div overview [data]="summary()?.overview ?? null" [currency]="currency()"></div>
+            <div credit-cards [data]="summary()?.budgetExecution ?? []" [currency]="currency()"></div>
+            <div global-transfer [data]="summary()?.pendingApprovals ?? null" [currency]="currency()"></div>
+            <div credit-score [data]="summary()?.cashBreakdown ?? null" [currency]="currency()"></div>
+            <div account-transactions [data]="summary()?.recentEntries ?? []" [currency]="currency()"></div>
         </div>
     `
 })
-export class BankingDashboard {
-    currencyChange = signal<CurrencyChangeData[]>([
-        {
-            currency: 'USD',
-            change: 72,
-            increase: true,
-            value: 178942.11,
-            comparedToLastMonth: 48157.94
-        },
-        {
-            currency: 'EUR',
-            change: 10,
-            increase: true,
-            value: 93942.62,
-            comparedToLastMonth: 12163.11
-        },
-        {
-            currency: 'GBP',
-            change: 5,
-            increase: true,
-            value: 17942.33,
-            comparedToLastMonth: 2983.74
-        },
-        {
-            currency: 'TRY',
-            change: 12,
-            increase: false,
-            value: 142409.01,
-            comparedToLastMonth: 134023.012
-        }
-    ]);
+export class BankingDashboard implements OnInit {
+    private readonly financeDashboardFacade = inject(FinanceDashboardFacadeService);
+
+    summary = signal<FinanceDashboardSummary | null>(null);
+
+    ngOnInit(): void {
+        this.financeDashboardFacade.loadSummary().subscribe((summary) => this.summary.set(summary));
+    }
+
+    currency(): string {
+        return this.summary()?.currency ?? 'RWF';
+    }
 }

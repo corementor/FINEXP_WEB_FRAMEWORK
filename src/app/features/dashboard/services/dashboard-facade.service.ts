@@ -1,14 +1,16 @@
 import { Injectable, inject } from '@angular/core';
 import { Observable } from 'rxjs';
 import { tap, map, catchError } from 'rxjs/operators';
-import {
-  EmployeeApiService,
-  AuditApiService,
-  LoggerService,
-  DashboardApiService,
-} from '@app/core/services';
+import { LoggerService, DashboardApiService } from '@app/core/services';
 import { AppStateStore } from '@app/core/state';
-import { ApiResponse, DashboardStats } from '@app/core/models';
+import {
+  ApiResponse,
+  AuditLog,
+  DashboardActivity,
+  DashboardStats,
+  DashboardSummary,
+  SystemHealth,
+} from '@app/core/models';
 
 /**
  * Dashboard Facade Service
@@ -19,37 +21,20 @@ import { ApiResponse, DashboardStats } from '@app/core/models';
 })
 export class DashboardFacadeService {
   private readonly dashboardApi = inject(DashboardApiService);
-  private readonly employeeApi = inject(EmployeeApiService);
-  private readonly auditApi = inject(AuditApiService);
   private readonly logger = inject(LoggerService);
   private readonly store = inject(AppStateStore);
 
   /**
    * Load dashboard statistics
-   * Fetches employee count, recent activity, system health from backend
+   * Uses the aggregated summary endpoint so counters, recent activity and
+   * system health are fetched in a single backend call
    */
-  loadDashboardStats(): Observable<DashboardStats> {
-    this.logger.debug('Facade: loading dashboard stats');
+  loadDashboardStats(activityLimit = 10): Observable<DashboardStats> {
+    this.logger.debug('Facade: loading dashboard stats', { activityLimit });
 
-    return this.dashboardApi.getDashboardStats().pipe(
-      tap((response: ApiResponse<Map<string, any>>) => {
-        this.logger.info('Facade: dashboard stats loaded');
-      }),
-      map((response: ApiResponse<any>) => {
-        const stats = response.result || {};
-        return {
-          totalEntities: stats['totalEntities'] || 0,
-          activeEntities: stats['activeEntities'] || 0,
-          createdEntities: stats['pendingEntities'] || 0,
-          inactiveEntities: stats['inactiveEntities'] || 0,
-          recentActivity: [],
-          systemHealth: {
-            uptime: 99.9,
-            memoryUsage: 45,
-            cpuUsage: 23,
-          },
-        } as DashboardStats;
-      }),
+    return this.dashboardApi.getDashboardSummary(activityLimit).pipe(
+      tap(() => this.logger.info('Facade: dashboard stats loaded')),
+      map((response: ApiResponse<DashboardSummary>) => this.toDashboardStats(response.result)),
       catchError((error) => {
         this.logger.error('Facade: failed to load dashboard stats', error);
         this.store.setError('Failed to load dashboard');
@@ -59,32 +44,16 @@ export class DashboardFacadeService {
   }
 
   /**
-   * Load recent audit events for activity feed
+   * Load recent activity entries for the activity feed
    */
-  loadRecentActivity(limit = 10): Observable<any[]> {
+  loadRecentActivity(limit = 10): Observable<DashboardActivity[]> {
     this.logger.debug('Facade: loading recent activity', { limit });
 
-    return this.auditApi.getAuditEvents(0, limit).pipe(
-      tap((response: ApiResponse<any>) => {
-        this.store.setAuditLogs(response.result || []);
-        this.logger.info('Facade: recent activity loaded', {
-          count: response.result?.length || 0,
-        });
-      }),
-      map((response: ApiResponse<any>) => {
-        // Format audit events for display
-        return (response.result || []).map((event: any) => ({
-          id: event.id,
-          timestamp: event.actionDate,
-          actionTime: event.actionTime,
-          employee: event.auditedObject?.name || 'Unknown',
-          employeeId: event.auditedObject?.id,
-          employeeNumber: event.auditedObject?.employeeNumber,
-          state: event.auditedObject?.state,
-          email: event.auditedObject?.emailAddress,
-          action: this.getActionLabel(event),
-          description: this.getActionDescription(event),
-        }));
+    return this.dashboardApi.getRecentActivity(limit).pipe(
+      map((response: ApiResponse<DashboardActivity[]>) => response.result || []),
+      tap((activities: DashboardActivity[]) => {
+        this.store.setAuditLogs(activities as unknown as AuditLog[]);
+        this.logger.info('Facade: recent activity loaded', { count: activities.length });
       }),
       catchError((error) => {
         this.logger.error('Facade: failed to load recent activity', error);
@@ -94,31 +63,54 @@ export class DashboardFacadeService {
   }
 
   /**
-   * Get action label based on lifecycle state
+   * Load the runtime health indicators of the backend
    */
-  private getActionLabel(event: any): string {
-    const state = event.auditedObject?.state;
-    switch (state) {
-      case 'CREATED':
-        return 'Created';
-      case 'ACTIVE':
-        return 'Activated';
-      case 'INACTIVE':
-        return 'Deactivated';
-      case 'ARCHIVED':
-        return 'Archived';
-      default:
-        return 'Modified';
-    }
+  loadSystemHealth(): Observable<SystemHealth> {
+    this.logger.debug('Facade: loading system health');
+
+    return this.dashboardApi.getSystemHealth().pipe(
+      map((response: ApiResponse<SystemHealth>) => response.result || this.emptySystemHealth()),
+      catchError((error) => {
+        this.logger.error('Facade: failed to load system health', error);
+        throw error;
+      }),
+    );
   }
 
   /**
-   * Get action description
+   * Map the backend summary payload to the view model consumed by the UI
    */
-  private getActionDescription(event: any): string {
-    const employee = event.auditedObject;
-    if (!employee) return 'No details available';
+  private toDashboardStats(summary: DashboardSummary | null | undefined): DashboardStats {
+    const counters = summary?.stats;
 
-    return `${employee.name} (${employee.employeeNumber}) - ${employee.state}`;
+    return {
+      totalEntities: counters?.totalEntities ?? 0,
+      activeEntities: counters?.activeEntities ?? 0,
+      createdEntities: counters?.pendingEntities ?? 0,
+      inactiveEntities: counters?.inactiveEntities ?? 0,
+      totalUsers: counters?.totalUsers ?? 0,
+      activeUsers: counters?.activeUsers ?? 0,
+      totalRoles: counters?.totalRoles ?? 0,
+      totalPermissions: counters?.totalPermissions ?? 0,
+      entitiesByState: summary?.entitiesByState ?? {},
+      recentActivity: summary?.recentActivity ?? [],
+      systemHealth: summary?.systemHealth ?? this.emptySystemHealth(),
+    };
+  }
+
+  /**
+   * Fallback health payload used when the backend returns nothing
+   */
+  private emptySystemHealth(): SystemHealth {
+    return {
+      status: 'DOWN',
+      uptime: 0,
+      uptimeMillis: 0,
+      memoryUsage: 0,
+      cpuUsage: 0,
+      usedMemoryMb: 0,
+      maxMemoryMb: 0,
+      availableProcessors: 0,
+    };
   }
 }

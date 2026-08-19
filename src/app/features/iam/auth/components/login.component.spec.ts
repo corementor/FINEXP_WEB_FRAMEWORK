@@ -2,7 +2,7 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { ReactiveFormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { LoginComponent } from './login.component';
-import { LoginFacadeService } from '@app/features/auth/services';
+import { LoginFacadeService } from '@app/features/iam/auth/services';
 import { LoggerService } from '@app/core/services';
 import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { of, throwError } from 'rxjs';

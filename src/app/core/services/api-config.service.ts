@@ -25,6 +25,14 @@ export class ApiConfigService {
     return `${this.baseUrl}/dashboard`;
   }
 
+  get financeDashboardEndpoint(): string {
+    return `${this.baseUrl}/finance-dashboard`;
+  }
+
+  get reportsEndpoint(): string {
+    return `${this.baseUrl}/reports`;
+  }
+
   get authEndpoint(): string {
     return `${this.authUrl}/login`;
   }

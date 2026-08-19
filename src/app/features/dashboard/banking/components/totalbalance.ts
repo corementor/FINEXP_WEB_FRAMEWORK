@@ -1,6 +1,7 @@
-import { Component, signal } from '@angular/core';
+import { Component, input } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Tag } from 'primeng/tag';
+import { CashPosition } from '@app/core/models';
 
 @Component({
     selector: '[total-balance]',
@@ -8,14 +9,14 @@ import { Tag } from 'primeng/tag';
     imports: [CommonModule, Tag],
     template: `
         <div>
-            <div class="text-2xl text-primary-contrast">Total Balance</div>
+            <div class="text-2xl text-primary-contrast">{{ label() }}</div>
             <div class="mt-4 flex items-center gap-2">
-                <div class="text-4xl text-primary-contrast font-semibold">{{ formatCurrency(totalBalance()) }}</div>
-                <p-tag severity="success" value="17%" />
+                <div class="text-4xl text-primary-contrast font-semibold">{{ formatCurrency(totalCash(), currency()) }}</div>
+                <p-tag [severity]="increase() ? 'success' : 'danger'" [value]="changePercent() + '%'" />
             </div>
             <div class="mt-2 flex items-center gap-2">
                 <span class="text-white/70 dark:text-primary-contrast">Compared to last month</span>
-                <span class="font-medium" [class]="increase() ? 'text-green-400' : 'text-red-400'">{{ formatCurrency(comparedToLastYear()) }}</span>
+                <span class="font-medium" [class]="increase() ? 'text-green-400' : 'text-red-400'">{{ formatCurrency(comparedToLastMonth(), currency()) }}</span>
             </div>
         </div>
         <div class="lg:block hidden absolute -top-2 -bottom-0 right-0 z-10">
@@ -158,9 +159,31 @@ import { Tag } from 'primeng/tag';
     }
 })
 export class TotalBalance {
-    totalBalance = signal(673742.9);
-    increase = signal(true);
-    comparedToLastYear = signal(148157.94);
+    data = input<CashPosition | null>(null);
+
+    label(): string {
+        return this.data()?.label ?? 'Total Cash Position';
+    }
+
+    totalCash(): number {
+        return this.data()?.totalCash ?? 0;
+    }
+
+    changePercent(): number {
+        return this.data()?.changePercent ?? 0;
+    }
+
+    increase(): boolean {
+        return this.data()?.increase ?? true;
+    }
+
+    comparedToLastMonth(): number {
+        return this.data()?.comparedToLastMonth ?? 0;
+    }
+
+    currency(): string {
+        return this.data()?.currency ?? 'USD';
+    }
 
     formatCurrency(value: number, currency: string = 'USD'): string {
         return new Intl.NumberFormat('en-US', {

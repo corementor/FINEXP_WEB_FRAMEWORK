@@ -102,7 +102,8 @@ export interface TableColumn<T = any> {
         [paginator]="paginator"
         [globalFilterFields]="globalFilterFields"
         [tableStyle]="{ 'min-width': '75rem' }"
-        [(selection)]="selectedItems"
+        [selection]="selectedItems"
+        (selectionChange)="onSelectionChange($event)"
         [rowHover]="true"
         dataKey="id"
         currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries"
@@ -206,6 +207,7 @@ export class AppTableComponent<T = any> implements OnInit {
   @Output() itemEdited = new EventEmitter<T>();
   @Output() deleteItem = new EventEmitter<T>();
   @Output() deleteSelected = new EventEmitter<T[]>();
+  @Output() selectionChanged = new EventEmitter<T[]>();
   @Output() saveItem = new EventEmitter<T>();
 
   @ViewChild('dt') table!: Table;
@@ -220,6 +222,22 @@ export class AppTableComponent<T = any> implements OnInit {
 
   ngOnInit(): void {
     this.globalFilterFields = this.columns.map((col) => String(col.field));
+  }
+
+  /**
+   * Keep the parent in sync with the rows checked by the user.
+   */
+  onSelectionChange(items: T[]): void {
+    this.selectedItems = items ?? [];
+    this.selectionChanged.emit(this.selectedItems);
+  }
+
+  /**
+   * Clear the current selection, typically after a bulk operation.
+   */
+  clearSelection(): void {
+    this.selectedItems = [];
+    this.selectionChanged.emit(this.selectedItems);
   }
 
   getPropertyValue(obj: any, key: PropertyKey): any {
@@ -289,7 +307,7 @@ export class AppTableComponent<T = any> implements OnInit {
       },
       accept: () => {
         this.deleteSelected.emit(this.selectedItems);
-        this.selectedItems = [];
+        this.clearSelection();
         this.messageService.add({
           severity: 'success',
           summary: 'Successful',

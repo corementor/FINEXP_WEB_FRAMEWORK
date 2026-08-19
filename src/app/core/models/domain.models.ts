@@ -90,6 +90,7 @@ export enum Permission {
   PERM_VIEW_TRIAL_BALANCE = 'PERM_VIEW_TRIAL_BALANCE',
   PERM_VIEW_FINANCIAL_STATEMENTS = 'PERM_VIEW_FINANCIAL_STATEMENTS',
   PERM_EXPORT_REPORTS = 'PERM_EXPORT_REPORTS',
+  PERM_VIEW_REPORT = 'PERM_VIEW_REPORT',
 
   // Budget
   PERM_VIEW_BUDGET = 'PERM_VIEW_BUDGET',
@@ -169,19 +170,77 @@ export interface AuditEvent extends DomainEntity {
 export type AuditLog = AuditEvent;
 
 /**
- * Dashboard statistics
+ * Runtime health indicators exposed by GET /api/dashboard/health
+ */
+export interface SystemHealth {
+  status: 'UP' | 'DEGRADED' | 'DOWN' | string;
+  uptime: number;
+  uptimeMillis: number;
+  memoryUsage: number;
+  cpuUsage: number;
+  usedMemoryMb: number;
+  maxMemoryMb: number;
+  availableProcessors: number;
+}
+
+/**
+ * Recent activity entry exposed by GET /api/dashboard/activity
+ */
+export interface DashboardActivity {
+  id: number;
+  actionTime: number;
+  actionDate: string;
+  action: string;
+  description: string;
+  entityId: string;
+  entityType: string;
+  entityName: string;
+  entityNumber?: string;
+  email?: string;
+  state: string;
+  userId?: string;
+}
+
+/**
+ * Aggregated counters exposed by GET /api/dashboard/stats
+ */
+export interface DashboardCounters {
+  totalEntities: number;
+  activeEntities: number;
+  pendingEntities: number;
+  inactiveEntities: number;
+  totalUsers: number;
+  activeUsers: number;
+  totalRoles: number;
+  totalPermissions: number;
+}
+
+/**
+ * Raw payload exposed by GET /api/dashboard/summary
+ */
+export interface DashboardSummary {
+  stats: DashboardCounters;
+  recentActivity: DashboardActivity[];
+  entitiesByState: Record<string, number>;
+  systemHealth: SystemHealth;
+  generatedAt: number;
+}
+
+/**
+ * Dashboard statistics as consumed by the dashboard view
  */
 export interface DashboardStats {
   totalEntities: number;
   activeEntities: number;
   createdEntities: number;
   inactiveEntities: number;
-  recentActivity: AuditEvent[];
-  systemHealth: {
-    uptime: number;
-    memoryUsage: number;
-    cpuUsage: number;
-  };
+  totalUsers: number;
+  activeUsers: number;
+  totalRoles: number;
+  totalPermissions: number;
+  entitiesByState: Record<string, number>;
+  recentActivity: DashboardActivity[];
+  systemHealth: SystemHealth;
 }
 
 /**
@@ -205,4 +264,118 @@ export interface AuthToken {
   refreshToken?: string;
   expiresIn: number;
   tokenType: 'Bearer';
+}
+
+/**
+ * Consolidated treasury position of the finance dashboard
+ */
+export interface CashPosition {
+  label: string;
+  totalCash: number;
+  changePercent: number;
+  increase: boolean;
+  comparedToLastMonth: number;
+  currency: string;
+}
+
+/**
+ * One key performance indicator tile of the finance dashboard
+ */
+export interface FinanceKpi {
+  key: string;
+  label: string;
+  value: number;
+  changePercent: number;
+  increase: boolean;
+  comparedToLastMonth: number;
+}
+
+/**
+ * Generic labelled amount used by the chart legends and the doughnut chart
+ */
+export interface FinanceSlice {
+  title: string;
+  value: number;
+  color: string;
+}
+
+/**
+ * Revenue, expenses and budget series of a single aggregation period
+ */
+export interface FinanceOverviewPeriod {
+  key: string;
+  label: string;
+  labels: string[];
+  revenue: number[];
+  expenses: number[];
+  budget: number[];
+}
+
+/**
+ * Revenue versus expenses versus budget chart
+ */
+export interface FinanceOverview {
+  selectedPeriod: string;
+  periods: FinanceOverviewPeriod[];
+  legend: FinanceSlice[];
+}
+
+/**
+ * Budget consumption of a single cost center
+ */
+export interface BudgetExecution {
+  code: string;
+  costCenter: string;
+  allocated: number;
+  consumed: number;
+  committed: number;
+  utilizationPercent: number;
+}
+
+/**
+ * Split of the cash movements feeding the doughnut chart
+ */
+export interface CashBreakdown {
+  slices: FinanceSlice[];
+  total: number;
+  netCashFlow: number;
+}
+
+/**
+ * One recent journal entry or payment
+ */
+export interface FinanceEntry {
+  reference: string;
+  description: string;
+  counterparty: string;
+  amount: number;
+  direction: string;
+  status: string;
+  date: string;
+}
+
+/**
+ * Summary of the payment run waiting for approval
+ */
+export interface PendingApprovals {
+  pendingCount: number;
+  pendingAmount: number;
+  nextRunDate: string;
+  approvedThisMonth: number;
+  rejectedThisMonth: number;
+}
+
+/**
+ * Raw payload exposed by GET /api/finance-dashboard/summary
+ */
+export interface FinanceDashboardSummary {
+  cashPosition: CashPosition;
+  kpis: FinanceKpi[];
+  overview: FinanceOverview;
+  budgetExecution: BudgetExecution[];
+  cashBreakdown: CashBreakdown;
+  recentEntries: FinanceEntry[];
+  pendingApprovals: PendingApprovals;
+  currency: string;
+  generatedAt: number;
 }

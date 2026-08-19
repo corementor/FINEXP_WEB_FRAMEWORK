@@ -14,7 +14,7 @@ import {
 } from '@app/shared/components';
 import { DashboardFacadeService } from '@app/features/dashboard/services';
 import { LoggerService } from '@app/core/services';
-import { DashboardStats } from '@app/core/models';
+import { DashboardActivity, DashboardStats, SystemHealth } from '@app/core/models';
 
 @Component({
   selector: 'app-dashboard',
@@ -47,8 +47,17 @@ export class DashboardComponent implements OnInit, OnDestroy {
     return this.dashboardQuery.data() || null;
   }
 
-  get recentActivity(): any[] {
-    return this.activityQuery.data() || [];
+  get recentActivity(): DashboardActivity[] {
+    return this.activityQuery.data() || this.stats?.recentActivity || [];
+  }
+
+  get systemHealth(): SystemHealth | null {
+    return this.stats?.systemHealth || null;
+  }
+
+  get entityStates(): { state: string; count: number }[] {
+    const distribution = this.stats?.entitiesByState || {};
+    return Object.keys(distribution).map((state) => ({ state, count: distribution[state] }));
   }
 
   get isLoading(): boolean {
@@ -70,6 +79,38 @@ export class DashboardComponent implements OnInit, OnDestroy {
   onRefresh(): void {
     this.queryClient.invalidateQueries({ queryKey: this.dashboardQueryKey });
     this.queryClient.invalidateQueries({ queryKey: this.activityQueryKey });
+  }
+
+  /**
+   * Format the backend uptime (milliseconds) as a readable duration
+   */
+  formatUptime(uptimeMillis: number): string {
+    if (!uptimeMillis || uptimeMillis < 0) return '0m';
+
+    const totalMinutes = Math.floor(uptimeMillis / 60000);
+    const days = Math.floor(totalMinutes / 1440);
+    const hours = Math.floor((totalMinutes % 1440) / 60);
+    const minutes = totalMinutes % 60;
+
+    if (days > 0) return `${days}d ${hours}h`;
+    if (hours > 0) return `${hours}h ${minutes}m`;
+    return `${minutes}m`;
+  }
+
+  /**
+   * Get CSS classes for the system health status badge
+   */
+  getHealthStatusClass(status: string | undefined): string {
+    switch (status) {
+      case 'UP':
+        return 'bg-green-100 text-green-800';
+      case 'DEGRADED':
+        return 'bg-yellow-100 text-yellow-800';
+      case 'DOWN':
+        return 'bg-red-100 text-red-800';
+      default:
+        return 'bg-gray-100 text-gray-800';
+    }
   }
 
   /**
